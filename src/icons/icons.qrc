@@ -1,0 +1,18 @@
+<RCC>
+    <qresource prefix="/items">
+        <file>add.png</file>
+        <file>suppress.png</file>
+        <file>depth.png</file>
+        <file>picker.png</file>
+        <file>size.png</file>
+        <file>width.png</file>
+        <file>zoom.png</file>
+    </qresource>
+    <qresource prefix="/export">
+        <file>generate.png</file>
+        <file>opengl.png</file>
+    </qresource>
+    <qresource prefix="/logo">
+        <file>logo.png</file>
+    </qresource>
+</RCC>
