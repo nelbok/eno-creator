@@ -1,0 +1,22 @@
+<RCC>
+    <qresource prefix="/items">
+        <file alias="add.png">icons/add.png</file>
+        <file alias="suppress.png">icons/suppress.png</file>
+        <file alias="depth.png">icons/depth.png</file>
+        <file alias="picker.png">icons/picker.png</file>
+        <file alias="size.png">icons/size.png</file>
+        <file alias="width.png">icons/width.png</file>
+        <file alias="zoom.png">icons/zoom.png</file>
+    </qresource>
+    <qresource prefix="/export">
+        <file alias="generate.png">icons/generate.png</file>
+        <file alias="opengl.png">icons/opengl.png</file>
+    </qresource>
+    <qresource prefix="/logo">
+        <file alias="logo.png">icons/logo.png</file>
+    </qresource>
+    <qresource prefix="/lang">
+        <file alias="en_US.qm">lang/en_US.qm</file>
+        <file alias="fr_FR.qm">lang/fr_FR.qm</file>
+    </qresource>
+</RCC>

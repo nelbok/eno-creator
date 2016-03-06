@@ -19,6 +19,9 @@
 #ifndef OPENGL_HPP
 # define OPENGL_HPP
 
+// FIXME: THIS CLASS NEED TO BE REWRITTEN !!!
+// QGLWIDGET IS OBSOLETE
+// REMOVE opengl option of QT in PRO FILE IF NEEDED
 # include <QGLWidget>
 
 namespace srp_creator

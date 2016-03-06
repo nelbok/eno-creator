@@ -7,5 +7,9 @@ Wavefront map editor
     It can export the result in Wavefront format with both a ojb file and a mtl file:
     https://en.wikipedia.org/wiki/Wavefront_.obj_file
 
-    Beware, the code doesn't compile for the moment !!!
     Any help to improve the project is okay.
+
+    Last update:
+    - The project compile
+    - OpenGL Preview doesn't work... The code need to be updated (file src/opengl/opengl class)
+    - Added some sample but without the OpenGL Preview... :(

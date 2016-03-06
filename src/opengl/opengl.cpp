@@ -104,100 +104,100 @@ namespace srp_creator
 
   void opengl::resizeGL(int width, int height)
   {
-    glViewport(0, 0, (GLint)width, (GLint)height);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluPerspective(70, (double) width / height, .1, 100);
-    glEnable(GL_DEPTH_TEST);
+//    glViewport(0, 0, (GLint)width, (GLint)height);
+//    glMatrixMode(GL_PROJECTION);
+//    glLoadIdentity();
+//    gluPerspective(70, (double) width / height, .1, 100);
+//    glEnable(GL_DEPTH_TEST);
   }
 
   void opengl::paintGL()
   {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    gluLookAt(0, 0, 1.5, 1, 0, 1.5, 0, 0, 1);
+//    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+//    glMatrixMode(GL_MODELVIEW);
+//    glLoadIdentity();
+//    gluLookAt(0, 0, 1.5, 1, 0, 1.5, 0, 0, 1);
 
-    //Movement of camera
-    glRotated(-angle_, 0, 0, 1);
-    glTranslated(-x_ - .5, -y_ - .5, -z_);
+//    //Movement of camera
+//    glRotated(-angle_, 0, 0, 1);
+//    glTranslated(-x_ - .5, -y_ - .5, -z_);
 
-    //Draw
-    glDisable(GL_TEXTURE_2D);
+//    //Draw
+//    glDisable(GL_TEXTURE_2D);
 
-    MapItem::const_iterator items = map_.items().constBegin();
-    while (items != map_.items().constEnd())
-    {
-        int x =  items.key().x() / 10;
-        int y = -items.key().y() / 10 - 1;
-        int z =  items.key().z() / 10;
-        QColor color = items.value().rgb();
+//    MapItem::const_iterator items = map_.items().constBegin();
+//    while (items != map_.items().constEnd())
+//    {
+//        int x =  items.key().x() / 10;
+//        int y = -items.key().y() / 10 - 1;
+//        int z =  items.key().z() / 10;
+//        QColor color = items.value().rgb();
 
-        glColor3ub(color.red(), color.green(), color.blue());
-        glBegin(GL_QUADS);
-          glVertex3d(x,   y,   z);
-          glVertex3d(x,   y+1, z);
-          glVertex3d(x+1, y+1, z);
-          glVertex3d(x+1, y,   z);
+//        glColor3ub(color.red(), color.green(), color.blue());
+//        glBegin(GL_QUADS);
+//          glVertex3d(x,   y,   z);
+//          glVertex3d(x,   y+1, z);
+//          glVertex3d(x+1, y+1, z);
+//          glVertex3d(x+1, y,   z);
 
-          glVertex3d(x,   y,   z+1);
-          glVertex3d(x,   y+1, z+1);
-          glVertex3d(x+1, y+1, z+1);
-          glVertex3d(x+1, y,   z+1);
+//          glVertex3d(x,   y,   z+1);
+//          glVertex3d(x,   y+1, z+1);
+//          glVertex3d(x+1, y+1, z+1);
+//          glVertex3d(x+1, y,   z+1);
 
-          glVertex3d(x,   y,   z);
-          glVertex3d(x,   y,   z+1);
-          glVertex3d(x+1, y,   z+1);
-          glVertex3d(x+1, y,   z);
+//          glVertex3d(x,   y,   z);
+//          glVertex3d(x,   y,   z+1);
+//          glVertex3d(x+1, y,   z+1);
+//          glVertex3d(x+1, y,   z);
 
-          glVertex3d(x,   y,   z);
-          glVertex3d(x,   y,   z+1);
-          glVertex3d(x,   y+1, z+1);
-          glVertex3d(x,   y+1, z);
+//          glVertex3d(x,   y,   z);
+//          glVertex3d(x,   y,   z+1);
+//          glVertex3d(x,   y+1, z+1);
+//          glVertex3d(x,   y+1, z);
 
-          glVertex3d(x,   y+1, z);
-          glVertex3d(x,   y+1, z+1);
-          glVertex3d(x+1, y+1, z+1);
-          glVertex3d(x+1, y+1, z);
+//          glVertex3d(x,   y+1, z);
+//          glVertex3d(x,   y+1, z+1);
+//          glVertex3d(x+1, y+1, z+1);
+//          glVertex3d(x+1, y+1, z);
 
-          glVertex3d(x+1, y,   z);
-          glVertex3d(x+1, y,   z+1);
-          glVertex3d(x+1, y+1, z+1);
-          glVertex3d(x+1, y+1, z);
-        glEnd();
+//          glVertex3d(x+1, y,   z);
+//          glVertex3d(x+1, y,   z+1);
+//          glVertex3d(x+1, y+1, z+1);
+//          glVertex3d(x+1, y+1, z);
+//        glEnd();
 
-        glColor3ub(255, 255, 255);
-        glBegin(GL_LINES);
-          glVertex3d(x,   y,   z);
-          glVertex3d(x,   y+1, z);
-          glVertex3d(x+1, y,   z);
-          glVertex3d(x+1, y+1, z);
-          glVertex3d(x,   y,   z+1);
-          glVertex3d(x,   y+1, z+1);
-          glVertex3d(x+1, y,   z+1);
-          glVertex3d(x+1, y+1, z+1);
+//        glColor3ub(255, 255, 255);
+//        glBegin(GL_LINES);
+//          glVertex3d(x,   y,   z);
+//          glVertex3d(x,   y+1, z);
+//          glVertex3d(x+1, y,   z);
+//          glVertex3d(x+1, y+1, z);
+//          glVertex3d(x,   y,   z+1);
+//          glVertex3d(x,   y+1, z+1);
+//          glVertex3d(x+1, y,   z+1);
+//          glVertex3d(x+1, y+1, z+1);
 
-          glVertex3d(x,   y,   z);
-          glVertex3d(x+1, y,   z);
-          glVertex3d(x,   y+1, z);
-          glVertex3d(x+1, y+1, z);
-          glVertex3d(x,   y,   z+1);
-          glVertex3d(x+1, y,   z+1);
-          glVertex3d(x,   y+1, z+1);
-          glVertex3d(x+1, y+1, z+1);
+//          glVertex3d(x,   y,   z);
+//          glVertex3d(x+1, y,   z);
+//          glVertex3d(x,   y+1, z);
+//          glVertex3d(x+1, y+1, z);
+//          glVertex3d(x,   y,   z+1);
+//          glVertex3d(x+1, y,   z+1);
+//          glVertex3d(x,   y+1, z+1);
+//          glVertex3d(x+1, y+1, z+1);
 
-          glVertex3d(x,   y,   z);
-          glVertex3d(x,   y,   z+1);
-          glVertex3d(x+1, y,   z);
-          glVertex3d(x+1, y,   z+1);
-          glVertex3d(x,   y+1, z);
-          glVertex3d(x,   y+1, z+1);
-          glVertex3d(x+1, y+1, z);
-          glVertex3d(x+1, y+1, z+1);
-        glEnd();
+//          glVertex3d(x,   y,   z);
+//          glVertex3d(x,   y,   z+1);
+//          glVertex3d(x+1, y,   z);
+//          glVertex3d(x+1, y,   z+1);
+//          glVertex3d(x,   y+1, z);
+//          glVertex3d(x,   y+1, z+1);
+//          glVertex3d(x+1, y+1, z);
+//          glVertex3d(x+1, y+1, z+1);
+//        glEnd();
 
-        ++items;
-    }
+//        ++items;
+//    }
   }
 
 

@@ -208,7 +208,7 @@ namespace srp_creator
 
     //Default language
     QTranslator* trans = new QTranslator();
-    trans->load(SRPDATADIR "/lang/" + CreatorSettings().do_load_language());
+    trans->load(":/lang/" + CreatorSettings().do_load_language());
     QApplication::installTranslator(trans);
   }
 
@@ -352,9 +352,11 @@ namespace srp_creator
   void CreatorWindow::do_about_creator_triggered()
   {
     QString msg ("<strong>SRP-Creator</strong><br/><br/>");
-    msg.append(QString("Version : %1<br/><br/>").arg(SRPCREATOR_VERSION));
-    msg.append(QString("2011-%1 Shadow Revival<br/><br/>").arg(SRPCREATOR_YEAR));
-    msg.append("<a href=\"http://www.shadowrevival.com\">www.shadowrevival.com</a>");
+//    msg.append(QString("Version : %1<br/><br/>").arg(SRPCREATOR_VERSION));
+//    msg.append(QString("2011-%1 Shadow Revival<br/><br/>").arg(SRPCREATOR_YEAR));
+//    msg.append("<a href=\"http://www.shadowrevival.com\">www.shadowrevival.com</a>");
+    msg.append("Version : 1.0 Alpha<br/><br/>");
+    msg.append("2011-2016 Shadow Revival<br/>");
     QMessageBox::about(this, QApplication::translate("CreatorWindow",  "About Creator"), msg);
     ui_->statusBar->showMessage(QApplication::translate("CreatorWindow",  "Open about creator completed."), TIME_STATUSBAR);
   }

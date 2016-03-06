@@ -176,7 +176,7 @@ namespace srp_creator
     for (int i = -mid_w; i < mid_w + mod_w; ++i)
       for (int j = -mid_w; j < mid_w + mod_w; ++j)
       {
-        CreatorItem* item = dynamic_cast<CreatorItem*> (creator_->scene().itemAt(pos_x_ + 5 + i * 10, pos_y_ + 5 + j * 10));
+        CreatorItem* item = dynamic_cast<CreatorItem*> (creator_->scene().itemAt(pos_x_ + 5 + i * 10, pos_y_ + 5 + j * 10, QTransform()));
         if (item && item->zValue() == creator_->depth())
         {
           creator_->map().remove_item(QVector3D(pos_x_ + i * 10, pos_y_ + j * 10, creator_->depth()));
@@ -194,7 +194,7 @@ namespace srp_creator
     for (int i = -mid_w; i < mid_w + mod_w; ++i)
       for (int j = -mid_w; j < mid_w + mod_w; ++j)
       {
-        CreatorItem* item = dynamic_cast<CreatorItem*> (creator_->scene().itemAt(pos_x_ + 5 + i * 10, pos_y_ + 5 + j * 10));
+        CreatorItem* item = dynamic_cast<CreatorItem*> (creator_->scene().itemAt(pos_x_ + 5 + i * 10, pos_y_ + 5 + j * 10, QTransform()));
         if (item && item->zValue() == creator_->depth())
         {
           creator_->map().remove_item(QVector3D(pos_x_ + i * 10, pos_y_ + j * 10, creator_->depth()));
@@ -217,7 +217,7 @@ namespace srp_creator
 
   void CreatorAction::execute_color()
   {
-    CreatorItem* item = dynamic_cast<CreatorItem*> (creator_->scene().itemAt(pos_x_ + 5, pos_y_ + 5));
+    CreatorItem* item = dynamic_cast<CreatorItem*> (creator_->scene().itemAt(pos_x_ + 5, pos_y_ + 5, QTransform()));
 
     if (item)
       creator_->color(item->color());

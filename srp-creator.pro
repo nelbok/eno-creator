@@ -18,8 +18,8 @@
 # -------------------------------------------------
 
 TEMPLATE = app
-QT += widgets
-TARGET = 3DCreator
+QT += widgets opengl
+TARGET = srp-creator
 
 # Source
 
@@ -55,11 +55,11 @@ SOURCES += \
     src/main.cpp \
 
 TRANSLATIONS += \
-    lang/fr_FR.ts \
-    lang/en_US.ts
+    data/lang/fr_FR.ts \
+    data/lang/en_US.ts
 
 RESOURCES += \
-    src/icons/icons.qrc \
+    data/data.qrc \
 
 FORMS += \
     src/creator-preference.ui \
@@ -68,7 +68,6 @@ FORMS += \
 INCLUDEPATH += \
     src
 
-# Other files
-
-DISTFILES += lang/en_US.ts
-DISTFILES += lang/fr_FR.ts
+DISTFILES += \
+    LICENSE \
+    README.md
