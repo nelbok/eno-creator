@@ -1,6 +1,8 @@
 # srp-creator
 Wavefront map editor
 
+![Alt text](sample/preview.png)
+
     It is a old project beginning in 2011, its need to be updated with the latest version of Qt.
 
     This software help the user to create a world like MineCraft.
