@@ -23,6 +23,7 @@
 // QGLWIDGET IS OBSOLETE
 # include <QOpenGLWidget>
 # include <QOpenGLFunctions_2_0>
+#include <QMatrix4x4>
 
 namespace srp_creator
 {
@@ -51,6 +52,9 @@ namespace srp_creator
                   GLfloat lookAtX, GLfloat lookAtY, GLfloat lookAtZ,
                   GLfloat upX, GLfloat upY, GLfloat upZ);
       const map& map_;
+
+      QMatrix4x4 projection_;
+
       bool left_;
       bool right_;
       bool up_;

@@ -23,7 +23,6 @@
 #include <QKeyEvent>
 #include <QTimerEvent>
 #include <QDebug>
-#include <QMatrix4x4>
 
 #include "data/map.hpp"
 #include "opengl/opengl.hpp"
@@ -110,6 +109,7 @@ namespace srp_creator
     glViewport(0, 0, (GLint)width, (GLint)height);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
+    projection_.setToIdentity();
 //    gluPerspective(70, (double) width / height, .1, 100);
     perspective(70, (double) width / height, .1, 100);
     glEnable(GL_DEPTH_TEST);
@@ -120,6 +120,7 @@ namespace srp_creator
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
+    projection_.setToIdentity();
 //    gluLookAt(0, 0, 1.5, 1, 0, 1.5, 0, 0, 1);
     lookAt(0, 0, 1.5, 1, 0, 1.5, 0, 0, 1);
 
@@ -231,6 +232,7 @@ namespace srp_creator
     xmin = ymin * aspect;
     xmax = ymax * aspect;
 
+    projection_.perspective(fovy, aspect, zNear, zFar);
     glFrustum( xmin, xmax, ymin, ymax, zNear, zFar );
   }
 
@@ -238,19 +240,8 @@ namespace srp_creator
                       GLfloat lookAtX, GLfloat lookAtY, GLfloat lookAtZ,
                       GLfloat upX, GLfloat upY, GLfloat upZ)
   {
-    QVector3D x, y, z;
-    z = QVector3D(eyeX - lookAtX, eyeY - lookAtY, eyeZ - lookAtZ).normalized();
-    y = QVector3D(upX, upY, upZ);
-    x = QVector3D::crossProduct(y, z);
-    y = QVector3D::crossProduct(z, x);
-    x = x.normalized();
-    y = y.normalized();
-    // mat is given transposed so OpenGL can handle it.
-    QMatrix4x4 mat (new GLfloat[16]
-                   {x.x(), y.x(),   z.x(),   0,
-                   x.y(),  y.y(),   z.y(),   0,
-                   x.z(),  y.z(),   z.z(),   0,
-                   -eyeX,     -eyeY,      -eyeZ,      1});
-    glMultMatrixf(mat.data());
+    projection_.lookAt(QVector3D(eyeX, eyeY, eyeZ), QVector3D(lookAtX, lookAtY, lookAtZ),
+                       QVector3D(upX, upY, upZ));
+    glMultMatrixf(projection_.data());
   }
 }
