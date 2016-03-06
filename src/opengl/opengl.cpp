@@ -16,7 +16,7 @@
                                                                       **/
 
 #include <cmath>
-#include <GL/glu.h>
+//#include <GL/glu.h>
 
 #include <QFileInfo>
 #include <QIcon>
