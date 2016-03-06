@@ -18,7 +18,8 @@
 # -------------------------------------------------
 
 TEMPLATE = app
-QT += widgets opengl
+QT += widgets
+CONFIG += c++11
 TARGET = srp-creator
 
 # Source

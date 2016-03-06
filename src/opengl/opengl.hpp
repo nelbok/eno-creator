@@ -21,14 +21,14 @@
 
 // FIXME: THIS CLASS NEED TO BE REWRITTEN !!!
 // QGLWIDGET IS OBSOLETE
-// REMOVE opengl option of QT in PRO FILE IF NEEDED
-# include <QGLWidget>
+# include <QOpenGLWidget>
+# include <QOpenGLFunctions_2_0>
 
 namespace srp_creator
 {
   class map;
 
-  class opengl : public QGLWidget
+  class opengl : public QOpenGLWidget, protected QOpenGLFunctions_2_0
   {
     public:
       opengl(const map& m, QWidget* parent = 0);
@@ -45,6 +45,11 @@ namespace srp_creator
     private:
       void do_change_key(int key, bool actif);
 
+      // Replacement of glu functions
+      void perspective(GLdouble fovy, GLdouble aspect, GLdouble zNear, GLdouble zFar);
+      void lookAt(GLfloat eyeX, GLfloat eyeY, GLfloat eyeZ,
+                  GLfloat lookAtX, GLfloat lookAtY, GLfloat lookAtZ,
+                  GLfloat upX, GLfloat upY, GLfloat upZ);
       const map& map_;
       bool left_;
       bool right_;
