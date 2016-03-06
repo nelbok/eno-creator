@@ -225,23 +225,15 @@ namespace srp_creator
 
   void opengl::perspective(GLdouble fovy, GLdouble aspect, GLdouble zNear, GLdouble zFar)
   {
-    GLdouble xmin, xmax, ymin, ymax;
-
-    ymax = zNear * tan( fovy * PI / 360.0 );
-    ymin = -ymax;
-    xmin = ymin * aspect;
-    xmax = ymax * aspect;
-
     projection_.perspective(fovy, aspect, zNear, zFar);
-    glFrustum( xmin, xmax, ymin, ymax, zNear, zFar );
+    glMultMatrixf(projection_.data());
   }
 
   void opengl::lookAt(GLfloat eyeX, GLfloat eyeY, GLfloat eyeZ,
                       GLfloat lookAtX, GLfloat lookAtY, GLfloat lookAtZ,
                       GLfloat upX, GLfloat upY, GLfloat upZ)
   {
-    projection_.lookAt(QVector3D(eyeX, eyeY, eyeZ), QVector3D(lookAtX, lookAtY, lookAtZ),
-                       QVector3D(upX, upY, upZ));
+    projection_.lookAt(QVector3D(eyeX, eyeY, eyeZ), QVector3D(lookAtX, lookAtY, lookAtZ), QVector3D(upX, upY, upZ));
     glMultMatrixf(projection_.data());
   }
 }
