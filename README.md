@@ -1,7 +1,8 @@
 # srp-creator
 Wavefront map editor
 
-![Alt text](sample/preview.png)
+![Interface](sample/preview.png)
+![OpenGL preview](sample/preview-opengl.png)
 
     It is a old project beginning in 2011, its need to be updated with the latest version of Qt.
 
@@ -12,6 +13,6 @@ Wavefront map editor
     Any help to improve the project is okay.
 
     Last update:
-    - The project compile
-    - OpenGL Preview doesn't work... The code need to be updated (file src/opengl/opengl class)
-    - Added some sample but without the OpenGL Preview... :(
+    - All features works !
+    - OpenGL preview works !
+    - Added some samples, test3.eno is used for screenshots

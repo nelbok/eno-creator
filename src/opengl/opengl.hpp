@@ -19,11 +19,9 @@
 #ifndef OPENGL_HPP
 # define OPENGL_HPP
 
-// FIXME: THIS CLASS NEED TO BE REWRITTEN !!!
-// QGLWIDGET IS OBSOLETE
 # include <QOpenGLWidget>
 # include <QOpenGLFunctions_2_0>
-#include <QMatrix4x4>
+# include <QMatrix4x4>
 
 namespace srp_creator
 {
@@ -46,11 +44,6 @@ namespace srp_creator
     private:
       void do_change_key(int key, bool actif);
 
-      // Replacement of glu functions
-      void perspective(GLdouble fovy, GLdouble aspect, GLdouble zNear, GLdouble zFar);
-      void lookAt(GLfloat eyeX, GLfloat eyeY, GLfloat eyeZ,
-                  GLfloat lookAtX, GLfloat lookAtY, GLfloat lookAtZ,
-                  GLfloat upX, GLfloat upY, GLfloat upZ);
       const map& map_;
 
       QMatrix4x4 projection_;
@@ -61,6 +54,7 @@ namespace srp_creator
       bool down_;
       bool top_;
       bool bottom_;
+      bool shift_;
 
       double x_;
       double y_;

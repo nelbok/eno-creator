@@ -36,7 +36,7 @@ namespace srp_creator
     : QOpenGLWidget(parent)
     , map_(m)
     , left_(false), right_(false), up_(false), down_(false)
-    , top_(false), bottom_(false)
+    , top_(false), bottom_(false), shift_(false)
     , x_(0), y_(0), z_(0), angle_(0)
   {
     setWindowIcon(QIcon(":/logo/logo.png"));
@@ -64,13 +64,13 @@ namespace srp_creator
       angle_ -= 10;
     if (not up_ and down_)
     {
-      x_-=cos(angle_ * TO_R) *.2;
-      y_-=sin(angle_ * TO_R) *.2;
+      x_-=cos(angle_ * TO_R) *.2 * ((shift_) ? 10 : 1);
+      y_-=sin(angle_ * TO_R) *.2 * ((shift_) ? 10 : 1);
     }
     if (up_ and not down_)
     {
-      x_+=cos(angle_ * TO_R) *.2;
-      y_+=sin(angle_ * TO_R) *.2;
+      x_+=cos(angle_ * TO_R) *.2 * ((shift_) ? 10 : 1);
+      y_+=sin(angle_ * TO_R) *.2 * ((shift_) ? 10 : 1);
     }
 
     if (not top_ and bottom_)
@@ -110,8 +110,8 @@ namespace srp_creator
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     projection_.setToIdentity();
-//    gluPerspective(70, (double) width / height, .1, 100);
-    perspective(70, (double) width / height, .1, 100);
+    projection_.perspective(70, (double) width / height, .1, 100);
+    glMultMatrixf(projection_.data());
     glEnable(GL_DEPTH_TEST);
   }
 
@@ -121,8 +121,11 @@ namespace srp_creator
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     projection_.setToIdentity();
-//    gluLookAt(0, 0, 1.5, 1, 0, 1.5, 0, 0, 1);
-    lookAt(0, 0, 1.5, 1, 0, 1.5, 0, 0, 1);
+    projection_.lookAt(
+                QVector3D(0, 0, 1.5),
+                QVector3D(1, 0, 1.5),
+                QVector3D(0, 0, 1));
+    glMultMatrixf(projection_.data());
 
     //Movement of camera
     glRotated(-angle_, 0, 0, 1);
@@ -209,31 +212,29 @@ namespace srp_creator
 
   void opengl::do_change_key(int key, bool actif)
   {
-    if (key == Qt::Key_Left)
-      left_ = actif;
-    if (key == Qt::Key_Right)
-      right_ = actif;
-    if (key == Qt::Key_Up)
-      up_ = actif;
-    if (key == Qt::Key_Down)
-      down_ = actif;
-    if (key == Qt::Key_PageUp)
-      top_ = actif;
-    if (key == Qt::Key_PageDown)
-      bottom_ = actif;
-  }
-
-  void opengl::perspective(GLdouble fovy, GLdouble aspect, GLdouble zNear, GLdouble zFar)
-  {
-    projection_.perspective(fovy, aspect, zNear, zFar);
-    glMultMatrixf(projection_.data());
-  }
-
-  void opengl::lookAt(GLfloat eyeX, GLfloat eyeY, GLfloat eyeZ,
-                      GLfloat lookAtX, GLfloat lookAtY, GLfloat lookAtZ,
-                      GLfloat upX, GLfloat upY, GLfloat upZ)
-  {
-    projection_.lookAt(QVector3D(eyeX, eyeY, eyeZ), QVector3D(lookAtX, lookAtY, lookAtZ), QVector3D(upX, upY, upZ));
-    glMultMatrixf(projection_.data());
+    switch (key)
+    {
+      case Qt::Key_Left:
+        left_ = actif;
+        break;
+      case Qt::Key_Right:
+        right_ = actif;
+        break;
+      case Qt::Key_Up:
+        up_ = actif;
+        break;
+      case Qt::Key_Down:
+        down_ = actif;
+        break;
+      case Qt::Key_PageUp:
+        top_ = actif;
+        break;
+      case Qt::Key_PageDown:
+        bottom_ = actif;
+        break;
+      case Qt::Key_Shift:
+        shift_ = actif;
+        break;
+    };
   }
 }
