@@ -14,6 +14,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
+include(cmake/deployqt.cmake)
 include_directories(src)
 
 set(PROJECT_SOURCES
@@ -24,11 +25,9 @@ set(PROJECT_SOURCES
     src/data/misc.hpp
     src/files/creator-eno.hpp
     src/files/creator-wavefront.hpp
-    src/help/help.hpp
     src/opengl/opengl.hpp
     src/creator-preference.hpp
     src/creator-settings.hpp
-    src/creator-undoredo.hpp
     src/creator-window.hpp
     src/creator/creator-action.cpp
     src/creator/creator-item.cpp
@@ -37,11 +36,9 @@ set(PROJECT_SOURCES
     src/data/misc.cpp
     src/files/creator-eno.cpp
     src/files/creator-wavefront.cpp
-    src/help/help.cpp
     src/opengl/opengl.cpp
     src/creator-preference.cpp
     src/creator-settings.cpp
-    src/creator-undoredo.cpp
     src/creator-window.cpp
     src/main.cpp
 
@@ -78,4 +75,8 @@ set_target_properties(EnoCreator PROPERTIES
 
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(EnoCreator)
+endif()
+
+if(WIN32)
+    windeployqt(EnoCreator ${INSTALL_BIN_PATH})
 endif()

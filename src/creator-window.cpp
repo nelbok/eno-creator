@@ -18,7 +18,6 @@
 
 #include "files/creator-eno.hpp"
 #include "files/creator-wavefront.hpp"
-#include "help/help.hpp"
 #include "opengl/opengl.hpp"
 #include "creator-preference.hpp"
 #include "creator-settings.hpp"
@@ -344,8 +343,8 @@ namespace srp_creator
   //Help menu
   void CreatorWindow::do_help_triggered()
   {
-    (new help())->show();
-    ui_->statusBar->showMessage(QApplication::translate("CreatorWindow",  "Open help completed."), TIME_STATUSBAR);
+    //(new help())->show();
+    //ui_->statusBar->showMessage(QApplication::translate("CreatorWindow",  "Open help completed."), TIME_STATUSBAR);
   }
 
 

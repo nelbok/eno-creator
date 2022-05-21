@@ -15,8 +15,4 @@
     <qresource prefix="/logo">
         <file alias="logo.png">icons/logo.png</file>
     </qresource>
-    <qresource prefix="/lang">
-        <file alias="en_US.qm">lang/en_US.qm</file>
-        <file alias="fr_FR.qm">lang/fr_FR.qm</file>
-    </qresource>
 </RCC>
