@@ -172,7 +172,7 @@ namespace srp_creator
   {
     QString title = QApplication::translate("CreatorWindow",  "Shadow Revival Project - Creator");
 
-    if (not creator_.map().file_name().isEmpty())
+    if (!creator_.map().file_name().isEmpty())
     {
       title.prepend(" - ");
       if (creator_.map().is_modified())
@@ -221,7 +221,7 @@ namespace srp_creator
 
     m->clear();
     int max = 5;
-    for(int i = 0; i < recent_files_.size() and i < max; ++i)
+    for(int i = 0; i < recent_files_.size() && i < max; ++i)
       if (QFile::exists(recent_files_.at(i)))
         m->addAction(recent_files_.at(i), this, SLOT(do_recent_files_triggered()));
       else
@@ -328,7 +328,7 @@ namespace srp_creator
                 QMessageBox::Save))
       {
         case QMessageBox::Save:
-          if (not do_save_triggered())
+          if (!do_save_triggered())
         default:
         case QMessageBox::Discard:
           qApp->exit();

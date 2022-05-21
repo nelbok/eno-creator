@@ -42,7 +42,7 @@ namespace srp_creator
     setWindowIcon(QIcon(":/logo/logo.png"));
 
     QString title = tr(" - Shadow Revival Project - Creator");
-    if (not map_.file_name().isEmpty())
+    if (!map_.file_name().isEmpty())
       title.prepend(QFileInfo(map_.file_name()).fileName());
     else
       title.prepend(tr("New map"));
@@ -58,24 +58,24 @@ namespace srp_creator
   {
     e->accept();
 
-    if (left_ and not right_)
+    if (left_ && !right_)
       angle_ += 10;
-    if (not left_ and right_)
+    if (!left_ && right_)
       angle_ -= 10;
-    if (not up_ and down_)
+    if (!up_ && down_)
     {
       x_-=cos(angle_ * TO_R) *.2 * ((shift_) ? 10 : 1);
       y_-=sin(angle_ * TO_R) *.2 * ((shift_) ? 10 : 1);
     }
-    if (up_ and not down_)
+    if (up_ && !down_)
     {
       x_+=cos(angle_ * TO_R) *.2 * ((shift_) ? 10 : 1);
       y_+=sin(angle_ * TO_R) *.2 * ((shift_) ? 10 : 1);
     }
 
-    if (not top_ and bottom_)
+    if (!top_ && bottom_)
       --z_;
-    if (top_ and not bottom_)
+    if (top_ && !bottom_)
       ++z_;
     if (z_ > 10)
       z_ = 10;

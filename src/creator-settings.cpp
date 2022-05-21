@@ -49,7 +49,7 @@ namespace srp_creator
   void CreatorSettings::do_save_recent_files(const QStringList& list)
   {
     settings_.beginWriteArray("RecentFiles");
-    for (int i = 0; i < list.size() and i < 10; ++i)
+    for (int i = 0; i < list.size() && i < 10; ++i)
     {
         settings_.setArrayIndex(i);
         settings_.setValue("file", list.at(i));

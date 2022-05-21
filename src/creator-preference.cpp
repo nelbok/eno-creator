@@ -113,14 +113,14 @@ namespace srp_creator
   void CreatorPreference::do_eno_clicked()
   {
     QString dir = QFileDialog::getExistingDirectory(this, tr("Select a directory"), CreatorSettings().do_load_eno_directory());
-    if (not dir.isEmpty())
+    if (!dir.isEmpty())
       ui_->enoLineEdit->setText(dir);
   }
 
   void CreatorPreference::do_obj_clicked()
   {
     QString dir = QFileDialog::getExistingDirectory(this, tr("Select a directory"), CreatorSettings().do_load_obj_directory());
-    if (not dir.isEmpty())
+    if (!dir.isEmpty())
       ui_->objLineEdit->setText(dir);
   }
 

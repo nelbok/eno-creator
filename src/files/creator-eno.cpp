@@ -127,7 +127,7 @@ namespace srp_creator
     map_.y_max(y_max);
 
     qDebug() << "Debug :: CreatorEno :: do_load_encoded_obj : " << x_min << " | " << x_max << " | " << y_min << " | " << y_max;
-    while(not tampon.atEnd())
+    while(!tampon.atEnd())
     {
       qreal x;
       qreal y;

@@ -160,7 +160,7 @@ namespace srp_creator
   void help::do_update_text_browser()
   {
     QTreeWidgetItem* i = tree_.currentItem();
-    if (not i)
+    if (!i)
       return;
 
     QString id = i->data(0, Qt::UserRole).toString();

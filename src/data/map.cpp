@@ -166,7 +166,7 @@ namespace srp_creator
     MapItem::const_iterator i = floor_.constBegin();
     while (i != floor_.constEnd())
     {
-      if (i.key().z() == depth or i.key().z() == depth - 10)
+      if (i.key().z() == depth || i.key().z() == depth - 10)
         floor.insert(i.key(), i.value());
       ++i;
     }
@@ -197,7 +197,7 @@ namespace srp_creator
     {
       int x = items.key().x();
       int y = items.key().y();
-      if (x_min_ > x or x >= x_max_ or y_min_ > y or y >= y_max_)
+      if (x_min_ > x || x >= x_max_ || y_min_ > y || y >= y_max_)
         floor_.remove(items.key());
       ++items;
     }

@@ -72,13 +72,13 @@ namespace srp_creator
       int pos_x = position.x();
       int pos_y = position.y();
 
-      if (pos_x - 5 < creator_->map().x_min() and pos_x + 5 > creator_->map().x_min())
+      if (pos_x - 5 < creator_->map().x_min() && pos_x + 5 > creator_->map().x_min())
         line_ |= 0x1000;
-      if (pos_x - 5 < creator_->map().x_max() and pos_x + 5 > creator_->map().x_max())
+      if (pos_x - 5 < creator_->map().x_max() && pos_x + 5 > creator_->map().x_max())
         line_ |= 0x0100;
-      if (pos_y - 5 < creator_->map().y_min() and pos_y + 5 > creator_->map().y_min())
+      if (pos_y - 5 < creator_->map().y_min() && pos_y + 5 > creator_->map().y_min())
         line_ |= 0x0010;
-      if (pos_y - 5 < creator_->map().y_max() and pos_y + 5 > creator_->map().y_max())
+      if (pos_y - 5 < creator_->map().y_max() && pos_y + 5 > creator_->map().y_max())
         line_ |= 0x0001;
     }
     calculate_pos(event);
@@ -86,20 +86,20 @@ namespace srp_creator
 
   void CreatorAction::mouseMoveEvent(QMouseEvent* event)
   {
-    if (value_ == CreatorAction::Size and not pressed_)
+    if (value_ == CreatorAction::Size && !pressed_)
     {
       const QPointF& position = creator_->mapToScene(event->pos());
       int pos_x = position.x();
       int pos_y = position.y();
 
       int line = 0;
-      if (pos_x - 5 < creator_->map().x_min() and pos_x + 5 > creator_->map().x_min())
+      if (pos_x - 5 < creator_->map().x_min() && pos_x + 5 > creator_->map().x_min())
         line |= 0x1000;
-      if (pos_x - 5 < creator_->map().x_max() and pos_x + 5 > creator_->map().x_max())
+      if (pos_x - 5 < creator_->map().x_max() && pos_x + 5 > creator_->map().x_max())
         line |= 0x0100;
-      if (pos_y - 5 < creator_->map().y_min() and pos_y + 5 > creator_->map().y_min())
+      if (pos_y - 5 < creator_->map().y_min() && pos_y + 5 > creator_->map().y_min())
         line |= 0x0010;
-      if (pos_y - 5 < creator_->map().y_max() and pos_y + 5 > creator_->map().y_max())
+      if (pos_y - 5 < creator_->map().y_max() && pos_y + 5 > creator_->map().y_max())
         line |= 0x0001;
 
       QCursor cursor = creator_->cursor();

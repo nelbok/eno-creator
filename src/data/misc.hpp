@@ -19,6 +19,7 @@
 #ifndef MISC_HPP
 # define MISC_HPP
 
+# include <QColor>
 # include <QVector3D>
 
 typedef QMap<QVector3D, QColor> MapItem;
