@@ -18,65 +18,51 @@ include(cmake/deployqt.cmake)
 include_directories(src)
 
 set(PROJECT_SOURCES
-    src/creator/creator-action.hpp
-    src/creator/creator.hpp
-    src/creator/creator-item.hpp
-    src/data/map.hpp
-    src/data/misc.hpp
-    src/files/creator-eno.hpp
-    src/files/creator-wavefront.hpp
-    src/opengl/opengl.hpp
-    src/creator-preference.hpp
-    src/creator-settings.hpp
-    src/creator-window.hpp
-    src/creator/creator-action.cpp
-    src/creator/creator-item.cpp
-    src/creator/creator.cpp
-    src/data/map.cpp
-    src/data/misc.cpp
-    src/files/creator-eno.cpp
-    src/files/creator-wavefront.cpp
-    src/opengl/opengl.cpp
-    src/creator-preference.cpp
-    src/creator-settings.cpp
-    src/creator-window.cpp
-    src/main.cpp
+	src/controller/MapAction.cpp
+	src/controller/MapAction.hpp
+	src/controller/Shortcuts.cpp
+	src/controller/Shortcuts.hpp
 
+	src/data/Data.cpp
+	src/data/Data.hpp
 
-    data/data.qrc
+	src/view/GraphicsView.cpp
+	src/view/GraphicsView.hpp
+	src/view/GraphicsItem.cpp
+	src/view/GraphicsItem.hpp
+	src/view/MainWindow.cpp
+	src/view/MainWindow.hpp
 
-    src/creator-preference.ui
-    src/creator-window.ui
-    
-    LICENSE
-    README.md
+	src/main.cpp
+
+	data/data.qrc
+
+	LICENSE
+	README.md
 )
+
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" PREFIX "" FILES ${PROJECT_SOURCES})
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(EnoCreator
-        MANUAL_FINALIZATION
-        ${PROJECT_SOURCES}
-    )
+	qt_add_executable(EnoCreator MANUAL_FINALIZATION ${PROJECT_SOURCES})
 else()
-add_executable(EnoCreator
-    ${PROJECT_SOURCES}
-)
+	add_executable(EnoCreator ${PROJECT_SOURCES})
 endif()
 
 target_link_libraries(EnoCreator PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 
 set_target_properties(EnoCreator PROPERTIES
-    MACOSX_BUNDLE_GUI_IDENTIFIER EnoCreator.SRP.com
-    MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
-    MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
-    MACOSX_BUNDLE TRUE
-    WIN32_EXECUTABLE TRUE
+	MACOSX_BUNDLE_GUI_IDENTIFIER EnoCreator.SRP.com
+	MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
+	MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
+	MACOSX_BUNDLE TRUE
+	WIN32_EXECUTABLE TRUE
 )
 
 if(QT_VERSION_MAJOR EQUAL 6)
-    qt_finalize_executable(EnoCreator)
+	qt_finalize_executable(EnoCreator)
 endif()
 
 if(WIN32)
-    windeployqt(EnoCreator ${INSTALL_BIN_PATH})
+	windeployqt(EnoCreator ${INSTALL_BIN_PATH})
 endif()

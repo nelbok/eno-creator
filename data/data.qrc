@@ -1,10 +1,10 @@
 <RCC>
     <qresource prefix="/items">
         <file alias="add.png">icons/add.png</file>
-        <file alias="suppress.png">icons/suppress.png</file>
         <file alias="depth.png">icons/depth.png</file>
         <file alias="picker.png">icons/picker.png</file>
-        <file alias="size.png">icons/size.png</file>
+        <file alias="resize.png">icons/resize.png</file>
+        <file alias="remove.png">icons/remove.png</file>
         <file alias="width.png">icons/width.png</file>
         <file alias="zoom.png">icons/zoom.png</file>
     </qresource>
