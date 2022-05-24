@@ -7,6 +7,7 @@
 #include "data/Data.hpp"
 #include "controller/MapAction.hpp"
 #include "GraphicsItem.hpp"
+#include "Utils.hpp"
 
 namespace eno {
 
@@ -48,17 +49,26 @@ void GraphicsView::mouseMoveEvent(QMouseEvent* e) {
 }
 
 void GraphicsView::updateMap() {
-	for (auto* item : items()) {
-		if (dynamic_cast<GraphicsItem*>(item))
-			delete item;
+	for (auto it = _items.begin(); it != _items.end(); ++it) {
+		if (!_mapAction->data()->findItem(it.key())) {
+			it.value()->hide();
+		}
 	}
 
 	for (const auto& pair : *(_mapAction->data())) {
 		if (pair.first.z() == _mapAction->depth() || pair.first.z() == _mapAction->depth() - 1) {
-			auto* item = new GraphicsItem(_mapAction);
-			item->setPos(pair.first);
-			item->setColor(pair.second);
-			_scene->addItem(item);
+			if (_items.contains(pair.first)) {
+				auto* item = _items.value(pair.first);
+				item->show();
+				item->setColor(pair.second);
+				item->update();
+			} else {
+				auto* item = new GraphicsItem(_mapAction);
+				item->setPos(pair.first);
+				item->setColor(pair.second);
+				_scene->addItem(item);
+				_items.insert(pair.first, item);
+			}
 		}
 	}
 }

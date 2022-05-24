@@ -33,6 +33,8 @@ set(PROJECT_SOURCES
 	src/view/MainWindow.cpp
 	src/view/MainWindow.hpp
 
+	src/Utils.hpp
+
 	src/main.cpp
 
 	data/data.qrc

@@ -6,6 +6,7 @@
 
 namespace eno {
 class MapAction;
+class GraphicsItem;
 
 class GraphicsView : public QGraphicsView {
 	Q_OBJECT
@@ -34,5 +35,7 @@ private:
 	QGraphicsRectItem _rect{};
 	QGraphicsLineItem _xAxis{};
 	QGraphicsLineItem _yAxis{};
+
+	QMap<QVector3D, GraphicsItem*> _items{};
 };
 } // namespace eno
