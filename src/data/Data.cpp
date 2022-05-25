@@ -1,5 +1,7 @@
 #include "Data.hpp"
 
+#include <QFileInfo>
+
 #include "Utils.hpp"
 
 namespace eno {
@@ -7,45 +9,84 @@ Data::Data(QObject* parent)
 	: QObject(parent) {}
 
 void Data::reset() {
-	_min = { -5.f, -5.f };
-	_max = { 5.f, 5.f };
-	rectUpdated();
+	setFilePath("");
+
+	setMin({ -5.f, -5.f });
+	setMax({ 5.f, 5.f });
 
 	_scene.clear();
 	sceneUpdated();
+
+	setIsModified(false);
+}
+
+QString Data::projectName() const {
+	if (!_filePath.isEmpty()) {
+		const auto& fileInfo = QFileInfo(_filePath);
+		if (fileInfo.exists()) {
+			return fileInfo.baseName();
+		}
+	}
+	return "New Project";
+}
+
+void Data::setFilePath(const QString& path) {
+	if (_filePath != path) {
+		_filePath = path;
+		filePathUpdated();
+	}
+}
+
+void Data::setIsModified(bool value) {
+	if (_isModified != value) {
+		_isModified = value;
+		isModifiedUpdated();
+	}
 }
 
 void Data::setMin(const QVector2D& min) {
-	_min = min;
-	if (_min.x() > -5.f) {
-		_min.setX(-5.f);
+	if (_min != min) {
+		_min = min;
+		if (_min.x() > -5.f) {
+			_min.setX(-5.f);
+		}
+		if (_min.y() > -5.f) {
+			_min.setY(-5.f);
+		}
+		setIsModified(true);
+		updateScene();
+		rectUpdated();
 	}
-	if (_min.y() > -5.f) {
-		_min.setY(-5.f);
-	}
-	updateScene();
-	rectUpdated();
 }
 void Data::setMax(const QVector2D& max) {
-	_max = max;
-	if (_max.x() < 5.f) {
-		_max.setX(5.f);
+	if (_max != max) {
+		_max = max;
+		if (_max.x() < 5.f) {
+			_max.setX(5.f);
+		}
+		if (_max.y() < 5.f) {
+			_max.setY(5.f);
+		}
+		setIsModified(true);
+		updateScene();
+		rectUpdated();
 	}
-	if (_max.y() < 5.f) {
-		_max.setY(5.f);
-	}
-	updateScene();
-	rectUpdated();
 }
 
 void Data::addItem(const QVector3D& pos, const QColor& color) {
-	_scene[pos] = color;
-	sceneUpdated();
+	if (_scene[pos] != color) {
+		_scene[pos] = color;
+		setIsModified(true);
+		sceneUpdated();
+	}
 }
 
 void Data::removeItem(const QVector3D& pos) {
-	_scene.remove(pos);
-	sceneUpdated();
+	if (_scene.contains(pos)) {
+		_scene.remove(pos);
+		setIsModified(true);
+		sceneUpdated();
+	}
 }
 
 bool Data::findItem(const QVector3D& pos) const {
@@ -76,6 +117,7 @@ void Data::updateScene() {
 		_scene.remove(item);
 	}
 	if (!itemsToDelete.isEmpty()) {
+		setIsModified(true);
 		sceneUpdated();
 	}
 }

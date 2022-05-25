@@ -175,27 +175,4 @@ void MapAction::resize(const QVector2D& pos) {
 	_currentPos = pos;
 }
 
-//    int line = 0;
-//    if (pos_x - 5 < creator_->map().x_min() && pos_x + 5 > creator_->map().x_min())
-//      line |= 0x1000;
-//    if (pos_x - 5 < creator_->map().x_max() && pos_x + 5 > creator_->map().x_max())
-//      line |= 0x0100;
-//    if (pos_y - 5 < creator_->map().y_min() && pos_y + 5 > creator_->map().y_min())
-//      line |= 0x0010;
-//    if (pos_y - 5 < creator_->map().y_max() && pos_y + 5 > creator_->map().y_max())
-//      line |= 0x0001;
-
-//    QCursor cursor = creator_->cursor();
-//    cursor.setShape(Qt::ArrowCursor);
-//    if ((line & 0x1000) == 0x1000 || (line & 0x0100) == 0x0100)
-//      cursor.setShape(Qt::SizeHorCursor);
-//    if ((line & 0x0010) == 0x0010 || (line & 0x0001) == 0x0001)
-//      cursor.setShape(Qt::SizeVerCursor);
-//    if ((line & 0x1010) == 0x1010 || (line & 0x0101) == 0x0101)
-//      cursor.setShape(Qt::SizeFDiagCursor);
-//    if ((line & 0x0110) == 0x0110 || (line & 0x1001) == 0x1001)
-//      cursor.setShape(Qt::SizeBDiagCursor);
-//    creator_->setCursor(cursor);
-//  }
-
 } // namespace eno

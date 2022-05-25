@@ -17,6 +17,8 @@ GraphicsView::GraphicsView(MapAction* mapAction, QWidget* parent)
 	, QGraphicsView(parent) {}
 
 void GraphicsView::init() {
+	setMouseTracking(true);
+
 	_rect = new QGraphicsRectItem;
 	_xAxis = new QGraphicsLineItem;
 	_yAxis = new QGraphicsLineItem;
@@ -45,6 +47,10 @@ void GraphicsView::init() {
 	connect(_mapAction, &MapAction::zoomUpdated, this, &GraphicsView::updateZoom);
 }
 
+const QVector2D& GraphicsView::pointerPosition() const {
+	return _pointerPosition;
+}
+
 void GraphicsView::mousePressEvent(QMouseEvent* e) {
 	QGraphicsView::mousePressEvent(e);
 	if (e->buttons() == Qt::LeftButton) {
@@ -54,9 +60,11 @@ void GraphicsView::mousePressEvent(QMouseEvent* e) {
 
 void GraphicsView::mouseMoveEvent(QMouseEvent* e) {
 	QGraphicsView::mouseMoveEvent(e);
+	_pointerPosition = mapToData(e->pos());
 	if (e->buttons() == Qt::LeftButton) {
-		_mapAction->mouseMoveEvent(mapToData(e->pos()));
+		_mapAction->mouseMoveEvent(_pointerPosition);
 	}
+	pointerPositionUpdated();
 }
 
 void GraphicsView::updateShapes() {
@@ -85,7 +93,7 @@ void GraphicsView::updateZoom() {
 
 const QVector2D GraphicsView::mapToData(const QPoint& pos) const {
 	const auto& posF = mapToScene(pos);
-	return { std::floorf(posF.x() / 10.f), std::floorf(posF.y() / 10.f) };
+	return { floorf(posF.x() / 10.f), floorf(posF.y() / 10.f) };
 }
 
 } // namespace eno

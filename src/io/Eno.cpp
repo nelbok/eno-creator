@@ -1,151 +1,85 @@
-/**
-  SRP-Creator, map editor
-  Copyright (C) 2011  Shadow Revival
+#include "Eno.hpp"
 
-  This program is free software: you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation, either version 3 of the License.
+#include <QFileInfo>
+#include <QTextStream>
 
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
+#include "data/Data.hpp"
+#include "controller/MapAction.hpp"
 
-  You should have received a copy of the GNU General Public License
-  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-                                                                      **/
+namespace eno {
+Eno::Eno(MapAction* mapAction)
+	: _data(mapAction->_data) {}
 
+bool Eno::save(const QString& path) const {
+	assert(_data);
 
-#include "creator/creator-item.hpp"
-#include "creator/creator.hpp"
-#include "files/creator-eno.hpp"
+	QFile file(path);
+	if (!file.open(QIODevice::WriteOnly)) {
+		return false;
+	}
 
-#include <QFile>
-#include <QFileDialog>
-#include <QDebug>
+	QTextStream tampon(&file);
+	tampon.setFieldWidth(8);
 
-namespace srp_creator
-{
-  CreatorEno::CreatorEno(map& m, QString& dir)
-    : map_(m)
-    , directory_(dir)
-  {
+	// Write min/max
+	const auto& min = _data->min() * 10.f;
+	const auto& max = _data->max() * 10.f;
+	tampon << min.x() << max.x() << min.y() << max.y();
 
-  }
+	// Write scene
+	for (const auto& item : *_data) {
+		Qt::endl(tampon);
+		const auto& vec = item.first * 10.f;
+		tampon << vec.x() << vec.y() << vec.z() << item.second.name();
+	}
 
+	file.close();
 
-  bool CreatorEno::save() const
-  {
-    if (map_.file_name().isEmpty())
-      return save_as();
-    else
-      return do_save(map_.file_name());
-  }
+	_data->setFilePath(path);
+	_data->setIsModified(false);
 
-  bool CreatorEno::save_as() const
-  {
-    QString fileName = QFileDialog::getSaveFileName(0, QObject::tr("Save as..."), directory_, QObject::tr("Encoded Obj (*.eno)"));
-
-    if (fileName.isEmpty())
-      return false;
-
-    if (QFileInfo(fileName).suffix() != "eno")
-      fileName.append(QString(".%1").arg("eno"));
-
-    qDebug() << "Debug :: CreatorEno :: " << fileName;
-
-    directory_ = QFileInfo(fileName).absolutePath();
-
-    return do_save(fileName);
-  }
-
-  bool CreatorEno::open(Creator& creator)
-  {
-    QString fileName = QFileDialog::getOpenFileName(0, QObject::tr("Open..."), directory_, QObject::tr("Encoded Obj (*.eno)"));
-
-    if (fileName.isEmpty())
-      return false;
-
-    qDebug() << "Debug :: CreatorEno :: " << fileName;
-
-    directory_ = QFileInfo(fileName).absolutePath();
-
-    return do_load(fileName, creator);
-  }
-
-  bool CreatorEno::open(const QString& fileName, Creator& creator)
-  {
-    qDebug() << "Debug :: CreatorEno :: " << fileName;
-
-    return do_load(fileName, creator);
-  }
-
-
-  bool CreatorEno::do_save(const QString& fileName) const
-  {
-    QFile file(fileName);
-    if (!file.open(QIODevice::WriteOnly))
-        return false;
-
-    QTextStream tampon(&file);
-    tampon.setFieldWidth(8);
-
-    tampon << map_.x_min() << map_.x_max() << map_.y_min() << map_.y_max();
-
-    MapItem::const_iterator items = map_.items().constBegin();
-    while (items != map_.items().constEnd())
-    {
-        endl(tampon);
-        tampon << items.key().x() << items.key().y() << items.key().z() << items.value().name();
-        ++items;
-    }
-
-    file.close();
-
-    map_.file_name(fileName);
-    map_.is_modified(false);
-
-    return true;
-  }
-
-  bool CreatorEno::do_load(const QString &fileName, Creator& creator)
-  {
-    QFile file(fileName);
-    if (!file.open(QIODevice::ReadOnly))
-        return false;
-
-    QTextStream tampon(&file);
-    tampon.setFieldWidth(8);
-
-    int x_min, x_max, y_min, y_max;
-
-    tampon >> x_min >> x_max >> y_min >> y_max;
-
-    map_.x_min(x_min);
-    map_.x_max(x_max);
-    map_.y_min(y_min);
-    map_.y_max(y_max);
-
-    qDebug() << "Debug :: CreatorEno :: do_load_encoded_obj : " << x_min << " | " << x_max << " | " << y_min << " | " << y_max;
-    while(!tampon.atEnd())
-    {
-      qreal x;
-      qreal y;
-      qreal z;
-      QString color;
-      tampon >> x >> y >> z >> color;
-
-      qDebug() << "Debug :: CreatorEno :: do_load_encoded_obj : " << x << " | " << y << " | " << z;
-
-      map_.add_item(QVector3D(x, y, z), QColor(color));
-    }
-
-    file.close();
-
-    creator.show_floor();
-    creator.update_scene_rect();
-    map_.file_name(fileName);
-
-    return true;
-  }
+	return true;
 }
+
+bool Eno::load(const QString& path) const {
+	assert(_data);
+
+	QFile file(path);
+	if (!file.open(QIODevice::ReadOnly)) {
+		assert(false);
+		return false;
+	}
+
+	// Reset and begin transaction
+	_data->blockSignals(true);
+	_data->reset();
+	_data->setFilePath(path);
+
+	QTextStream buffer(&file);
+	buffer.setFieldWidth(8);
+
+	// Retrieve min/max
+	float minX{}, maxX{}, minY{}, maxY{};
+	buffer >> minX >> maxX >> minY >> maxY;
+	_data->setMin(QVector2D{ minX, minY } / 10.f);
+	_data->setMax(QVector2D{ maxX, maxY } / 10.f);
+
+	// Retrieve scene
+	while (!buffer.atEnd()) {
+		float x{}, y{}, z{};
+		QString color;
+		buffer >> x >> y >> z >> color;
+
+		_data->addItem(QVector3D{ x, y, z } / 10.f, { color });
+	}
+
+	file.close();
+
+	_data->blockSignals(false);
+	_data->setIsModified(false);
+	_data->rectUpdated();
+	_data->sceneUpdated();
+
+	return true;
+}
+} // namespace eno

@@ -2,6 +2,8 @@
 
 #include <QGraphicsView>
 
+#include <QVector2D>
+
 class QGraphicsRectItem;
 class QGraphicsLineItem;
 
@@ -17,6 +19,7 @@ public:
 	virtual ~GraphicsView() = default;
 
 	void init();
+	const QVector2D& pointerPosition() const;
 
 protected:
 	virtual void mousePressEvent(QMouseEvent* e);
@@ -31,6 +34,7 @@ private:
 	const QVector2D mapToData(const QPoint& pos) const;
 
 	MapAction* _mapAction{ nullptr };
+	QVector2D _pointerPosition{};
 
 	QGraphicsScene* _scene{ nullptr };
 	QGraphicsRectItem* _rect{ nullptr };
@@ -38,5 +42,8 @@ private:
 	QGraphicsLineItem* _yAxis{ nullptr };
 	GraphicsShape* _shapeNormal{ nullptr };
 	GraphicsShape* _shapeBelow{ nullptr };
+
+signals:
+	void pointerPositionUpdated();
 };
 } // namespace eno

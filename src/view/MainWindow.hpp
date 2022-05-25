@@ -4,8 +4,10 @@
 
 class QSpinBox;
 class QComboBox;
+class QLabel;
 
 namespace eno {
+class Data;
 class GraphicsView;
 class MapAction;
 class Shortcuts;
@@ -25,12 +27,16 @@ protected:
 private slots:
 	void reset();
 	void updateWindowTitle();
+	void updateInfos();
 	void showMessage(const QString& message);
 
 private:
 	void initMainMenu();
 	void initTools();
 	void initLayers();
+	void initGenerate();
+
+	Data* _data{ nullptr };
 
 	// Controllers
 	MapAction* _mapAction{ nullptr };
@@ -41,5 +47,6 @@ private:
 	QSpinBox* _depthSpinBox{ nullptr };
 	QSpinBox* _penWidthSpinBox{ nullptr };
 	QComboBox* _zoomComboBox{ nullptr };
+	QLabel* _infoLabel{ nullptr };
 };
 } // namespace eno

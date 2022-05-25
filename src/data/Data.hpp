@@ -19,8 +19,13 @@ public:
 	void reset();
 
 	// clang-format off
+	QString projectName() const;
+	const QString& filePath() const { return _filePath; }
+	bool isModified() const { return _isModified; }
 	const QVector2D& min() const { return _min; }
 	const QVector2D& max() const { return _max; }
+	void setFilePath(const QString& path);
+	void setIsModified(bool isModifed);
 	void setMin(const QVector2D& min);
 	void setMax(const QVector2D& max);
 	// clang-format on
@@ -36,12 +41,17 @@ public:
 private:
 	void updateScene();
 
+	QString _filePath{};
+	bool _isModified{ false };
+
 	QVector2D _min{};
 	QVector2D _max{};
 
 	MapItem _scene{};
 
 signals:
+	void filePathUpdated();
+	void isModifiedUpdated();
 	void rectUpdated();
 	void sceneUpdated();
 };

@@ -1,48 +1,22 @@
-/**
-  SRP-Creator, map editor
-  Copyright (C) 2011  Shadow Revival
-
-  This program is free software: you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation, either version 3 of the License.
-
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
-
-  You should have received a copy of the GNU General Public License
-  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-                                                                      **/
-
-
-#ifndef CREATORENO_HPP
-# define CREATORENO_HPP
+#pragma once
 
 class QString;
 
-namespace srp_creator
-{
-  class Creator;
-  class map;
+namespace eno {
+class Data;
+class MapAction;
 
-  class CreatorEno
-  {
-    public:
-      CreatorEno(map& m, QString& dir);
+class Eno {
+public:
+	static constexpr auto fileType = "ENO file (*.eno)";
 
-      bool save() const;
-      bool save_as() const;
-      bool open(Creator& creator);
-      bool open(const QString& fileName, Creator& creator);
+	Eno(MapAction* mapAction);
+	virtual ~Eno() = default;
 
-    private:
-      bool do_save(const QString& fileName) const;
-      bool do_load(const QString& fileName, Creator& creator);
+	bool save(const QString& path) const;
+	bool load(const QString& path) const;
 
-      map& map_;
-      QString& directory_;
-  };
-}
-
-#endif // CREATORENO_HPP
+private:
+	Data* _data{ nullptr };
+};
+} // namespace eno

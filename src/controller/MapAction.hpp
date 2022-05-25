@@ -10,6 +10,8 @@ namespace eno {
 class Data;
 
 class MapAction : public QObject {
+	friend class Eno;
+
 	Q_OBJECT
 
 public:
@@ -29,6 +31,11 @@ public:
 	};
 	Q_ENUM(Zoom)
 	static QString toString(Zoom zoom);
+
+	static constexpr auto minDepth = -100;
+	static constexpr auto maxDepth = 100;
+	static constexpr auto minPenWidth = 1;
+	static constexpr auto maxPenWidth = 50;
 
 	MapAction(Data* data, QObject* parent = nullptr);
 	virtual ~MapAction() = default;

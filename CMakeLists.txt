@@ -26,6 +26,9 @@ set(PROJECT_SOURCES
 	src/data/Data.cpp
 	src/data/Data.hpp
 
+	src/io/Eno.cpp
+	src/io/Eno.hpp
+
 	src/view/GraphicsShape.cpp
 	src/view/GraphicsShape.hpp
 	src/view/GraphicsView.cpp

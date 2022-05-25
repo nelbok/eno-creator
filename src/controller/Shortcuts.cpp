@@ -4,7 +4,11 @@
 #include <QActionGroup>
 #include <QApplication>
 #include <QColorDialog>
+#include <QFileDialog>
+#include <QMessageBox>
 
+#include "data/Data.hpp"
+#include "io/Eno.hpp"
 #include "MapAction.hpp"
 
 namespace eno {
@@ -17,6 +21,7 @@ Shortcuts::Shortcuts(MapAction* mapAction, QObject* parent)
 void Shortcuts::initActions() {
 	initFile();
 	initTools();
+	initGenerate();
 }
 
 void Shortcuts::resetActions() {
@@ -50,31 +55,47 @@ void Shortcuts::initFile() {
 	connect(_newAction, &QAction::triggered, [this]() {
 		this->_mapAction->reset();
 		this->resetActions();
-		this->updateWindowTitle();
 		this->showMessage("New map created");
 		this->updated();
 	});
 
+	_openAction = new QAction("Open", this);
+	connect(_openAction, &QAction::triggered, [this]() {
+		const auto& path = QFileDialog::getOpenFileName(qApp->activeWindow(), qApp->applicationName() + " - Open", "", Eno::fileType);
+		if (path.isEmpty())
+			return;
+		if (Eno(this->_mapAction).load(path)) {
+			this->showMessage("Map %1 loaded");
+		} else {
+			this->showMessage(QString("Failed to load %1").arg(path));
+		}
+	});
+
+	_saveAction = new QAction("Save", this);
+	connect(_saveAction, &QAction::triggered, [this]() {
+		save(false);
+	});
+
+	_saveAsAction = new QAction("Save As", this);
+	connect(_saveAsAction, &QAction::triggered, [this]() {
+		save(true);
+	});
 
 	_quitAction = new QAction("Quit", this);
 	connect(_quitAction, &QAction::triggered, [this]() {
-		//	CreatorSettings().do_save_recent_files(recent_files_);
-		//	CreatorSettings().do_save_eno_directory(eno_directory_);
-		//	CreatorSettings().do_save_obj_directory(obj_directory_);
-		//
-		//	if (creator_.map().is_modified())
-		//		switch (QMessageBox::warning(this, QApplication::translate("CreatorWindow", "Shadow Revival Project - Creator"),
-		//			QApplication::translate("CreatorWindow", "The map has been modified.\nDo you want to save your changes?"), QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel, QMessageBox::Save)) {
-		//			case QMessageBox::Save:
-		//				if (!do_save_triggered())
-		//				default:
-		//				case QMessageBox::Discard:
-		//					qApp->exit();
-		//				break;
-		//			case QMessageBox::Cancel:
-		//				break;
-		//		}
-		//	else
+		if (_mapAction->data()->isModified()) {
+			const auto& button = QMessageBox::warning(qApp->activeWindow(), qApp->applicationName(), "The map has been modified.\nDo you want to save your changes?",
+				QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel, QMessageBox::Save);
+			switch (button) {
+				case QMessageBox::Save:
+					save(false);
+					break;
+				case QMessageBox::Cancel:
+					return;
+				default:
+					break;
+			}
+		}
 		qApp->exit();
 	});
 }
@@ -121,4 +142,41 @@ void Shortcuts::initTools() {
 	connect(_mapAction, &MapAction::colorUpdated, this, &Shortcuts::updateColorDialogIcon);
 	updateColorDialogIcon();
 }
+
+void Shortcuts::initGenerate() {
+	_generateOBJAction = new QAction(QIcon(":export/generate.png"), "Generate OBJ file", this);
+	_generateOBJAction->setToolTip("Generate the OBJ file corresponding at the project in a file");
+	connect(_generateOBJAction, &QAction::triggered, [this]() {
+		this->showMessage("Work In Progress");
+	});
+
+	_generate3DAction = new QAction(QIcon(":export/opengl.png"), "Open 3D view", this);
+	_generate3DAction->setToolTip("Open the 3D view and show the current scene inside");
+	connect(_generate3DAction, &QAction::triggered, [this]() {
+		this->showMessage("Work In Progress");
+	});
+}
+
+bool Shortcuts::save(bool newPathRequested) {
+	QString path = _mapAction->data()->filePath();
+
+	QFileInfo fileInfo(path);
+	auto isFile = fileInfo.isFile();
+	auto isWritable = fileInfo.isWritable();
+
+	if (newPathRequested || !isFile || !isWritable) {
+		path = QFileDialog::getSaveFileName(qApp->activeWindow(), qApp->applicationName() + " - Save as", "", Eno::fileType);
+	}
+	if (path.isEmpty())
+		return false;
+
+	if (Eno(this->_mapAction).save(path)) {
+		showMessage("Map %1 saved");
+		return true;
+	} else {
+		showMessage(QString("Failed to save %1").arg(path));
+		return false;
+	}
+}
+
 } // namespace eno
