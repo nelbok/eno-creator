@@ -1,12 +1,13 @@
 #pragma once
 
-#include <QGraphicsRectItem>
-#include <QGraphicsLineItem>
 #include <QGraphicsView>
+
+class QGraphicsRectItem;
+class QGraphicsLineItem;
 
 namespace eno {
 class MapAction;
-class GraphicsItem;
+class GraphicsShape;
 
 class GraphicsView : public QGraphicsView {
 	Q_OBJECT
@@ -22,7 +23,7 @@ protected:
 	virtual void mouseMoveEvent(QMouseEvent* e);
 
 private slots:
-	void updateMap();
+	void updateShapes();
 	void updateRect();
 	void updateZoom();
 
@@ -32,10 +33,10 @@ private:
 	MapAction* _mapAction{ nullptr };
 
 	QGraphicsScene* _scene{ nullptr };
-	QGraphicsRectItem _rect{};
-	QGraphicsLineItem _xAxis{};
-	QGraphicsLineItem _yAxis{};
-
-	QMap<QVector3D, GraphicsItem*> _items{};
+	QGraphicsRectItem* _rect{ nullptr };
+	QGraphicsLineItem* _xAxis{ nullptr };
+	QGraphicsLineItem* _yAxis{ nullptr };
+	GraphicsShape* _shapeNormal{ nullptr };
+	GraphicsShape* _shapeBelow{ nullptr };
 };
 } // namespace eno

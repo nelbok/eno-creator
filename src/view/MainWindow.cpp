@@ -2,6 +2,7 @@
 
 #include <QCloseEvent>
 #include <QComboBox>
+#include <QCoreApplication>
 #include <QLabel>
 #include <QMenuBar>
 #include <QMessageBox>
@@ -18,7 +19,6 @@
 
 namespace eno {
 
-const QString appTitle{ "Eno Creator" };
 MainWindow::MainWindow(QWidget* parent)
 	: QMainWindow(parent) {
 	setWindowIcon(QIcon(":/logo/logo.png"));
@@ -41,12 +41,13 @@ void MainWindow::reset() {
 	_penWidthSpinBox->setValue(_mapAction->penWidth());
 	auto variant = QVariant::fromValue(_mapAction->zoom());
 	_zoomComboBox->setCurrentIndex(_zoomComboBox->findData(variant));
+	updateWindowTitle();
 }
 
 void MainWindow::updateWindowTitle() {
 	assert(_graphicsView != nullptr);
 
-	QString title = appTitle;
+	QString title = qApp->applicationName();
 
 	//if (!_creator->map().file_name().isEmpty()) {
 	//	title.prepend(" - ");
@@ -85,10 +86,11 @@ void MainWindow::initUi() {
 	initLayers();
 
 	menuBar()->addAction("About Qt", [this]() {
-		QMessageBox::aboutQt(this, appTitle);
+		QMessageBox::aboutQt(this, qApp->applicationName());
 	});
 
 	_mapAction->reset();
+	_shortcuts->resetActions();
 	reset();
 
 	showMessage("Ready!");
@@ -97,12 +99,12 @@ void MainWindow::initMainMenu() {
 	auto* menuFile = menuBar()->addMenu("File");
 
 	menuFile->addAction(_shortcuts->newAction());
-	menuFile->addAction("TODO: Open");
+	menuFile->addAction("TODO: Open"); // FIXME
 	menuFile->addSeparator();
-	menuFile->addAction("TODO: Save");
-	menuFile->addAction("TODO: Save as");
+	menuFile->addAction("TODO: Save"); // FIXME
+	menuFile->addAction("TODO: Save as"); // FIXME
 	menuFile->addSeparator();
-	menuFile->addAction("TODO: Preferences");
+	menuFile->addAction("TODO: Preferences"); // FIXME ?
 	menuFile->addSeparator();
 	menuFile->addAction(_shortcuts->quitAction());
 }
@@ -135,8 +137,8 @@ void MainWindow::initLayers() {
 	{
 		auto* layout = new QHBoxLayout(wLevel);
 		_depthSpinBox = new QSpinBox(wLevel);
-		_depthSpinBox->setMinimum(-100);
-		_depthSpinBox->setMaximum(100);
+		_depthSpinBox->setMinimum(-100); // FIXME
+		_depthSpinBox->setMaximum(100); // FIXME
 		connect(_depthSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), [this](int value) {
 			this->_mapAction->setDepth(value);
 			showMessage(QString("Depth changed to %1").arg(value));
@@ -151,8 +153,8 @@ void MainWindow::initLayers() {
 	{
 		auto* layout = new QHBoxLayout(wPen);
 		_penWidthSpinBox = new QSpinBox(wPen);
-		_penWidthSpinBox->setMinimum(1);
-		_penWidthSpinBox->setMaximum(10);
+		_penWidthSpinBox->setMinimum(1); // FIXME
+		_penWidthSpinBox->setMaximum(50); // FIXME
 		connect(_penWidthSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), [this](int value) {
 			this->_mapAction->setPenWidth(value);
 			showMessage(QString("Pen width changed to %1pt").arg(value));
@@ -167,8 +169,6 @@ void MainWindow::initLayers() {
 	{
 		auto* layout = new QHBoxLayout(wZoom);
 		_zoomComboBox = new QComboBox(wZoom);
-		_zoomComboBox->addItem(MapAction::toString(MapAction::Zoom::x10), QVariant::fromValue(MapAction::Zoom::x10));
-		_zoomComboBox->addItem(MapAction::toString(MapAction::Zoom::x25), QVariant::fromValue(MapAction::Zoom::x25));
 		_zoomComboBox->addItem(MapAction::toString(MapAction::Zoom::x50), QVariant::fromValue(MapAction::Zoom::x50));
 		_zoomComboBox->addItem(MapAction::toString(MapAction::Zoom::x100), QVariant::fromValue(MapAction::Zoom::x100));
 		_zoomComboBox->addItem(MapAction::toString(MapAction::Zoom::x200), QVariant::fromValue(MapAction::Zoom::x200));

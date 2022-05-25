@@ -2,12 +2,13 @@
 
 #include <cmath>
 
+#include <QGraphicsRectItem>
+#include <QGraphicsLineItem>
 #include <QMouseEvent>
 
 #include "data/Data.hpp"
 #include "controller/MapAction.hpp"
-#include "GraphicsItem.hpp"
-#include "Utils.hpp"
+#include "GraphicsShape.hpp"
 
 namespace eno {
 
@@ -16,21 +17,31 @@ GraphicsView::GraphicsView(MapAction* mapAction, QWidget* parent)
 	, QGraphicsView(parent) {}
 
 void GraphicsView::init() {
+	_rect = new QGraphicsRectItem;
+	_xAxis = new QGraphicsLineItem;
+	_yAxis = new QGraphicsLineItem;
+
 	QPen pen;
 	pen.setStyle(Qt::DashLine);
-	_xAxis.setPen(pen);
-	_yAxis.setPen(pen);
+	_xAxis->setPen(pen);
+	_yAxis->setPen(pen);
 
+	_shapeNormal = new GraphicsShape(_mapAction);
+	_shapeBelow = new GraphicsShape(_mapAction);
+	_shapeBelow->setMode(GraphicsShape::Mode::Below);
+
+	// We need to respect the order for the paint event
 	_scene = new QGraphicsScene(this);
-	_scene->addItem(&_rect);
-	_scene->addItem(&_xAxis);
-	_scene->addItem(&_yAxis);
-
+	_scene->addItem(_shapeBelow);
+	_scene->addItem(_shapeNormal);
+	_scene->addItem(_rect);
+	_scene->addItem(_xAxis);
+	_scene->addItem(_yAxis);
 	setScene(_scene);
 
-	connect(_mapAction->data(), &Data::sceneUpdated, this, &GraphicsView::updateMap);
+	connect(_mapAction->data(), &Data::sceneUpdated, this, &GraphicsView::updateShapes);
 	connect(_mapAction->data(), &Data::rectUpdated, this, &GraphicsView::updateRect);
-	connect(_mapAction, &MapAction::depthUpdated, this, &GraphicsView::updateMap);
+	connect(_mapAction, &MapAction::depthUpdated, this, &GraphicsView::updateShapes);
 	connect(_mapAction, &MapAction::zoomUpdated, this, &GraphicsView::updateZoom);
 }
 
@@ -48,29 +59,9 @@ void GraphicsView::mouseMoveEvent(QMouseEvent* e) {
 	}
 }
 
-void GraphicsView::updateMap() {
-	for (auto it = _items.begin(); it != _items.end(); ++it) {
-		if (!_mapAction->data()->findItem(it.key())) {
-			it.value()->hide();
-		}
-	}
-
-	for (const auto& pair : *(_mapAction->data())) {
-		if (pair.first.z() == _mapAction->depth() || pair.first.z() == _mapAction->depth() - 1) {
-			if (_items.contains(pair.first)) {
-				auto* item = _items.value(pair.first);
-				item->show();
-				item->setColor(pair.second);
-				item->update();
-			} else {
-				auto* item = new GraphicsItem(_mapAction);
-				item->setPos(pair.first);
-				item->setColor(pair.second);
-				_scene->addItem(item);
-				_items.insert(pair.first, item);
-			}
-		}
-	}
+void GraphicsView::updateShapes() {
+	_shapeNormal->update();
+	_shapeBelow->update();
 }
 
 void GraphicsView::updateRect() {
@@ -80,9 +71,9 @@ void GraphicsView::updateRect() {
 
 	const QRectF rect{ min.x(), min.y(), max.x() - min.x(), max.y() - min.y() };
 	_scene->setSceneRect(rect);
-	_rect.setRect(rect);
-	_xAxis.setLine(min.x() - 30.f, 0.f, max.x() + 30.f, 0.f);
-	_yAxis.setLine(0, min.y() - 30.f, 0, max.y() + 30.f);
+	_rect->setRect(rect);
+	_xAxis->setLine(min.x() - 30.f, 0.f, max.x() + 30.f, 0.f);
+	_yAxis->setLine(0, min.y() - 30.f, 0, max.y() + 30.f);
 }
 
 void GraphicsView::updateZoom() {

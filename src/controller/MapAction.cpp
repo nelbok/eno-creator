@@ -8,10 +8,6 @@ namespace eno {
 
 QString MapAction::toString(MapAction::Zoom zoom) {
 	switch (zoom) {
-		case MapAction::Zoom::x10:
-			return "x10";
-		case MapAction::Zoom::x25:
-			return "x25";
 		case MapAction::Zoom::x50:
 			return " x50";
 		case MapAction::Zoom::x100:

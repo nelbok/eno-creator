@@ -26,10 +26,10 @@ set(PROJECT_SOURCES
 	src/data/Data.cpp
 	src/data/Data.hpp
 
+	src/view/GraphicsShape.cpp
+	src/view/GraphicsShape.hpp
 	src/view/GraphicsView.cpp
 	src/view/GraphicsView.hpp
-	src/view/GraphicsItem.cpp
-	src/view/GraphicsItem.hpp
 	src/view/MainWindow.cpp
 	src/view/MainWindow.hpp
 

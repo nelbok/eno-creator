@@ -22,8 +22,6 @@ public:
 	Q_ENUM(TypeAction)
 
 	enum class Zoom : int {
-		x10 = 10,
-		x25 = 25,
 		x50 = 50,
 		x100 = 100,
 		x200 = 200,

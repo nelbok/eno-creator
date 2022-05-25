@@ -4,6 +4,7 @@
 
 int main(int argc, char* argv[]) {
 	QApplication a(argc, argv);
+	a.setApplicationName("Eno Creator");
 
 	eno::MainWindow w;
 	w.initUi();
