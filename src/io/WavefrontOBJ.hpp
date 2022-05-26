@@ -1,51 +1,40 @@
-/**
-  SRP-Creator, map editor
-  Copyright (C) 2011  Shadow Revival
+#pragma once
 
-  This program is free software: you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation, either version 3 of the License.
+#include <QColor>
+#include <QList>
+#include <QMap>
+#include <QVector3D>
 
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
+class QString;
 
-  You should have received a copy of the GNU General Public License
-  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-                                                                      **/
+namespace eno {
+class Data;
+class MapAction;
 
+class WavefrontOBJ {
+public:
+	struct Triangle {
+		int one{};
+		int two{};
+		int three{};
+	};
 
-#ifndef CREATORWAVEFRONT_HPP
-# define CREATORWAVEFRONT_HPP
+	static constexpr auto fileType = "Wavefront OBJ (*.obj)";
 
-# include <QMultiHash>
-# include <QRgb>
-# include <QVector>
-# include <QVector3D>
+	WavefrontOBJ(MapAction* mapAction);
+	virtual ~WavefrontOBJ() = default;
 
-namespace srp_creator
-{
-  class map;
+	bool save(const QString& path);
 
-  class CreatorWavefront
-  {
-    typedef QMultiHash<QRgb, QVector3D> MapColor;
+private:
+	void compute();
+	int getIndexBy(const QVector3D& vertex);
+	void insertTriangle(const QColor& color, const Triangle& triangle);
+	bool writeObjFile(const QString& path);
+	bool writeMtlFile(const QString& path);
 
-    public:
-      CreatorWavefront();
-
-      bool generate(const map& m, QString& dir) const;
-
-    private:
-      void get_obj_colors(MapColor& map_color, const map& m) const;
-
-      bool write_obj_file(const QString& filename, const QString& file_mtl, const MapColor& map_color) const;
-      void write_obj_line(QByteArray& tampon, int& id_vertex, const MapColor& map_color) const;
-
-      bool write_mtl_file(const QString& filename, const MapColor& map_color) const;
-      void write_mtl_line(QByteArray& tampon, const MapColor& map_color) const;
-  };
-}
-
-#endif // CREATORWAVEFRONT_HPP
+	Data* _data{ nullptr };
+	QList<QVector3D> _vertices{};
+	QMap<QColor, QList<Triangle>> _triangles;
+};
+} // namespace eno

@@ -13,8 +13,8 @@ public:
 	Eno(MapAction* mapAction);
 	virtual ~Eno() = default;
 
-	bool save(const QString& path) const;
-	bool load(const QString& path) const;
+	bool save(const QString& path);
+	bool load(const QString& path);
 
 private:
 	Data* _data{ nullptr };

@@ -28,6 +28,8 @@ set(PROJECT_SOURCES
 
 	src/io/Eno.cpp
 	src/io/Eno.hpp
+	src/io/WavefrontOBJ.cpp
+	src/io/WavefrontOBJ.hpp
 
 	src/view/GraphicsShape.cpp
 	src/view/GraphicsShape.hpp
@@ -44,6 +46,7 @@ set(PROJECT_SOURCES
 
 	LICENSE
 	README.md
+	TODO.md
 )
 
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" PREFIX "" FILES ${PROJECT_SOURCES})

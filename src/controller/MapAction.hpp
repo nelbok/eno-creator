@@ -11,6 +11,7 @@ class Data;
 
 class MapAction : public QObject {
 	friend class Eno;
+	friend class WavefrontOBJ;
 
 	Q_OBJECT
 

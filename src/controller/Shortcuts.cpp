@@ -9,6 +9,7 @@
 
 #include "data/Data.hpp"
 #include "io/Eno.hpp"
+#include "io/WavefrontOBJ.hpp"
 #include "MapAction.hpp"
 
 namespace eno {
@@ -147,7 +148,17 @@ void Shortcuts::initGenerate() {
 	_generateOBJAction = new QAction(QIcon(":export/generate.png"), "Generate OBJ file", this);
 	_generateOBJAction->setToolTip("Generate the OBJ file corresponding at the project in a file");
 	connect(_generateOBJAction, &QAction::triggered, [this]() {
-		this->showMessage("Work In Progress");
+		const QString& path = QFileDialog::getSaveFileName(qApp->activeWindow(), qApp->applicationName() + " - Export as", "", WavefrontOBJ::fileType);
+		if (path.isEmpty())
+			return false;
+
+		if (WavefrontOBJ(this->_mapAction).save(path)) {
+			showMessage(QString("Export %1 successed").arg(path);
+			return true;
+		} else {
+			showMessage(QString("Failed to export %1").arg(path));
+			return false;
+		}
 	});
 
 	_generate3DAction = new QAction(QIcon(":export/opengl.png"), "Open 3D view", this);
@@ -171,7 +182,7 @@ bool Shortcuts::save(bool newPathRequested) {
 		return false;
 
 	if (Eno(this->_mapAction).save(path)) {
-		showMessage("Map %1 saved");
+		showMessage(QString("Map %1 saved").arg(path));
 		return true;
 	} else {
 		showMessage(QString("Failed to save %1").arg(path));

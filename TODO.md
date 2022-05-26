@@ -1,9 +1,9 @@
-- Generate OBJ
 - 3D View
 - Cursor Icon
 - Bouding Box editable in the status bar
 - Threading save/load + progress bar
 - Materiau / Color
+- Optimize Wavefront OBJ (less triangle)
 - File versionning
 - Settings
 - Recent files

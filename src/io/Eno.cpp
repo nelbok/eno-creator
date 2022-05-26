@@ -10,7 +10,7 @@ namespace eno {
 Eno::Eno(MapAction* mapAction)
 	: _data(mapAction->_data) {}
 
-bool Eno::save(const QString& path) const {
+bool Eno::save(const QString& path) {
 	assert(_data);
 
 	QFile file(path);
@@ -24,13 +24,12 @@ bool Eno::save(const QString& path) const {
 	// Write min/max
 	const auto& min = _data->min() * 10.f;
 	const auto& max = _data->max() * 10.f;
-	tampon << min.x() << max.x() << min.y() << max.y();
+	tampon << min.x() << max.x() << min.y() << max.y() << Qt::endl;
 
 	// Write scene
 	for (const auto& item : *_data) {
-		Qt::endl(tampon);
 		const auto& vec = item.first * 10.f;
-		tampon << vec.x() << vec.y() << vec.z() << item.second.name();
+		tampon << vec.x() << vec.y() << vec.z() << item.second.name() << Qt::endl;
 	}
 
 	file.close();
@@ -41,7 +40,7 @@ bool Eno::save(const QString& path) const {
 	return true;
 }
 
-bool Eno::load(const QString& path) const {
+bool Eno::load(const QString& path) {
 	assert(_data);
 
 	QFile file(path);
