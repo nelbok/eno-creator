@@ -8,6 +8,7 @@
 #include <QMessageBox>
 
 #include "data/Data.hpp"
+#include "engine/Engine.hpp"
 #include "io/Eno.hpp"
 #include "io/WavefrontOBJ.hpp"
 #include "MapAction.hpp"
@@ -153,7 +154,7 @@ void Shortcuts::initGenerate() {
 			return false;
 
 		if (WavefrontOBJ(this->_mapAction).save(path)) {
-			showMessage(QString("Export %1 successed").arg(path);
+			showMessage(QString("Export %1 successed").arg(path));
 			return true;
 		} else {
 			showMessage(QString("Failed to export %1").arg(path));
@@ -164,6 +165,9 @@ void Shortcuts::initGenerate() {
 	_generate3DAction = new QAction(QIcon(":export/opengl.png"), "Open 3D view", this);
 	_generate3DAction->setToolTip("Open the 3D view and show the current scene inside");
 	connect(_generate3DAction, &QAction::triggered, [this]() {
+		auto* widget = new Engine();
+		widget->init(_mapAction->data());
+		widget->show();
 		this->showMessage("Work In Progress");
 	});
 }

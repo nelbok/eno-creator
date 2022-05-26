@@ -33,7 +33,7 @@ private:
 	bool writeObjFile(const QString& path);
 	bool writeMtlFile(const QString& path);
 
-	Data* _data{ nullptr };
+	const Data* _data{ nullptr };
 	QList<QVector3D> _vertices{};
 	QMap<QColor, QList<Triangle>> _triangles;
 };

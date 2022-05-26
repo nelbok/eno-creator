@@ -15,7 +15,7 @@ bool operator==(const WavefrontOBJ::Triangle& p1, const WavefrontOBJ::Triangle& 
 }
 
 WavefrontOBJ::WavefrontOBJ(MapAction* mapAction)
-	: _data(mapAction->_data) {}
+	: _data(mapAction->data()) {}
 
 bool WavefrontOBJ::save(const QString& path) {
 	assert(_data);

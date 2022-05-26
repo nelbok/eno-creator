@@ -11,8 +11,8 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets 3DExtras 3DCore 3DRender)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets 3DExtras 3DCore 3DRender)
 
 include(cmake/deployqt.cmake)
 include_directories(src)
@@ -26,6 +26,9 @@ set(PROJECT_SOURCES
 	src/data/Data.cpp
 	src/data/Data.hpp
 
+	src/engine/Engine.cpp
+	src/engine/Engine.hpp
+	
 	src/io/Eno.cpp
 	src/io/Eno.hpp
 	src/io/WavefrontOBJ.cpp
@@ -57,7 +60,12 @@ else()
 	add_executable(EnoCreator ${PROJECT_SOURCES})
 endif()
 
-target_link_libraries(EnoCreator PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(EnoCreator PRIVATE
+	Qt${QT_VERSION_MAJOR}::Widgets
+	Qt${QT_VERSION_MAJOR}::3DCore
+	Qt${QT_VERSION_MAJOR}::3DExtras
+	Qt${QT_VERSION_MAJOR}::3DRender
+)
 
 set_target_properties(EnoCreator PROPERTIES
 	MACOSX_BUNDLE_GUI_IDENTIFIER EnoCreator.SRP.com
