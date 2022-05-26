@@ -92,7 +92,7 @@ bool WavefrontOBJ::writeObjFile(const QString& path) {
 	}
 
 	tampon << "# triangles" << Qt::endl;
-	for (auto& it = _triangles.constKeyValueBegin(); it != _triangles.constKeyValueEnd(); ++it) {
+	for (auto it = _triangles.constKeyValueBegin(); it != _triangles.constKeyValueEnd(); ++it) {
 		const QColor& color = it->first;
 		tampon << "g " << color.name() << Qt::endl;
 		tampon << "usemtl " << color.name() << Qt::endl;
@@ -117,7 +117,7 @@ bool WavefrontOBJ::writeMtlFile(const QString& path) {
 	}
 
 	QTextStream tampon(&file);
-	for (auto& it = _triangles.constKeyValueBegin(); it != _triangles.constKeyValueEnd(); ++it) {
+	for (auto it = _triangles.constKeyValueBegin(); it != _triangles.constKeyValueEnd(); ++it) {
 		const QColor& color = it->first;
 		tampon << "newmtl " << color.name() << Qt::endl;
 		tampon << "Kd " << color.red() / 255.f << " " << color.green() / 255.f << " " << color.blue() / 255.f << Qt::endl;

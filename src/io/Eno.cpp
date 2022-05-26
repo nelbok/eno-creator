@@ -21,6 +21,9 @@ bool Eno::save(const QString& path) {
 	QTextStream tampon(&file);
 	tampon.setFieldWidth(8);
 
+	// Write version
+	tampon << "Version:" << Eno::fileVersion << Qt::endl;
+
 	// Write min/max
 	const auto& min = _data->min() * 10.f;
 	const auto& max = _data->max() * 10.f;
@@ -49,13 +52,22 @@ bool Eno::load(const QString& path) {
 		return false;
 	}
 
+	QTextStream buffer(&file);
+	buffer.setFieldWidth(8);
+
+	// Retrieve version
+	QString bar{};
+	auto version = 0u;
+	buffer >> bar >> version;
+	if (version != 1u) {
+		assert(false);
+		return false;
+	}
+
 	// Reset and begin transaction
 	_data->blockSignals(true);
 	_data->reset();
 	_data->setFilePath(path);
-
-	QTextStream buffer(&file);
-	buffer.setFieldWidth(8);
 
 	// Retrieve min/max
 	float minX{}, maxX{}, minY{}, maxY{};

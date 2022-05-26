@@ -7,6 +7,22 @@
 #include <QVector3D>
 
 namespace eno {
+//  Data Graphical Representation
+//
+//  Y
+//  |  Z
+//  | /       = MapItem
+//  |/
+//  +-----X
+// 0
+//
+//  Min / Max
+//     +-------+ max (X,Z)
+//    /       /
+//   /       /
+//  +-------+
+// 0 = min (X,Z)
+
 using MapItem = QMap<QVector3D, QColor>;
 
 class Data : public QObject {

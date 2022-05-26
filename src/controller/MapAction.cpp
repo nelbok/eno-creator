@@ -83,7 +83,7 @@ const Data* MapAction::data() const {
 	return _data;
 }
 
-void MapAction::mousePressEvent(const QVector2D& pos) {
+void MapAction::mousePressEvent(const QVector3D& pos) {
 	switch (_typeAction) {
 		case TypeAction::Remove:
 			removeItem(pos);
@@ -95,12 +95,12 @@ void MapAction::mousePressEvent(const QVector2D& pos) {
 			pickColor(pos);
 			break;
 		case TypeAction::Resize:
-			_currentPos = pos;
+			_currentPos = { pos.x(), pos.z() };
 			break;
 	}
 }
 
-void MapAction::mouseMoveEvent(const QVector2D& pos) {
+void MapAction::mouseMoveEvent(const QVector3D& pos) {
 	switch (_typeAction) {
 		case TypeAction::Remove:
 			removeItem(pos);
@@ -112,31 +112,30 @@ void MapAction::mouseMoveEvent(const QVector2D& pos) {
 			// Nothing to do
 			break;
 		case TypeAction::Resize:
-			resize(pos);
+			resize({ pos.x(), pos.z() });
 			break;
 	}
 }
 
 bool MapAction::validPosition(const QVector3D& pos) const {
-	return (_data->min().x() <= pos.x() && pos.x() < _data->max().x()) && (_data->min().y() <= pos.y() && pos.y() < _data->max().y());
+	return (_data->min().x() <= pos.x() && pos.x() < _data->max().x()) && (_data->min().y() <= pos.z() && pos.z() < _data->max().y());
 }
 
-void MapAction::removeItem(const QVector2D& pos) {
+void MapAction::removeItem(const QVector3D& pos) {
 	changeItem(pos, [this](const QVector3D& vec) {
 		this->_data->removeItem(vec);
 	});
 }
 
-void MapAction::addItem(const QVector2D& pos) {
+void MapAction::addItem(const QVector3D& pos) {
 	changeItem(pos, [this](const QVector3D& vec) {
 		this->_data->addItem(vec, this->_color);
 	});
 }
 
-void MapAction::pickColor(const QVector2D& pos) {
-	const QVector3D vec{ pos, _depth };
-	if (_data->findItem(vec)) {
-		_color = _data->colorAt(vec);
+void MapAction::pickColor(const QVector3D& pos) {
+	if (_data->findItem(pos)) {
+		_color = _data->colorAt(pos);
 		colorUpdated();
 	}
 }

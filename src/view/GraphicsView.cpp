@@ -60,9 +60,10 @@ void GraphicsView::mousePressEvent(QMouseEvent* e) {
 
 void GraphicsView::mouseMoveEvent(QMouseEvent* e) {
 	QGraphicsView::mouseMoveEvent(e);
-	_pointerPosition = mapToData(e->pos());
+	const auto& pos = mapToData(e->pos());
+	_pointerPosition = { pos.x(), pos.z() };
 	if (e->buttons() == Qt::LeftButton) {
-		_mapAction->mouseMoveEvent(_pointerPosition);
+		_mapAction->mouseMoveEvent(pos);
 	}
 	pointerPositionUpdated();
 }
@@ -91,9 +92,9 @@ void GraphicsView::updateZoom() {
 	setTransform(transform);
 }
 
-const QVector2D GraphicsView::mapToData(const QPoint& pos) const {
+const QVector3D GraphicsView::mapToData(const QPoint& pos) const {
 	const auto& posF = mapToScene(pos);
-	return { floorf(posF.x() / 10.f), floorf(posF.y() / 10.f) };
+	return { floorf(posF.x() / 10.f), _mapAction->depth(), floorf(posF.y() / 10.f) };
 }
 
 } // namespace eno

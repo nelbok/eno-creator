@@ -30,10 +30,10 @@ void GraphicsShape::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QW
 	painter->setPen(pen);
 	for (const auto& pair : *(_mapAction->data())) {
 		const auto& pos = pair.first;
-		if ((pos.z() == _mapAction->depth() && _mode == Mode::Normal) || (pos.z() == _mapAction->depth() - 1 && _mode == Mode::Below)) {
+		if ((pos.y() == _mapAction->depth() && _mode == Mode::Normal) || (pos.y() == _mapAction->depth() - 1 && _mode == Mode::Below)) {
 			brush.setColor(pair.second);
 			painter->setBrush(brush);
-			painter->drawRect(pos.x() * 10.f, pos.y() * 10.f, 9, 9);
+			painter->drawRect(pos.x() * 10.f, pos.z() * 10.f, 9, 9);
 		}
 	}
 }

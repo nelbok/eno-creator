@@ -5,7 +5,7 @@
 #include <Qt3DCore/QEntity>
 #include <Qt3DCore/QTransform>
 #include <Qt3DExtras/QCuboidMesh>
-#include <Qt3DExtras/QDiffuseSpecularMaterial >
+#include <Qt3DExtras/QDiffuseSpecularMaterial>
 #include <Qt3DExtras/QFirstPersonCameraController>
 #include <Qt3DExtras/QForwardRenderer>
 #include <Qt3DExtras/Qt3DWindow>
@@ -21,6 +21,8 @@ Engine::Engine(QWidget* parent)
 
 void Engine::init(const Data* data) {
 	setMinimumSize(1280, 780);
+	setWindowIcon(QIcon(":/logo/logo.png"));
+	setWindowModality(Qt::WindowModality::ApplicationModal);
 
 	_view = new Qt3DExtras::Qt3DWindow();
 	_view->defaultFrameGraph()->setClearColor(QColor(QRgb(0x4d4d4f)));

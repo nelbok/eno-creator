@@ -9,6 +9,7 @@ class MapAction;
 class Eno {
 public:
 	static constexpr auto fileType = "ENO file (*.eno)";
+	static constexpr auto fileVersion = 1u;
 
 	Eno(MapAction* mapAction);
 	virtual ~Eno() = default;

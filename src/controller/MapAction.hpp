@@ -59,14 +59,14 @@ public:
 
 	const Data* data() const;
 
-	void mousePressEvent(const QVector2D& pos);
-	void mouseMoveEvent(const QVector2D& pos);
+	void mousePressEvent(const QVector3D& pos);
+	void mouseMoveEvent(const QVector3D& pos);
 
 private:
 	bool validPosition(const QVector3D& pos) const;
-	void removeItem(const QVector2D& pos);
-	void addItem(const QVector2D& pos);
-	void pickColor(const QVector2D& pos);
+	void removeItem(const QVector3D& pos);
+	void addItem(const QVector3D& pos);
+	void pickColor(const QVector3D& pos);
 	void resize(const QVector2D& pos);
 
 	TypeAction _typeAction{};
@@ -79,12 +79,12 @@ private:
 
 private:
 	template<class Func>
-	void changeItem(const QVector2D& pos, Func lambda) {
+	void changeItem(const QVector3D& pos, Func lambda) {
 		const int min = 0 - _penWidth / 2;
 		const int max = _penWidth - _penWidth / 2;
 		for (int x = min; x < max; ++x) {
 			for (int y = min; y < max; ++y) {
-				const QVector3D vec{ pos.x() + x, pos.y() + y, _depth };
+				const QVector3D vec{ pos.x() + x, pos.y(), pos.z() + y };
 				if (validPosition(vec)) {
 					lambda(vec);
 				}

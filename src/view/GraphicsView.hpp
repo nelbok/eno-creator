@@ -31,7 +31,7 @@ private slots:
 	void updateZoom();
 
 private:
-	const QVector2D mapToData(const QPoint& pos) const;
+	const QVector3D mapToData(const QPoint& pos) const;
 
 	MapAction* _mapAction{ nullptr };
 	QVector2D _pointerPosition{};
