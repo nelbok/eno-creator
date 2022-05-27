@@ -149,7 +149,7 @@ void Shortcuts::initGenerate() {
 	_generateOBJAction = new QAction(QIcon(":export/generate.png"), "Generate OBJ file", this);
 	_generateOBJAction->setToolTip("Generate the OBJ file corresponding at the project in a file");
 	connect(_generateOBJAction, &QAction::triggered, [this]() {
-		const QString& path = QFileDialog::getSaveFileName(qApp->activeWindow(), qApp->applicationName() + " - Export as", "", WavefrontOBJ::fileType);
+		const QString& path = QFileDialog::getSaveFileName(qApp->activeWindow(), qApp->applicationName() + " - Export as", _mapAction->data()->projectName(), WavefrontOBJ::fileType);
 		if (path.isEmpty())
 			return false;
 
@@ -180,7 +180,11 @@ bool Shortcuts::save(bool newPathRequested) {
 	auto isWritable = fileInfo.isWritable();
 
 	if (newPathRequested || !isFile || !isWritable) {
-		path = QFileDialog::getSaveFileName(qApp->activeWindow(), qApp->applicationName() + " - Save as", "", Eno::fileType);
+		QString currentPath = _mapAction->data()->filePath();
+		if (currentPath.isEmpty()) {
+			currentPath = _mapAction->data()->projectName();
+		}
+		path = QFileDialog::getSaveFileName(qApp->activeWindow(), qApp->applicationName() + " - Save as", currentPath, Eno::fileType);
 	}
 	if (path.isEmpty())
 		return false;

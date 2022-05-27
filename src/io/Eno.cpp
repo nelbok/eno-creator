@@ -78,9 +78,13 @@ bool Eno::load(const QString& path) {
 	// Retrieve scene
 	while (!buffer.atEnd()) {
 		float x{}, y{}, z{};
-		QString color;
+		QString color{};
 		buffer >> x >> y >> z >> color;
 
+		// Fix a end of line bug, will be fixed again with materials
+		if (color.isEmpty()) {
+			continue;
+		}
 		_data->addItem(QVector3D{ x, y, z } / 10.f, { color });
 	}
 

@@ -1,5 +1,6 @@
 #include "WavefrontOBJ.hpp"
 
+#include <QCoreApplication>
 #include <QFile>
 #include <QFileInfo>
 #include <QTextStream>
@@ -79,7 +80,7 @@ bool WavefrontOBJ::writeObjFile(const QString& path) {
 	}
 
 	QTextStream tampon(&file);
-	tampon << "# Eno Creator: " << _data->projectName() << Qt::endl;
+	tampon << "# " << qApp->applicationName() << " " << qApp->applicationVersion() << ": " << _data->projectName() << Qt::endl;
 	tampon << "o " << _data->projectName() << Qt::endl;
 
 	// Material file name

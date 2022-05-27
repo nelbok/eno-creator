@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(EnoCreator VERSION 0.1 LANGUAGES CXX)
+set(ENO_NAME "Eno Creator")
+set(ENO_VERSION "1.0")
+
+configure_file(src/Config.hpp.in src/Config.hpp)
+
+project(EnoCreator VERSION ${ENO_VERSION} LANGUAGES CXX)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -15,6 +20,7 @@ find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets 3DExtras 3DCore 3DRend
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets 3DExtras 3DCore 3DRender)
 
 include(cmake/deployqt.cmake)
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/src)
 include_directories(src)
 
 set(PROJECT_SOURCES
@@ -41,6 +47,8 @@ set(PROJECT_SOURCES
 	src/view/MainWindow.cpp
 	src/view/MainWindow.hpp
 
+	src/Config.hpp.in
+	${CMAKE_CURRENT_BINARY_DIR}/src/Config.hpp
 	src/Utils.hpp
 
 	src/main.cpp
