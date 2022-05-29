@@ -56,12 +56,12 @@ QSpinBox* InfoWidget::initSpinBox(QHBoxLayout* layout, bool positive) {
 	if (positive) {
 		widget->setRange(5, 999);
 		connect(widget, QOverload<int>::of(&QSpinBox::valueChanged), [this]() {
-			_data->setMax({ static_cast<float>(_maxXSpinBox->value()), static_cast<float>(_maxYSpinBox->value()) });
+			_data->setMax({ _maxXSpinBox->value(), _maxYSpinBox->value() });
 		});
 	} else {
 		widget->setRange(-999, -5);
 		connect(widget, QOverload<int>::of(&QSpinBox::valueChanged), [this]() {
-			_data->setMin({ static_cast<float>(_minXSpinBox->value()), static_cast<float>(_minYSpinBox->value()) });
+			_data->setMin({ _minXSpinBox->value(), _minYSpinBox->value() });
 		});
 	}
 	layout->addWidget(widget);

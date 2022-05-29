@@ -70,10 +70,10 @@ bool Eno::load(const QString& path) {
 	_data->setFilePath(path);
 
 	// Retrieve min/max
-	float minX{}, maxX{}, minY{}, maxY{};
+	int minX{}, maxX{}, minY{}, maxY{};
 	buffer >> minX >> maxX >> minY >> maxY;
-	_data->setMin(QVector2D{ minX, minY } / 10.f);
-	_data->setMax(QVector2D{ maxX, maxY } / 10.f);
+	_data->setMin(QPoint{ minX, minY } / 10);
+	_data->setMax(QPoint{ maxX, maxY } / 10);
 
 	// Retrieve scene
 	while (!buffer.atEnd()) {

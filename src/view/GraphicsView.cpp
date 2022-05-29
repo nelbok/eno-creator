@@ -75,10 +75,10 @@ void GraphicsView::updateShapes() {
 
 void GraphicsView::updateRect() {
 	const auto* data = _mapAction->data();
-	const auto& min = data->min() * 10.f;
-	const auto& max = data->max() * 10.f;
+	const auto min = data->min() * 10;
+	const auto max = data->max() * 10;
 
-	const QRectF rect{ min.x(), min.y(), max.x() - min.x(), max.y() - min.y() };
+	const QRectF rect{ min, max };
 	_scene->setSceneRect(rect);
 	_rect->setRect(rect);
 	_xAxis->setLine(min.x() - 30.f, 0.f, max.x() + 30.f, 0.f);

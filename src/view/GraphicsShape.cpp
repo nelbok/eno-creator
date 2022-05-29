@@ -15,9 +15,9 @@ void GraphicsShape::setMode(Mode mode) {
 }
 
 QRectF GraphicsShape::boundingRect() const {
-	const auto& min = _mapAction->data()->min() * 10.f;
-	const auto& max = _mapAction->data()->max() * 10.f;
-	return { min.x(), min.y(), max.x() - min.x(), max.y() - min.y() };
+	const auto min = _mapAction->data()->min() * 10;
+	const auto max = _mapAction->data()->max() * 10;
+	return { min, max };
 }
 
 void GraphicsShape::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*) {
@@ -33,7 +33,7 @@ void GraphicsShape::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QW
 		if ((pos.y() == _mapAction->depth() && _mode == Mode::Normal) || (pos.y() == _mapAction->depth() - 1 && _mode == Mode::Below)) {
 			brush.setColor(pair.second);
 			painter->setBrush(brush);
-			painter->drawRect(pos.x() * 10.f, pos.z() * 10.f, 9, 9);
+			painter->drawRect(pos.x() * 10, pos.z() * 10, 9, 9);
 		}
 	}
 }

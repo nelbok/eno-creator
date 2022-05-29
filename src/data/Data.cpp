@@ -11,8 +11,8 @@ Data::Data(QObject* parent)
 void Data::reset() {
 	setFilePath("");
 
-	setMin({ -5.f, -5.f });
-	setMax({ 5.f, 5.f });
+	setMin({ -5, -5 });
+	setMax({ 5, 5 });
 
 	_scene.clear();
 	sceneUpdated();
@@ -44,28 +44,28 @@ void Data::setIsModified(bool value) {
 	}
 }
 
-void Data::setMin(const QVector2D& min) {
+void Data::setMin(const QPoint& min) {
 	if (_min != min) {
 		_min = min;
-		if (_min.x() > -5.f) {
-			_min.setX(-5.f);
+		if (_min.x() > -5) {
+			_min.setX(-5);
 		}
-		if (_min.y() > -5.f) {
-			_min.setY(-5.f);
+		if (_min.y() > -5) {
+			_min.setY(-5);
 		}
 		setIsModified(true);
 		updateScene();
 		rectUpdated();
 	}
 }
-void Data::setMax(const QVector2D& max) {
+void Data::setMax(const QPoint& max) {
 	if (_max != max) {
 		_max = max;
-		if (_max.x() < 5.f) {
-			_max.setX(5.f);
+		if (_max.x() < 5) {
+			_max.setX(5);
 		}
-		if (_max.y() < 5.f) {
-			_max.setY(5.f);
+		if (_max.y() < 5) {
+			_max.setY(5);
 		}
 		setIsModified(true);
 		updateScene();
