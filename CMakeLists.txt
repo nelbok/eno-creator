@@ -47,6 +47,13 @@ set(PROJECT_SOURCES
 	src/view/MainWindow.cpp
 	src/view/MainWindow.hpp
 
+	src/widgets/ComboBoxWidget.cpp
+	src/widgets/ComboBoxWidget.hpp
+	src/widgets/InfoWidget.cpp
+	src/widgets/InfoWidget.hpp
+	src/widgets/SpinBoxWidget.cpp
+	src/widgets/SpinBoxWidget.hpp
+
 	src/Config.hpp.in
 	${CMAKE_CURRENT_BINARY_DIR}/src/Config.hpp
 	src/Utils.hpp
@@ -57,7 +64,6 @@ set(PROJECT_SOURCES
 
 	LICENSE
 	README.md
-	TODO.md
 )
 
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" PREFIX "" FILES ${PROJECT_SOURCES})

@@ -2,10 +2,6 @@
 
 #include <QMainWindow>
 
-class QSpinBox;
-class QComboBox;
-class QLabel;
-
 namespace eno {
 class Data;
 class GraphicsView;
@@ -25,9 +21,7 @@ protected:
 	virtual void closeEvent(QCloseEvent* event);
 
 private slots:
-	void reset();
 	void updateWindowTitle();
-	void updateInfos();
 	void showMessage(const QString& message);
 
 private:
@@ -44,9 +38,5 @@ private:
 
 	// Interface
 	GraphicsView* _graphicsView{ nullptr };
-	QSpinBox* _depthSpinBox{ nullptr };
-	QSpinBox* _penWidthSpinBox{ nullptr };
-	QComboBox* _zoomComboBox{ nullptr };
-	QLabel* _infoLabel{ nullptr };
 };
 } // namespace eno

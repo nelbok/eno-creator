@@ -24,6 +24,7 @@ void Shortcuts::initActions() {
 	initFile();
 	initTools();
 	initGenerate();
+	initOthers();
 }
 
 void Shortcuts::resetActions() {
@@ -169,6 +170,13 @@ void Shortcuts::initGenerate() {
 		widget->init(_mapAction->data());
 		widget->show();
 		this->showMessage("Work In Progress");
+	});
+}
+
+void Shortcuts::initOthers() {
+	_aboutQtAction = new QAction("About Qt", this);
+	connect(_aboutQtAction, &QAction::triggered, [this]() {
+		QMessageBox::aboutQt(qApp->activeWindow(), qApp->applicationName());
 	});
 }
 

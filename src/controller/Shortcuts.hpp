@@ -35,6 +35,9 @@ public:
 	// Generate
 	QAction* generateOBJAction() const { return _generateOBJAction; }
 	QAction* generate3DAction() const { return _generate3DAction; }
+
+	// Others
+	QAction* aboutQtAction() const { return _aboutQtAction; }
 	// clang-format on
 
 private slots:
@@ -44,6 +47,7 @@ private:
 	void initFile();
 	void initTools();
 	void initGenerate();
+	void initOthers();
 
 	bool save(bool newPathRequested);
 
@@ -63,9 +67,12 @@ private:
 	QAction* _resizeAction{ nullptr };
 	QAction* _colorDialogAction{ nullptr };
 
-	// Tools action
+	// Generate action
 	QAction* _generateOBJAction{ nullptr };
 	QAction* _generate3DAction{ nullptr };
+
+	// Others action
+	QAction* _aboutQtAction{ nullptr };
 
 signals:
 	void updated();
