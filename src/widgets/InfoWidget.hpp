@@ -3,6 +3,8 @@
 #include <QWidget>
 
 class QLabel;
+class QSpinBox;
+class QHBoxLayout;
 
 namespace eno {
 class Data;
@@ -21,8 +23,15 @@ private slots:
 	void updateData();
 
 private:
+	QSpinBox* initSpinBox(QHBoxLayout* layout, bool positive);
+
 	Data* _data{ nullptr };
 	GraphicsView* _graphicsView{ nullptr };
-	QLabel* _label{ nullptr };
+
+	QLabel* _labelPosition{ nullptr };
+	QSpinBox* _minXSpinBox{ nullptr };
+	QSpinBox* _minYSpinBox{ nullptr };
+	QSpinBox* _maxXSpinBox{ nullptr };
+	QSpinBox* _maxYSpinBox{ nullptr };
 };
 } // namespace eno
