@@ -23,6 +23,7 @@ void Engine::init(const Data* data) {
 	setMinimumSize(1280, 780);
 	setWindowIcon(QIcon(":/logo/logo.png"));
 	setWindowModality(Qt::WindowModality::ApplicationModal);
+	setAttribute(Qt::WA_DeleteOnClose, true);
 
 	_view = new Qt3DExtras::Qt3DWindow();
 	_view->defaultFrameGraph()->setClearColor(QColor(QRgb(0x4d4d4f)));
@@ -39,7 +40,7 @@ void Engine::init(const Data* data) {
 	initCube();
 
 	for (const auto& item : *data) {
-		auto* transform = new Qt3DCore::QTransform();
+		auto* transform = new Qt3DCore::QTransform(_root);
 		transform->setTranslation(item.first);
 
 		auto* def = new Qt3DCore::QEntity(_root);
@@ -78,7 +79,7 @@ void Engine::initLight() {
 
 void Engine::initCube() {
 	// We need a better cube
-	_mesh = new Qt3DExtras::QCuboidMesh();
+	_mesh = new Qt3DExtras::QCuboidMesh(_root);
 }
 
 Qt3DCore::QComponent* Engine::getMaterialBy(const QColor& color) {
@@ -87,7 +88,7 @@ Qt3DCore::QComponent* Engine::getMaterialBy(const QColor& color) {
 		return it.value();
 	}
 
-	auto* material = new Qt3DExtras::QDiffuseSpecularMaterial();
+	auto* material = new Qt3DExtras::QDiffuseSpecularMaterial(_root);
 	material->setDiffuse(color);
 	_materials.insert(color, material);
 	return material;

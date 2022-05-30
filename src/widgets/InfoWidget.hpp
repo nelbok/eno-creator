@@ -23,7 +23,7 @@ private slots:
 	void updateData();
 
 private:
-	QSpinBox* initSpinBox(QHBoxLayout* layout, bool positive);
+	QSpinBox* createSpinBox(bool positive);
 
 	Data* _data{ nullptr };
 	GraphicsView* _graphicsView{ nullptr };
