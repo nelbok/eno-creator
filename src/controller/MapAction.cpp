@@ -1,8 +1,7 @@
 #include "MapAction.hpp"
 
-#include <QVector2D>
-
-#include "data/Data.hpp"
+#include "data/Project.hpp"
+#include "data/Scene.hpp"
 
 namespace eno {
 
@@ -21,18 +20,18 @@ QString MapAction::toString(MapAction::Zoom zoom) {
 	return {};
 }
 
-MapAction::MapAction(Data* data, QObject* parent)
+MapAction::MapAction(Project* project, QObject* parent)
 	: QObject(parent)
-	, _data(data) {}
+	, _project(project) {}
 
 
 void MapAction::reset() {
+	_project->reset();
 	setTypeAction(TypeAction::Add);
-	setColor(QColor("#ffaa00"));
+	setMaterial(_project->materials().at(0));
 	setDepth(0.f);
 	setPenWidth(1);
 	setZoom(Zoom::x100);
-	_data->reset();
 }
 
 void MapAction::setTypeAction(TypeAction value) {
@@ -43,12 +42,14 @@ MapAction::TypeAction MapAction::typeAction() const {
 	return _typeAction;
 }
 
-void MapAction::setColor(const QColor& color) {
-	_color = color;
-	colorUpdated();
+void MapAction::setMaterial(Material* material) {
+	assert(material);
+	_material = material;
+	materialUpdated();
 }
-const QColor& MapAction::color() const {
-	return _color;
+
+Material* MapAction::material() const {
+	return _material;
 }
 
 void MapAction::setDepth(float depth) {
@@ -78,9 +79,9 @@ void MapAction::setZoom(MapAction::Zoom zoom) {
 	zoomUpdated();
 }
 
-const Data* MapAction::data() const {
-	assert(_data);
-	return _data;
+const Project* MapAction::project() const {
+	assert(_project);
+	return _project;
 }
 
 void MapAction::mousePressEvent(const QVector3D& pos) {
@@ -118,25 +119,26 @@ void MapAction::mouseMoveEvent(const QVector3D& pos) {
 }
 
 bool MapAction::validPosition(const QVector3D& pos) const {
-	return (_data->min().x() <= pos.x() && pos.x() < _data->max().x()) && (_data->min().y() <= pos.z() && pos.z() < _data->max().y());
+	auto* scene = _project->scene();
+	return (scene->min().x() <= pos.x() && pos.x() < scene->max().x()) && (scene->min().y() <= pos.z() && pos.z() < scene->max().y());
 }
 
 void MapAction::removeItem(const QVector3D& pos) {
 	changeItem(pos, [this](const QVector3D& vec) {
-		this->_data->removeItem(vec);
+		this->_project->scene()->removeItem(vec);
 	});
 }
 
 void MapAction::addItem(const QVector3D& pos) {
 	changeItem(pos, [this](const QVector3D& vec) {
-		this->_data->addItem(vec, this->_color);
+		this->_project->scene()->addItem(vec, this->_material);
 	});
 }
 
 void MapAction::pickColor(const QVector3D& pos) {
-	if (_data->findItem(pos)) {
-		_color = _data->colorAt(pos);
-		colorUpdated();
+	if (_project->scene()->findItem(pos)) {
+		_material = _project->scene()->materialAt(pos);
+		materialUpdated();
 	}
 }
 
@@ -146,8 +148,8 @@ void MapAction::resize(const QVector2D& pos) {
 	}
 
 	bool changed = false;
-	auto min = _data->min();
-	auto max = _data->max();
+	auto min = _project->scene()->min();
+	auto max = _project->scene()->max();
 
 	if (_currentPos.x() == min.x() && std::abs(_currentPos.x() - pos.x()) <= 1.f) {
 		min.setX(pos.x());
@@ -167,8 +169,8 @@ void MapAction::resize(const QVector2D& pos) {
 	}
 
 	if (changed) {
-		_data->setMin(min);
-		_data->setMax(max);
+		_project->scene()->setMin(min);
+		_project->scene()->setMax(max);
 	}
 
 	_currentPos = pos;

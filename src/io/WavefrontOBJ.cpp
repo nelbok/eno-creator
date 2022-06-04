@@ -5,8 +5,9 @@
 #include <QFileInfo>
 #include <QTextStream>
 
-#include "controller/MapAction.hpp"
-#include "data/Data.hpp"
+#include "data/Material.hpp"
+#include "data/Project.hpp"
+#include "data/Scene.hpp"
 
 #include "Utils.hpp"
 
@@ -15,11 +16,11 @@ bool operator==(const WavefrontOBJ::Triangle& p1, const WavefrontOBJ::Triangle& 
 	return (p1.one == p2.one) && (p1.two == p2.two) && (p1.three == p2.three);
 }
 
-WavefrontOBJ::WavefrontOBJ(MapAction* mapAction)
-	: _data(mapAction->data()) {}
+WavefrontOBJ::WavefrontOBJ(const Project* project)
+	: _project(project) {}
 
 bool WavefrontOBJ::save(const QString& path) {
-	assert(_data);
+	assert(_project);
 	bool success = true;
 
 	compute();
@@ -30,7 +31,7 @@ bool WavefrontOBJ::save(const QString& path) {
 }
 
 void WavefrontOBJ::compute() {
-	for (const auto& cube : *_data) {
+	for (const auto& cube : *_project->scene()) {
 		const auto& vec = cube.first;
 		auto v1 = getIndexBy(vec + QVector3D(0.f, 0.f, 1.f));
 		auto v2 = getIndexBy(vec + QVector3D(1.f, 0.f, 1.f));
@@ -41,19 +42,19 @@ void WavefrontOBJ::compute() {
 		auto v7 = getIndexBy(vec + QVector3D(0.f, 0.f, 0.f));
 		auto v8 = getIndexBy(vec + QVector3D(1.f, 0.f, 0.f));
 
-		const auto& color = cube.second;
-		insertTriangle(color, { v1, v2, v3 });
-		insertTriangle(color, { v3, v2, v4 });
-		insertTriangle(color, { v3, v4, v5 });
-		insertTriangle(color, { v5, v4, v6 });
-		insertTriangle(color, { v5, v6, v7 });
-		insertTriangle(color, { v7, v6, v8 });
-		insertTriangle(color, { v7, v8, v1 });
-		insertTriangle(color, { v1, v8, v2 });
-		insertTriangle(color, { v2, v8, v4 });
-		insertTriangle(color, { v4, v8, v6 });
-		insertTriangle(color, { v7, v1, v5 });
-		insertTriangle(color, { v5, v1, v3 });
+		const auto& material = cube.second;
+		insertTriangle(material, { v1, v2, v3 });
+		insertTriangle(material, { v3, v2, v4 });
+		insertTriangle(material, { v3, v4, v5 });
+		insertTriangle(material, { v5, v4, v6 });
+		insertTriangle(material, { v5, v6, v7 });
+		insertTriangle(material, { v7, v6, v8 });
+		insertTriangle(material, { v7, v8, v1 });
+		insertTriangle(material, { v1, v8, v2 });
+		insertTriangle(material, { v2, v8, v4 });
+		insertTriangle(material, { v4, v8, v6 });
+		insertTriangle(material, { v7, v1, v5 });
+		insertTriangle(material, { v5, v1, v3 });
 	}
 }
 
@@ -66,8 +67,9 @@ int WavefrontOBJ::getIndexBy(const QVector3D& vertex) {
 	return index;
 }
 
-void WavefrontOBJ::insertTriangle(const QColor& color, const Triangle& triangle) {
-	auto& triangles = _triangles[color];
+void WavefrontOBJ::insertTriangle(Material* material, const Triangle& triangle) {
+	assert(material);
+	auto& triangles = _triangles[material];
 	if (!(triangles.contains(triangle))) {
 		triangles.append(triangle);
 	}
@@ -80,8 +82,8 @@ bool WavefrontOBJ::writeObjFile(const QString& path) {
 	}
 
 	QTextStream tampon(&file);
-	tampon << "# " << qApp->applicationName() << " " << qApp->applicationVersion() << ": " << _data->projectName() << Qt::endl;
-	tampon << "o " << _data->projectName() << Qt::endl;
+	tampon << "# " << qApp->applicationName() << " " << qApp->applicationVersion() << ": " << _project->projectName() << Qt::endl;
+	tampon << "o " << _project->projectName() << Qt::endl;
 
 	// Material file name
 	QFileInfo fileInfo(path);
@@ -94,9 +96,9 @@ bool WavefrontOBJ::writeObjFile(const QString& path) {
 
 	tampon << "# triangles" << Qt::endl;
 	for (auto it = _triangles.constKeyValueBegin(); it != _triangles.constKeyValueEnd(); ++it) {
-		const QColor& color = it->first;
-		tampon << "g " << color.name() << Qt::endl;
-		tampon << "usemtl " << color.name() << Qt::endl;
+		Material* material = it->first;
+		tampon << "g " << material->name() << Qt::endl;
+		tampon << "usemtl " << material->name() << Qt::endl;
 		for (const auto& triangle : it->second) {
 			// The index begin at 1 and not 0 like in the list
 			tampon << "f " << triangle.one + 1 << " " << triangle.two + 1 << " " << triangle.three + 1 << Qt::endl;
@@ -119,8 +121,9 @@ bool WavefrontOBJ::writeMtlFile(const QString& path) {
 
 	QTextStream tampon(&file);
 	for (auto it = _triangles.constKeyValueBegin(); it != _triangles.constKeyValueEnd(); ++it) {
-		const QColor& color = it->first;
-		tampon << "newmtl " << color.name() << Qt::endl;
+		Material* material = it->first;
+		const QColor& color = material->diffuse();
+		tampon << "newmtl " << material->name() << Qt::endl;
 		tampon << "Kd " << color.red() / 255.f << " " << color.green() / 255.f << " " << color.blue() / 255.f << Qt::endl;
 		tampon << Qt::endl;
 	}

@@ -30,7 +30,6 @@ public:
 	QAction* addAction() const { return _addAction; }
 	QAction* pickerAction() const { return _pickerAction; }
 	QAction* resizeAction() const { return _resizeAction; }
-	QAction* colorDialogAction() const { return _colorDialogAction; }
 
 	// Generate
 	QAction* generateOBJAction() const { return _generateOBJAction; }
@@ -39,9 +38,6 @@ public:
 	// Others
 	QAction* aboutQtAction() const { return _aboutQtAction; }
 	// clang-format on
-
-private slots:
-	void updateColorDialogIcon();
 
 private:
 	void initFile();
@@ -65,7 +61,6 @@ private:
 	QAction* _addAction{ nullptr };
 	QAction* _pickerAction{ nullptr };
 	QAction* _resizeAction{ nullptr };
-	QAction* _colorDialogAction{ nullptr };
 
 	// Generate action
 	QAction* _generateOBJAction{ nullptr };

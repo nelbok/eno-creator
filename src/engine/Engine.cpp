@@ -12,14 +12,15 @@
 #include <Qt3DRender/QCamera>
 #include <Qt3DRender/QPointLight>
 
-#include "data/Data.hpp"
+#include "data/Scene.hpp"
+#include "data/Material.hpp"
 #include "Utils.hpp"
 
 namespace eno {
 Engine::Engine(QWidget* parent)
 	: QWidget(parent) {}
 
-void Engine::init(const Data* data) {
+void Engine::init(const Scene* scene) {
 	setMinimumSize(1280, 780);
 	setWindowIcon(QIcon(":/logo/logo.png"));
 	setWindowModality(Qt::WindowModality::ApplicationModal);
@@ -39,7 +40,7 @@ void Engine::init(const Data* data) {
 	initLight();
 	initCube();
 
-	for (const auto& item : *data) {
+	for (const auto& item : *scene) {
 		auto* transform = new Qt3DCore::QTransform(_root);
 		transform->setTranslation(item.first);
 
@@ -82,15 +83,16 @@ void Engine::initCube() {
 	_mesh = new Qt3DExtras::QCuboidMesh(_root);
 }
 
-Qt3DCore::QComponent* Engine::getMaterialBy(const QColor& color) {
-	const auto it = _materials.find(color);
+Qt3DCore::QComponent* Engine::getMaterialBy(Material* mat) {
+	assert(mat);
+	const auto it = _materials.find(mat);
 	if (it != _materials.end()) {
 		return it.value();
 	}
 
 	auto* material = new Qt3DExtras::QDiffuseSpecularMaterial(_root);
-	material->setDiffuse(color);
-	_materials.insert(color, material);
+	material->setDiffuse(mat->diffuse());
+	_materials.insert(mat, material);
 	return material;
 }
 

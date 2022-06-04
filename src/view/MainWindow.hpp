@@ -3,7 +3,7 @@
 #include <QMainWindow>
 
 namespace eno {
-class Data;
+class Project;
 class GraphicsView;
 class MapAction;
 class Shortcuts;
@@ -30,7 +30,7 @@ private:
 	void initLayers();
 	void initGenerate();
 
-	Data* _data{ nullptr };
+	Project* _project{ nullptr };
 
 	// Controllers
 	MapAction* _mapAction{ nullptr };

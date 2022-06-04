@@ -6,7 +6,7 @@
 #include <QStatusBar>
 #include <QToolBar>
 
-#include "data/Data.hpp"
+#include "data/Project.hpp"
 #include "controller/MapAction.hpp"
 #include "controller/Shortcuts.hpp"
 
@@ -33,8 +33,8 @@ void MainWindow::updateWindowTitle() {
 	QString title = qApp->applicationName();
 
 	title.append(" - ");
-	title.append(_data->projectName());
-	if (_data->isModified()) {
+	title.append(_project->projectName());
+	if (_project->isModified()) {
 		title.append("*");
 	}
 
@@ -46,11 +46,12 @@ void MainWindow::showMessage(const QString& message) {
 }
 
 void MainWindow::initUi() {
-	_data = new Data(this);
-	connect(_data, &Data::filePathUpdated, this, &MainWindow::updateWindowTitle);
-	connect(_data, &Data::isModifiedUpdated, this, &MainWindow::updateWindowTitle);
+	_project = new Project(this);
+	_project->init();
+	connect(_project, &Project::filePathUpdated, this, &MainWindow::updateWindowTitle);
+	connect(_project, &Project::isModifiedUpdated, this, &MainWindow::updateWindowTitle);
 
-	_mapAction = new MapAction(_data, this);
+	_mapAction = new MapAction(_project, this);
 
 	_shortcuts = new Shortcuts(_mapAction, this);
 	_shortcuts->initActions();
@@ -61,7 +62,7 @@ void MainWindow::initUi() {
 	setCentralWidget(_graphicsView);
 
 	auto* infoWidget = new InfoWidget(this);
-	infoWidget->init(_data, _graphicsView);
+	infoWidget->init(_project->scene(), _graphicsView);
 	statusBar()->addPermanentWidget(infoWidget);
 
 	setMinimumSize(1280, 780);
@@ -95,22 +96,18 @@ void MainWindow::initTools() {
 	auto* action2 = _shortcuts->addAction();
 	auto* action3 = _shortcuts->pickerAction();
 	auto* action4 = _shortcuts->resizeAction();
-	auto* action5 = _shortcuts->colorDialogAction();
 
 	auto* menu = menuBar()->addMenu("Tools");
 	menu->addAction(action1);
 	menu->addAction(action2);
 	menu->addAction(action3);
 	menu->addAction(action4);
-	menu->addAction(action5);
 
 	auto* toolBar = addToolBar("Tools");
 	toolBar->addAction(action1);
 	toolBar->addAction(action2);
 	toolBar->addAction(action3);
 	toolBar->addAction(action4);
-	toolBar->addSeparator();
-	toolBar->addAction(action5);
 }
 
 void MainWindow::initLayers() {

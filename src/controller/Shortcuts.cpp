@@ -3,11 +3,10 @@
 #include <QAction>
 #include <QActionGroup>
 #include <QApplication>
-#include <QColorDialog>
 #include <QFileDialog>
 #include <QMessageBox>
 
-#include "data/Data.hpp"
+#include "data/Project.hpp"
 #include "engine/Engine.hpp"
 #include "io/Eno.hpp"
 #include "io/WavefrontOBJ.hpp"
@@ -43,14 +42,6 @@ void Shortcuts::resetActions() {
 			_resizeAction->setChecked(true);
 			break;
 	}
-	updateColorDialogIcon();
-}
-
-void Shortcuts::updateColorDialogIcon() {
-	assert(_colorDialogAction);
-	auto image = QImage(48, 48, QImage::Format_RGB32);
-	image.fill(_mapAction->color());
-	_colorDialogAction->setIcon({ QPixmap::fromImage(image) });
 }
 
 void Shortcuts::initFile() {
@@ -86,7 +77,7 @@ void Shortcuts::initFile() {
 
 	_quitAction = new QAction("Quit", this);
 	connect(_quitAction, &QAction::triggered, [this]() {
-		if (_mapAction->data()->isModified()) {
+		if (_mapAction->project()->isModified()) {
 			const auto& button = QMessageBox::warning(qApp->activeWindow(), qApp->applicationName(), "The map has been modified.\nDo you want to save your changes?",
 				QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel, QMessageBox::Save);
 			switch (button) {
@@ -131,30 +122,17 @@ void Shortcuts::initTools() {
 		this->_mapAction->setTypeAction(MapAction::TypeAction::Resize);
 		this->showMessage("Resize tool selected");
 	});
-
-	_colorDialogAction = new QAction("Open color dialog", this);
-	_colorDialogAction->setToolTip("Open the color dialog so that you can choose the pen's color");
-	connect(_colorDialogAction, &QAction::triggered, [this]() {
-		QColor color = QColorDialog::getColor(this->_mapAction->color(), qApp->activeWindow());
-		if (color.isValid()) {
-			this->_mapAction->setColor(color);
-			this->showMessage(QString("Color changed to %1").arg(color.name()));
-			updateColorDialogIcon();
-		}
-	});
-	connect(_mapAction, &MapAction::colorUpdated, this, &Shortcuts::updateColorDialogIcon);
-	updateColorDialogIcon();
 }
 
 void Shortcuts::initGenerate() {
 	_generateOBJAction = new QAction(QIcon(":export/generate.png"), "Generate OBJ file", this);
 	_generateOBJAction->setToolTip("Generate the OBJ file corresponding at the project in a file");
 	connect(_generateOBJAction, &QAction::triggered, [this]() {
-		const QString& path = QFileDialog::getSaveFileName(qApp->activeWindow(), qApp->applicationName() + " - Export as", _mapAction->data()->projectName(), WavefrontOBJ::fileType);
+		const QString& path = QFileDialog::getSaveFileName(qApp->activeWindow(), qApp->applicationName() + " - Export as", _mapAction->project()->projectName(), WavefrontOBJ::fileType);
 		if (path.isEmpty())
 			return false;
 
-		if (WavefrontOBJ(this->_mapAction).save(path)) {
+		if (WavefrontOBJ(this->_mapAction->project()).save(path)) {
 			showMessage(QString("Export %1 successed").arg(path));
 			return true;
 		} else {
@@ -167,7 +145,7 @@ void Shortcuts::initGenerate() {
 	_generate3DAction->setToolTip("Open the 3D view and show the current scene inside");
 	connect(_generate3DAction, &QAction::triggered, [this]() {
 		auto* widget = new Engine();
-		widget->init(_mapAction->data());
+		widget->init(_mapAction->project()->scene());
 		widget->show();
 		this->showMessage("Work In Progress");
 	});
@@ -181,16 +159,16 @@ void Shortcuts::initOthers() {
 }
 
 bool Shortcuts::save(bool newPathRequested) {
-	QString path = _mapAction->data()->filePath();
+	QString path = _mapAction->project()->filePath();
 
 	QFileInfo fileInfo(path);
 	auto isFile = fileInfo.isFile();
 	auto isWritable = fileInfo.isWritable();
 
 	if (newPathRequested || !isFile || !isWritable) {
-		QString currentPath = _mapAction->data()->filePath();
+		QString currentPath = _mapAction->project()->filePath();
 		if (currentPath.isEmpty()) {
-			currentPath = _mapAction->data()->projectName();
+			currentPath = _mapAction->project()->projectName();
 		}
 		path = QFileDialog::getSaveFileName(qApp->activeWindow(), qApp->applicationName() + " - Save as", currentPath, Eno::fileType);
 	}

@@ -3,17 +3,19 @@
 #include <QFileInfo>
 #include <QTextStream>
 
-#include "data/Data.hpp"
 #include "controller/MapAction.hpp"
+#include "data/Material.hpp"
+#include "data/Project.hpp"
+#include "data/Scene.hpp"
 
 namespace eno {
 Eno::Eno(MapAction* mapAction)
-	: _data(mapAction->_data) {}
+	: _project(mapAction->_project) {}
 
 bool Eno::save(const QString& path) {
-	assert(_data);
+	assert(_project);
 
-	QFile file(path);
+/*	QFile file(path);
 	if (!file.open(QIODevice::WriteOnly)) {
 		return false;
 	}
@@ -38,13 +40,13 @@ bool Eno::save(const QString& path) {
 	file.close();
 
 	_data->setFilePath(path);
-	_data->setIsModified(false);
+	_data->setIsModified(false);*/
 
 	return true;
 }
 
 bool Eno::load(const QString& path) {
-	assert(_data);
+	assert(_project);
 
 	QFile file(path);
 	if (!file.open(QIODevice::ReadOnly)) {
@@ -65,15 +67,19 @@ bool Eno::load(const QString& path) {
 	}
 
 	// Reset and begin transaction
-	_data->blockSignals(true);
-	_data->reset();
-	_data->setFilePath(path);
+	_project->blockSignals(true);
+	_project->reset();
+	_project->setFilePath(path);
+	auto* scene = _project->scene();
+	//When a project is resetted, a default materials is created
+	const auto& oldMaterials = _project->materials();
+	QList<Material*> newMaterials{};
 
 	// Retrieve min/max
 	int minX{}, maxX{}, minY{}, maxY{};
 	buffer >> minX >> maxX >> minY >> maxY;
-	_data->setMin(QPoint{ minX, minY } / 10);
-	_data->setMax(QPoint{ maxX, maxY } / 10);
+	scene->setMin(QPoint{ minX, minY } / 10);
+	scene->setMax(QPoint{ maxX, maxY } / 10);
 
 	// Retrieve scene
 	while (!buffer.atEnd()) {
@@ -85,15 +91,37 @@ bool Eno::load(const QString& path) {
 		if (color.isEmpty()) {
 			continue;
 		}
-		_data->addItem(QVector3D{ x, y, z } / 10.f, { color });
+
+		Material* material = nullptr;
+		for (auto* mat : newMaterials) {
+			if (mat->name() == color) {
+				material = mat;
+				break;
+			}
+		}
+		if (material == nullptr) {
+			material = new Material(_project);
+			material->setName(color);
+			material->setDiffuse(color);
+		}
+		newMaterials.append(material);
+
+		scene->addItem(QVector3D{ x, y, z } / 10.f, material);
+	}
+
+	for (auto* mat : oldMaterials) {
+		_project->removeMaterial(mat);
+	}
+	for (auto* mat : newMaterials) {
+		_project->addMaterial(mat);
 	}
 
 	file.close();
 
-	_data->blockSignals(false);
-	_data->setIsModified(false);
-	_data->rectUpdated();
-	_data->sceneUpdated();
+	_project->blockSignals(false);
+	_project->setIsModified(false);
+	scene->rectUpdated();
+	scene->sceneUpdated();
 
 	return true;
 }

@@ -29,8 +29,12 @@ set(PROJECT_SOURCES
 	src/controller/Shortcuts.cpp
 	src/controller/Shortcuts.hpp
 
-	src/data/Data.cpp
-	src/data/Data.hpp
+	src/data/Material.cpp
+	src/data/Material.hpp
+	src/data/Project.cpp
+	src/data/Project.hpp
+	src/data/Scene.cpp
+	src/data/Scene.hpp
 
 	src/engine/Engine.cpp
 	src/engine/Engine.hpp

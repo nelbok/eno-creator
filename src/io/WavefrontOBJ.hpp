@@ -1,15 +1,12 @@
 #pragma once
 
-#include <QColor>
 #include <QList>
 #include <QMap>
 #include <QVector3D>
 
-class QString;
-
 namespace eno {
-class Data;
-class MapAction;
+class Project;
+class Material;
 
 class WavefrontOBJ {
 public:
@@ -21,7 +18,7 @@ public:
 
 	static constexpr auto fileType = "Wavefront OBJ (*.obj)";
 
-	WavefrontOBJ(MapAction* mapAction);
+	WavefrontOBJ(const Project* project);
 	virtual ~WavefrontOBJ() = default;
 
 	bool save(const QString& path);
@@ -29,12 +26,12 @@ public:
 private:
 	void compute();
 	int getIndexBy(const QVector3D& vertex);
-	void insertTriangle(const QColor& color, const Triangle& triangle);
+	void insertTriangle(Material* material, const Triangle& triangle);
 	bool writeObjFile(const QString& path);
 	bool writeMtlFile(const QString& path);
 
-	const Data* _data{ nullptr };
+	const Project* _project{ nullptr };
 	QList<QVector3D> _vertices{};
-	QMap<QColor, QList<Triangle>> _triangles;
+	QMap<Material*, QList<Triangle>> _triangles;
 };
 } // namespace eno

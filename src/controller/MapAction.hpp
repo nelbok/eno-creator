@@ -1,13 +1,14 @@
 #pragma once
 
 #include <QObject>
-#include <QColor>
 #include <QVector2D>
+#include <QVector3D>
 
 class QMouseEvent;
 
 namespace eno {
-class Data;
+class Project;
+class Material;
 
 class MapAction : public QObject {
 	friend class Eno;
@@ -37,7 +38,7 @@ public:
 	static constexpr auto minPenWidth = 1;
 	static constexpr auto maxPenWidth = 50;
 
-	MapAction(Data* data, QObject* parent = nullptr);
+	MapAction(Project* project, QObject* parent = nullptr);
 	virtual ~MapAction() = default;
 
 	void reset();
@@ -45,8 +46,8 @@ public:
 	void setTypeAction(TypeAction value);
 	TypeAction typeAction() const;
 
-	void setColor(const QColor& color);
-	const QColor& color() const;
+	void setMaterial(Material* color);
+	Material* material() const;
 
 	void setDepth(float depth);
 	float depth() const;
@@ -57,7 +58,7 @@ public:
 	void setZoom(Zoom zoom);
 	Zoom zoom() const;
 
-	const Data* data() const;
+	const Project* project() const;
 
 	void mousePressEvent(const QVector3D& pos);
 	void mouseMoveEvent(const QVector3D& pos);
@@ -70,11 +71,11 @@ private:
 	void resize(const QVector2D& pos);
 
 	TypeAction _typeAction{};
-	QColor _color{};
+	Material* _material{ nullptr };
 	float _depth{};
 	int _penWidth{};
 	Zoom _zoom{};
-	Data* _data{ nullptr };
+	Project* _project{ nullptr };
 	QVector2D _currentPos{};
 
 private:
@@ -93,7 +94,7 @@ private:
 	}
 
 signals:
-	void colorUpdated();
+	void materialUpdated();
 	void depthUpdated();
 	void penWidthUpdated();
 	void zoomUpdated();

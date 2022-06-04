@@ -2,8 +2,10 @@
 
 #include <QPainter>
 
-#include "data/Data.hpp"
 #include "controller/MapAction.hpp"
+#include "data/Project.hpp"
+#include "data/Material.hpp"
+#include "data/Scene.hpp"
 
 namespace eno {
 GraphicsShape::GraphicsShape(MapAction* mapAction, QGraphicsItem* parent)
@@ -15,8 +17,9 @@ void GraphicsShape::setMode(Mode mode) {
 }
 
 QRectF GraphicsShape::boundingRect() const {
-	const auto min = _mapAction->data()->min() * 10;
-	const auto max = _mapAction->data()->max() * 10;
+	const auto* scene = _mapAction->project()->scene();
+	const auto min = scene->min() * 10;
+	const auto max = scene->max() * 10;
 	return { min, max };
 }
 
@@ -28,10 +31,10 @@ void GraphicsShape::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QW
 		brush.setStyle(Qt::Dense4Pattern);
 	}
 	painter->setPen(pen);
-	for (const auto& pair : *(_mapAction->data())) {
+	for (const auto& pair : *(_mapAction->project()->scene())) {
 		const auto& pos = pair.first;
 		if ((pos.y() == _mapAction->depth() && _mode == Mode::Normal) || (pos.y() == _mapAction->depth() - 1 && _mode == Mode::Below)) {
-			brush.setColor(pair.second);
+			brush.setColor(pair.second->diffuse());
 			painter->setBrush(brush);
 			painter->drawRect(pos.x() * 10, pos.z() * 10, 9, 9);
 		}

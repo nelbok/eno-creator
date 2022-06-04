@@ -6,7 +6,8 @@
 #include <QGraphicsLineItem>
 #include <QMouseEvent>
 
-#include "data/Data.hpp"
+#include "data/Project.hpp"
+#include "data/Scene.hpp"
 #include "controller/MapAction.hpp"
 #include "GraphicsShape.hpp"
 
@@ -41,8 +42,8 @@ void GraphicsView::init() {
 	_scene->addItem(_yAxis);
 	setScene(_scene);
 
-	connect(_mapAction->data(), &Data::sceneUpdated, this, &GraphicsView::updateShapes);
-	connect(_mapAction->data(), &Data::rectUpdated, this, &GraphicsView::updateRect);
+	connect(_mapAction->project()->scene(), &Scene::sceneUpdated, this, &GraphicsView::updateShapes);
+	connect(_mapAction->project()->scene(), &Scene::rectUpdated, this, &GraphicsView::updateRect);
 	connect(_mapAction, &MapAction::depthUpdated, this, &GraphicsView::updateShapes);
 	connect(_mapAction, &MapAction::zoomUpdated, this, &GraphicsView::updateZoom);
 }
@@ -74,9 +75,9 @@ void GraphicsView::updateShapes() {
 }
 
 void GraphicsView::updateRect() {
-	const auto* data = _mapAction->data();
-	const auto min = data->min() * 10;
-	const auto max = data->max() * 10;
+	const auto* scene = _mapAction->project()->scene();
+	const auto min = scene->min() * 10;
+	const auto max = scene->max() * 10;
 
 	const QRectF rect{ min, max };
 	_scene->setSceneRect(rect);

@@ -7,7 +7,7 @@ class QSpinBox;
 class QHBoxLayout;
 
 namespace eno {
-class Data;
+class Scene;
 class GraphicsView;
 
 class InfoWidget : public QWidget {
@@ -17,7 +17,7 @@ public:
 	InfoWidget(QWidget* parent = 0);
 	virtual ~InfoWidget() = default;
 
-	void init(Data* data, GraphicsView* graphicsView);
+	void init(Scene* scene, GraphicsView* graphicsView);
 
 private slots:
 	void updateData();
@@ -25,7 +25,7 @@ private slots:
 private:
 	QSpinBox* createSpinBox(bool positive);
 
-	Data* _data{ nullptr };
+	Scene* _scene{ nullptr };
 	GraphicsView* _graphicsView{ nullptr };
 
 	QLabel* _labelPosition{ nullptr };

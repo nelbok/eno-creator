@@ -3,8 +3,8 @@
 class QString;
 
 namespace eno {
-class Data;
 class MapAction;
+class Project;
 
 class Eno {
 public:
@@ -18,6 +18,6 @@ public:
 	bool load(const QString& path);
 
 private:
-	Data* _data{ nullptr };
+	Project* _project{ nullptr };
 };
 } // namespace eno
