@@ -1,6 +1,7 @@
 #include "Scene.hpp"
 
-#include "Project.hpp"
+#include "data/Material.hpp"
+#include "data/Project.hpp"
 #include "Utils.hpp"
 
 namespace eno {
@@ -9,12 +10,11 @@ Scene::Scene(Project* project)
 	, _project(project) {}
 
 void Scene::reset() {
-
 	setMin({ -5, -5 });
 	setMax({ 5, 5 });
 
 	_sceneData.clear();
-	sceneUpdated();
+	dataUpdated();
 }
 
 void Scene::setMin(const QPoint& min) {
@@ -48,18 +48,24 @@ void Scene::setMax(const QPoint& max) {
 
 void Scene::addItem(const QVector3D& pos, Material* material) {
 	assert(material);
-	if (_sceneData[pos] != material) {
-		_sceneData[pos] = material;
-		_project->setIsModified(true);
-		sceneUpdated();
+	if (findItem(pos)) {
+		if (_sceneData[pos] == material) {
+			return;
+		}
+		materialAt(pos)->decreaseRefCount();
 	}
+	material->increaseRefCount();
+	_sceneData[pos] = material;
+	_project->setIsModified(true);
+	dataUpdated();
 }
 
 void Scene::removeItem(const QVector3D& pos) {
 	if (_sceneData.contains(pos)) {
+		materialAt(pos)->decreaseRefCount();
 		_sceneData.remove(pos);
 		_project->setIsModified(true);
-		sceneUpdated();
+		dataUpdated();
 	}
 }
 
@@ -88,11 +94,11 @@ void Scene::updateScene() {
 		}
 	}
 	for (const auto& item : itemsToDelete) {
-		_sceneData.remove(item);
+		removeItem(item);
 	}
 	if (!itemsToDelete.isEmpty()) {
 		_project->setIsModified(true);
-		sceneUpdated();
+		dataUpdated();
 	}
 }
 } // namespace eno

@@ -1,5 +1,6 @@
 #include "MapAction.hpp"
 
+#include "data/Materials.hpp"
 #include "data/Project.hpp"
 #include "data/Scene.hpp"
 
@@ -28,7 +29,7 @@ MapAction::MapAction(Project* project, QObject* parent)
 void MapAction::reset() {
 	_project->reset();
 	setTypeAction(TypeAction::Add);
-	setMaterial(_project->materials().at(0));
+	setMaterial(*(_project->materials()->begin()));
 	setDepth(0.f);
 	setPenWidth(1);
 	setZoom(Zoom::x100);
@@ -148,8 +149,8 @@ void MapAction::resize(const QVector2D& pos) {
 	}
 
 	bool changed = false;
-	auto min = _project->scene()->min();
-	auto max = _project->scene()->max();
+	QPoint min = _project->scene()->min();
+	QPoint max = _project->scene()->max();
 
 	if (_currentPos.x() == min.x() && std::abs(_currentPos.x() - pos.x()) <= 1.f) {
 		min.setX(pos.x());

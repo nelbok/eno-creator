@@ -2,7 +2,7 @@
 
 #include <QFileInfo>
 
-#include "Material.hpp"
+#include "Materials.hpp"
 #include "Scene.hpp"
 
 namespace eno {
@@ -10,18 +10,18 @@ Project::Project(QObject* parent)
 	: QObject(parent) {}
 
 void Project::init() {
+	assert(!_materials);
 	assert(!_scene);
+	_materials = new Materials(this);
 	_scene = new Scene(this);
 }
 
 void Project::reset() {
+	assert(_materials);
 	assert(_scene);
-	_scene->reset();
 
-	Material* defaultMaterial = new Material(this);
-	defaultMaterial->setName("default");
-	defaultMaterial->setDiffuse(QColor("#ffaa00"));
-	_materials.append(defaultMaterial);
+	_materials->reset();
+	_scene->reset();
 
 	setFilePath("");
 
@@ -50,19 +50,6 @@ void Project::setIsModified(bool value) {
 		_isModified = value;
 		isModifiedUpdated();
 	}
-}
-
-const QList<Material*>& Project::materials() const {
-	assert(!_materials.empty());
-	return _materials;
-}
-
-void Project::addMaterial(Material* material) {
-	_materials.append(material);
-}
-
-void Project::removeMaterial(Material* material) {
-	_materials.removeAll(material);
 }
 
 } // namespace eno

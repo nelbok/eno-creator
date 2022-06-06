@@ -63,6 +63,6 @@ private:
 
 signals:
 	void rectUpdated();
-	void sceneUpdated();
+	void dataUpdated();
 };
 } // namespace eno

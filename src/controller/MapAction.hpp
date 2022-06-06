@@ -46,7 +46,7 @@ public:
 	void setTypeAction(TypeAction value);
 	TypeAction typeAction() const;
 
-	void setMaterial(Material* color);
+	void setMaterial(Material* material);
 	Material* material() const;
 
 	void setDepth(float depth);

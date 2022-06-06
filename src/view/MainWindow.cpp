@@ -12,6 +12,7 @@
 
 #include "widgets/ComboBoxWidget.hpp"
 #include "widgets/InfoWidget.hpp"
+#include "widgets/MaterialsDockWidget.hpp"
 #include "widgets/SpinBoxWidget.hpp"
 #include "GraphicsView.hpp"
 
@@ -71,6 +72,7 @@ void MainWindow::initUi() {
 	initTools();
 	initLayers();
 	initGenerate();
+	initDocks();
 
 	menuBar()->addAction(_shortcuts->aboutQtAction());
 
@@ -171,6 +173,16 @@ void MainWindow::initGenerate() {
 	auto* toolBar = addToolBar("Generate");
 	toolBar->addAction(action1);
 	toolBar->addAction(action2);
+}
+
+void MainWindow::initDocks() {
+	auto* menuDocks = menuBar()->addMenu("Views");
+
+	auto* dock = new MaterialsDockWidget(this);
+	dock->init(_project->materials(), _mapAction);
+	connect(dock, &MaterialsDockWidget::showMessage, this, &MainWindow::showMessage);
+	addDockWidget(Qt::LeftDockWidgetArea, dock);
+	menuDocks->addAction(dock->toggleViewAction());
 }
 
 } // namespace eno

@@ -1,10 +1,9 @@
 #pragma once
 
 #include <QObject>
-#include <QList>
 
 namespace eno {
-class Material;
+class Materials;
 class Scene;
 
 class Project : public QObject {
@@ -26,25 +25,22 @@ public:
 	bool isModified() const { return _isModified; }
 	void setIsModified(bool isModifed);
 
+	Materials* materials() { return _materials; }
+	const Materials* materials() const { return _materials; }
+
 	Scene* scene() { return _scene; }
 	const Scene* scene() const { return _scene; }
 	// clang-format on
-
-	// FIXME: Make materials class to manage them
-	const QList<Material*>& materials() const;
-	void addMaterial(Material* material);
-	void removeMaterial(Material* material);
 
 private:
 	QString _filePath{};
 	bool _isModified{ false };
 
-	QList<Material*> _materials{};
+	Materials* _materials{ nullptr };
 	Scene* _scene{ nullptr };
 
 signals:
 	void filePathUpdated();
 	void isModifiedUpdated();
-	void materialsUpdated();
 };
 } // namespace eno

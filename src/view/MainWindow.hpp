@@ -29,6 +29,7 @@ private:
 	void initTools();
 	void initLayers();
 	void initGenerate();
+	void initDocks();
 
 	Project* _project{ nullptr };
 

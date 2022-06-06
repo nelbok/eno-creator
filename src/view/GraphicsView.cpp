@@ -7,6 +7,7 @@
 #include <QMouseEvent>
 
 #include "data/Project.hpp"
+#include "data/Materials.hpp"
 #include "data/Scene.hpp"
 #include "controller/MapAction.hpp"
 #include "GraphicsShape.hpp"
@@ -42,8 +43,9 @@ void GraphicsView::init() {
 	_scene->addItem(_yAxis);
 	setScene(_scene);
 
-	connect(_mapAction->project()->scene(), &Scene::sceneUpdated, this, &GraphicsView::updateShapes);
+	connect(_mapAction->project()->scene(), &Scene::dataUpdated, this, &GraphicsView::updateShapes);
 	connect(_mapAction->project()->scene(), &Scene::rectUpdated, this, &GraphicsView::updateRect);
+	connect(_mapAction->project()->materials(), &Materials::materialUpdated, this, &GraphicsView::updateShapes);
 	connect(_mapAction, &MapAction::depthUpdated, this, &GraphicsView::updateShapes);
 	connect(_mapAction, &MapAction::zoomUpdated, this, &GraphicsView::updateZoom);
 }

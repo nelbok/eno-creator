@@ -31,6 +31,8 @@ set(PROJECT_SOURCES
 
 	src/data/Material.cpp
 	src/data/Material.hpp
+	src/data/Materials.cpp
+	src/data/Materials.hpp
 	src/data/Project.cpp
 	src/data/Project.hpp
 	src/data/Scene.cpp
@@ -41,6 +43,7 @@ set(PROJECT_SOURCES
 	
 	src/io/Eno.cpp
 	src/io/Eno.hpp
+	src/io/EnoConverter.hpp
 	src/io/WavefrontOBJ.cpp
 	src/io/WavefrontOBJ.hpp
 
@@ -55,6 +58,8 @@ set(PROJECT_SOURCES
 	src/widgets/ComboBoxWidget.hpp
 	src/widgets/InfoWidget.cpp
 	src/widgets/InfoWidget.hpp
+	src/widgets/MaterialsDockWidget.cpp
+	src/widgets/MaterialsDockWidget.hpp
 	src/widgets/SpinBoxWidget.cpp
 	src/widgets/SpinBoxWidget.hpp
 

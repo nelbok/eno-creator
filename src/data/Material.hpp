@@ -5,35 +5,37 @@
 #include <QColor>
 
 namespace eno {
+class Project;
 
 class Material : public QObject {
 	Q_OBJECT
 
 public:
-	Material(QObject* parent = nullptr);
+	Material(Project* project);
 	virtual ~Material() = default;
 
-	const QString& name() const {
-		return _name;
-	}
+	// clang-format off
+	const QString& name() const { return _name; }
+	void setName(const QString& name);
 
-	void setName(const QString& name) {
-		_name = name;
-	}
+	const QColor& diffuse() const { return _diffuse; }
+	void setDiffuse(const QColor& color);
 
-	const QColor& diffuse() const {
-		return _diffuse;
-	}
-
-	void setDiffuse(const QColor& color) {
-		_diffuse = color;
-	}
+	int refCount() const { return _refCount; }
+	void increaseRefCount();
+	void decreaseRefCount();
+	// clang-format on
 
 private:
-	QString _name;
-	QColor _diffuse{};
+	Project* _project{ nullptr };
+
+	QString _name{ "default" };
+	QColor _diffuse{ "#ffaa00" };
+	int _refCount{ 0 };
 
 signals:
-
+	void nameUpdated();
+	void diffuseUpdated();
+	void refCountUpdated();
 };
 } // namespace eno

@@ -59,7 +59,7 @@ void Shortcuts::initFile() {
 		if (path.isEmpty())
 			return;
 		if (Eno(this->_mapAction).load(path)) {
-			this->showMessage("Map %1 loaded");
+			this->showMessage(QString("Map %1 loaded").arg(this->_mapAction->project()->projectName()));
 		} else {
 			this->showMessage(QString("Failed to load %1").arg(path));
 		}
@@ -128,15 +128,16 @@ void Shortcuts::initGenerate() {
 	_generateOBJAction = new QAction(QIcon(":export/generate.png"), "Generate OBJ file", this);
 	_generateOBJAction->setToolTip("Generate the OBJ file corresponding at the project in a file");
 	connect(_generateOBJAction, &QAction::triggered, [this]() {
-		const QString& path = QFileDialog::getSaveFileName(qApp->activeWindow(), qApp->applicationName() + " - Export as", _mapAction->project()->projectName(), WavefrontOBJ::fileType);
+		const auto& path = QFileDialog::getSaveFileName(qApp->activeWindow(), qApp->applicationName() + " - Export as", _mapAction->project()->projectName(), WavefrontOBJ::fileType);
 		if (path.isEmpty())
 			return false;
 
+		const auto& name = this->_mapAction->project()->projectName();
 		if (WavefrontOBJ(this->_mapAction->project()).save(path)) {
-			showMessage(QString("Export %1 successed").arg(path));
+			showMessage(QString("Export %1 successed").arg(name));
 			return true;
 		} else {
-			showMessage(QString("Failed to export %1").arg(path));
+			showMessage(QString("Failed to export %1").arg(name));
 			return false;
 		}
 	});
@@ -175,11 +176,12 @@ bool Shortcuts::save(bool newPathRequested) {
 	if (path.isEmpty())
 		return false;
 
+	const auto& name = this->_mapAction->project()->projectName();
 	if (Eno(this->_mapAction).save(path)) {
-		showMessage(QString("Map %1 saved").arg(path));
+		showMessage(QString("Map %1 saved").arg(name));
 		return true;
 	} else {
-		showMessage(QString("Failed to save %1").arg(path));
+		showMessage(QString("Failed to save %1").arg(name));
 		return false;
 	}
 }
