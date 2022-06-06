@@ -28,6 +28,8 @@ class Project;
 using SceneData = QMap<QVector3D, Material*>;
 
 class Scene : public QObject {
+	friend class Eno;
+
 	Q_OBJECT
 
 public:
@@ -46,6 +48,7 @@ public:
 	void addItem(const QVector3D& pos, Material* material);
 	void removeItem(const QVector3D& pos);
 	bool findItem(const QVector3D& pos) const;
+	int countItems() const;
 	Material* materialAt(const QVector3D& pos) const;
 
 	SceneData::const_key_value_iterator begin() const;

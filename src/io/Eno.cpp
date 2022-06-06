@@ -1,48 +1,65 @@
 #include "Eno.hpp"
 
 #include <QFileInfo>
+#include <QDataStream>
 #include <QTextStream>
 
 #include "controller/MapAction.hpp"
 #include "data/Materials.hpp"
+#include "data/Material.hpp"
 #include "data/Project.hpp"
 #include "data/Scene.hpp"
 
-#include "EnoConverter.hpp"
-
 namespace eno {
+enum class EnoVersion : unsigned int {
+	v1 = 1u,
+};
+
 Eno::Eno(MapAction* mapAction)
 	: _project(mapAction->_project) {}
 
 bool Eno::save(const QString& path) {
 	assert(_project);
 
-	/*	QFile file(path);
+	QFile file(path);
 	if (!file.open(QIODevice::WriteOnly)) {
 		return false;
 	}
 
-	QTextStream tampon(&file);
-	tampon.setFieldWidth(8);
+	QDataStream stream(&file);
+
+	// Set Qt version
+	stream.setVersion(QDataStream::Qt_5_15);
 
 	// Write version
-	tampon << "Version:" << Eno::fileVersion << Qt::endl;
+	stream << Eno::fileVersion;
 
-	// Write min/max
-	const auto& min = _data->min() * 10.f;
-	const auto& max = _data->max() * 10.f;
-	tampon << min.x() << max.x() << min.y() << max.y() << Qt::endl;
-
-	// Write scene
-	for (const auto& item : *_data) {
-		const auto& vec = item.first * 10.f;
-		tampon << vec.x() << vec.y() << vec.z() << item.second.name() << Qt::endl;
+	// Write materials
+	auto* materials = _project->materials();
+	{
+		auto nbMaterials = materials->count();
+		stream << nbMaterials;
+		for (auto* material : *materials) {
+			stream << material->_uuid << material->_name << material->_diffuse;
+		}
 	}
 
+	auto* scene = _project->scene();
+	{
+		// Write min/max
+		stream << scene->_min << scene->_max;
+
+		// Write scene
+		auto nbItems = scene->countItems();
+		stream << nbItems;
+		for (const auto& item : *scene) {
+			stream << item.first << item.second->_uuid;
+		}
+	}
 	file.close();
 
-	_data->setFilePath(path);
-	_data->setIsModified(false);*/
+	_project->setFilePath(path);
+	_project->setIsModified(false);
 
 	return true;
 }
@@ -65,19 +82,22 @@ bool Eno::load(const QString& path) {
 	auto* materials = _project->materials();
 	auto* defaultMaterial = *(materials->begin());
 
-	QTextStream buffer(&file);
-	buffer.setFieldWidth(8);
+	QDataStream stream(&file);
 
-	// Retrieve version
-	QString bar{};
-	auto version = 1.f;
-	buffer >> bar >> version;
+	// Test Qt version
+	assert(stream.version() == QDataStream::Qt_5_15);
+
+	// Read version
+	auto version = Eno::fileVersion;
+	stream >> version;
 
 	try {
-		if (version == 1.0f) {
-			EnoConverter::convert1_0(buffer, _project);
-		} else {
-			assert(false);
+		switch (static_cast<EnoVersion>(version)) {
+			case EnoVersion::v1:
+				loadV1(stream);
+				break;
+			default:
+				assert(false);
 		}
 	} catch (...) {
 		_project->reset();
@@ -95,4 +115,50 @@ bool Eno::load(const QString& path) {
 
 	return true;
 }
+
+void Eno::loadV1(QDataStream& stream) {
+	const auto mapMaterials = loadMaterialsV1(stream);
+	loadSceneV1(stream, mapMaterials);
+}
+
+	// Materials load functions
+QMap<QUuid, Material*> Eno::loadMaterialsV1(QDataStream& stream) {
+	QMap<QUuid, Material*> mapMaterials;
+	auto* materials = _project->materials();
+	{
+		int nbMaterials = 0;
+		stream >> nbMaterials;
+		for (int i = 0; i < nbMaterials; ++i) {
+			auto* material = materials->createMaterial();
+			stream >> material->_uuid >> material->_name >> material->_diffuse;
+			materials->add(material);
+			mapMaterials.insert(material->_uuid, material);
+		}
+	}
+	return mapMaterials;
+}
+
+// Scene load functions
+void Eno::loadSceneV1(QDataStream& stream, const QMap<QUuid, Material*>& mapMaterials) {
+	auto* scene = _project->scene();
+	{
+		// Write min/max
+		stream >> scene->_min >> scene->_max;
+
+		// Write scene
+		int nbItems = 0;
+		stream >> nbItems;
+		for (int i = 0; i < nbItems; ++i) {
+			QVector3D pos;
+			QUuid uuid;
+			Material* material = nullptr;
+
+			stream >> pos >> uuid;
+			material = mapMaterials.value(uuid);
+
+			scene->addItem(pos, material);
+		}
+	}
+}
+
 } // namespace eno

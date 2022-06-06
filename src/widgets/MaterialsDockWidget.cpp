@@ -38,8 +38,7 @@ void MaterialsDockWidget::init(Materials* materials, MapAction* mapAction) {
 		this->_materials->add(material);
 	});
 	tb->addAction("Remove material", [this]() {
-		auto* item = this->_list->currentItem();
-		auto* material = item->data(Qt::UserRole).value<Material*>();
+		auto* material = this->currentMaterialSelected();
 		if (this->_materials->canRemove(material)) {
 			this->_materials->remove(material);
 		}
@@ -48,7 +47,6 @@ void MaterialsDockWidget::init(Materials* materials, MapAction* mapAction) {
 	_list = new QListWidget(w);
 	_name = new QLineEdit(w);
 	_diffuse = new QPushButton(w);
-	connect(_diffuse, &QPushButton::clicked, this, &MaterialsDockWidget::chooseDiffuse);
 	_refCount = new QLabel(w);
 
 	_list->setSortingEnabled(true);
@@ -64,12 +62,6 @@ void MaterialsDockWidget::init(Materials* materials, MapAction* mapAction) {
 
 	setWidget(w);
 
-	connect(_materials, &Materials::updated, this, &MaterialsDockWidget::resetList);
-	connect(_list, &QListWidget::itemSelectionChanged, this, &MaterialsDockWidget::updateForm);
-	connect(_list, &QListWidget::itemSelectionChanged, [this]() {
-		auto* material = this->currentMaterialSelected();
-		this->_mapAction->setMaterial(material);
-	});
 	connect(_mapAction, &MapAction::materialUpdated, [this]() {
 		for (int row = 0; row < this->_list->count(); ++row) {
 			auto* item = this->_list->item(row);
@@ -79,6 +71,20 @@ void MaterialsDockWidget::init(Materials* materials, MapAction* mapAction) {
 			}
 		}
 	});
+	connect(_materials, &Materials::updated, this, &MaterialsDockWidget::resetList);
+
+	connect(_list, &QListWidget::itemSelectionChanged, this, &MaterialsDockWidget::updateForm);
+	connect(_list, &QListWidget::itemSelectionChanged, [this]() {
+		auto* material = this->currentMaterialSelected();
+		this->_mapAction->setMaterial(material);
+	});
+
+	connect(_name, &QLineEdit::returnPressed, [this]() {
+		const auto& name = _name->text();
+		this->_list->currentItem()->setText(name);
+		this->currentMaterialSelected()->setName(name);
+	});
+	connect(_diffuse, &QPushButton::clicked, this, &MaterialsDockWidget::chooseDiffuse);
 }
 
 Material* MaterialsDockWidget::currentMaterialSelected() const {

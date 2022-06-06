@@ -59,7 +59,7 @@ void Shortcuts::initFile() {
 		if (path.isEmpty())
 			return;
 		if (Eno(this->_mapAction).load(path)) {
-			this->showMessage(QString("Map %1 loaded").arg(this->_mapAction->project()->projectName()));
+			this->showMessage(QString("Project [%1] loaded").arg(this->_mapAction->project()->projectName()));
 		} else {
 			this->showMessage(QString("Failed to load %1").arg(path));
 		}
@@ -178,7 +178,7 @@ bool Shortcuts::save(bool newPathRequested) {
 
 	const auto& name = this->_mapAction->project()->projectName();
 	if (Eno(this->_mapAction).save(path)) {
-		showMessage(QString("Map %1 saved").arg(name));
+		showMessage(QString("Project [%1] saved").arg(name));
 		return true;
 	} else {
 		showMessage(QString("Failed to save %1").arg(name));

@@ -44,6 +44,10 @@ void Materials::remove(Material* material) {
 	}
 }
 
+int Materials::count() const {
+	return _materials.count();
+}
+
 QList<Material*>::const_iterator Materials::begin() const {
 	return _materials.begin();
 }

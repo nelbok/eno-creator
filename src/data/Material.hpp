@@ -3,11 +3,14 @@
 #include <QObject>
 
 #include <QColor>
+#include <QUuid>
 
 namespace eno {
 class Project;
 
 class Material : public QObject {
+	friend class Eno;
+
 	Q_OBJECT
 
 public:
@@ -29,6 +32,7 @@ public:
 private:
 	Project* _project{ nullptr };
 
+	QUuid _uuid{ QUuid::createUuid() };
 	QString _name{ "default" };
 	QColor _diffuse{ "#ffaa00" };
 	int _refCount{ 0 };

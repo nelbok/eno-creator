@@ -43,7 +43,6 @@ set(PROJECT_SOURCES
 	
 	src/io/Eno.cpp
 	src/io/Eno.hpp
-	src/io/EnoConverter.hpp
 	src/io/WavefrontOBJ.cpp
 	src/io/WavefrontOBJ.hpp
 

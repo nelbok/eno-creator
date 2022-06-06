@@ -73,6 +73,10 @@ bool Scene::findItem(const QVector3D& pos) const {
 	return _sceneData.contains(pos);
 }
 
+int Scene::countItems() const {
+	return _sceneData.count();
+}
+
 Material* Scene::materialAt(const QVector3D& pos) const {
 	assert(findItem(pos));
 	return _sceneData.value(pos, {});

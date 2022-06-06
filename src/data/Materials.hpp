@@ -21,6 +21,7 @@ public:
 	void add(Material* material);
 	bool canRemove(Material* material);
 	void remove(Material* material);
+	int count() const;
 
 	QList<Material*>::const_iterator begin() const;
 	QList<Material*>::const_iterator end() const;
