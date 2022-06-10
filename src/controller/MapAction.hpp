@@ -62,6 +62,7 @@ public:
 
 	void mousePressEvent(const QVector3D& pos);
 	void mouseMoveEvent(const QVector3D& pos);
+	const Qt::CursorShape cursorShape(const QVector3D& pos) const;
 
 private:
 	bool validPosition(const QVector3D& pos) const;

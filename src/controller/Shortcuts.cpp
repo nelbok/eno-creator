@@ -47,6 +47,8 @@ void Shortcuts::resetActions() {
 void Shortcuts::initFile() {
 	_newAction = new QAction("New file", this);
 	connect(_newAction, &QAction::triggered, [this]() {
+		if (!needToSave())
+			return;
 		this->_mapAction->reset();
 		this->resetActions();
 		this->showMessage("New map created");
@@ -55,6 +57,8 @@ void Shortcuts::initFile() {
 
 	_openAction = new QAction("Open", this);
 	connect(_openAction, &QAction::triggered, [this]() {
+		if (!needToSave())
+			return;
 		const auto& path = QFileDialog::getOpenFileName(qApp->activeWindow(), qApp->applicationName() + " - Open", "", Eno::fileType);
 		if (path.isEmpty())
 			return;
@@ -77,19 +81,8 @@ void Shortcuts::initFile() {
 
 	_quitAction = new QAction("Quit", this);
 	connect(_quitAction, &QAction::triggered, [this]() {
-		if (_mapAction->project()->isModified()) {
-			const auto& button = QMessageBox::warning(qApp->activeWindow(), qApp->applicationName(), "The map has been modified.\nDo you want to save your changes?",
-				QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel, QMessageBox::Save);
-			switch (button) {
-				case QMessageBox::Save:
-					save(false);
-					break;
-				case QMessageBox::Cancel:
-					return;
-				default:
-					break;
-			}
-		}
+		if (!needToSave())
+			return;
 		qApp->exit();
 	});
 }
@@ -157,6 +150,23 @@ void Shortcuts::initOthers() {
 	connect(_aboutQtAction, &QAction::triggered, [this]() {
 		QMessageBox::aboutQt(qApp->activeWindow(), qApp->applicationName());
 	});
+}
+
+bool Shortcuts::needToSave() {
+	if (_mapAction->project()->isModified()) {
+		const auto& button = QMessageBox::warning(qApp->activeWindow(), qApp->applicationName(), "The project has been modified.\nDo you want to save your changes?",
+			QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel, QMessageBox::Save);
+		switch (button) {
+			case QMessageBox::Cancel:
+				return false;
+			case QMessageBox::Save:
+				save(false);
+				break;
+			default:
+				break;
+		}
+	}
+	return true;
 }
 
 bool Shortcuts::save(bool newPathRequested) {

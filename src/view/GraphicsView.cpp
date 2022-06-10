@@ -69,6 +69,7 @@ void GraphicsView::mouseMoveEvent(QMouseEvent* e) {
 		_mapAction->mouseMoveEvent(pos);
 	}
 	pointerPositionUpdated();
+	setCursor(_mapAction->cursorShape(pos));
 }
 
 void GraphicsView::updateShapes() {

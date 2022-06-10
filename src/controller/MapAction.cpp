@@ -119,6 +119,25 @@ void MapAction::mouseMoveEvent(const QVector3D& pos) {
 	}
 }
 
+const Qt::CursorShape MapAction::cursorShape(const QVector3D& pos) const {
+	auto shape = Qt::CursorShape::ArrowCursor;
+	switch (_typeAction) {
+		case TypeAction::Remove:
+			// Nothing to do
+			break;
+		case TypeAction::Add:
+			// Nothing to do
+			break;
+		case TypeAction::Picker:
+			shape = Qt::CrossCursor;
+			break;
+		case TypeAction::Resize:
+			shape = Qt::SizeAllCursor;
+			break;
+	}
+	return shape;
+}
+
 bool MapAction::validPosition(const QVector3D& pos) const {
 	auto* scene = _project->scene();
 	return (scene->min().x() <= pos.x() && pos.x() < scene->max().x()) && (scene->min().y() <= pos.z() && pos.z() < scene->max().y());

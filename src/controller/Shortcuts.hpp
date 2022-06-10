@@ -45,6 +45,7 @@ private:
 	void initGenerate();
 	void initOthers();
 
+	bool needToSave();
 	bool save(bool newPathRequested);
 
 	MapAction* _mapAction{ nullptr };
