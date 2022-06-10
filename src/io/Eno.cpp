@@ -27,8 +27,6 @@ bool Eno::save(const QString& path) {
 	}
 
 	QDataStream stream(&file);
-
-	// Set Qt version
 	stream.setVersion(QDataStream::Qt_5_15);
 
 	// Write version
@@ -83,9 +81,7 @@ bool Eno::load(const QString& path) {
 	auto* defaultMaterial = *(materials->begin());
 
 	QDataStream stream(&file);
-
-	// Test Qt version
-	assert(stream.version() == QDataStream::Qt_5_15);
+	stream.setVersion(QDataStream::Qt_5_15);
 
 	// Read version
 	auto version = Eno::fileVersion;
