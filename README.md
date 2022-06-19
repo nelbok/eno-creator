@@ -33,13 +33,13 @@ Warning: Might not working on macOS or Linux.
 ## Compilation
 
 Example with Qt5 and Visual Studio 2022 on Windows:
-cmake -S . -B "build5" -G "Visual Studio 17 2022" -D "CMAKE_PREFIX_PATH=D:/Qt/5.15.2/msvc2019_64"
-cmake --build build5
+- cmake -S . -B "build5" -G "Visual Studio 17 2022" -D "CMAKE_PREFIX_PATH=D:/Qt/5.15.2/msvc2019_64"
+- cmake --build build5
 
 Example with Qt6 and Visual Studio 2022 on Windows:
-cmake -S . -B "build6" -G "Visual Studio 17 2022" -D "CMAKE_PREFIX_PATH=D:/Qt/6.3.0/msvc2019_64"
-cmake --build build6
+- cmake -S . -B "build6" -G "Visual Studio 17 2022" -D "CMAKE_PREFIX_PATH=D:/Qt/6.3.0/msvc2019_64"
+- cmake --build build6
 
 Example on Linux when you already have either Qt5 or Qt6 installed:
-cmake -S . -B "build"
-cmake --build build
+- cmake -S . -B "build"
+- cmake --build build

@@ -38,6 +38,10 @@ set(PROJECT_SOURCES
 	src/data/Scene.cpp
 	src/data/Scene.hpp
 
+	src/engine/CuboidGeometry.cpp
+	src/engine/CuboidGeometry.hpp
+	src/engine/CuboidMesh.cpp
+	src/engine/CuboidMesh.hpp
 	src/engine/Engine.cpp
 	src/engine/Engine.hpp
 	

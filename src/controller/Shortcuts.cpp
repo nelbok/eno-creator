@@ -139,7 +139,7 @@ void Shortcuts::initGenerate() {
 	_generate3DAction->setToolTip("Open the 3D view and show the current scene inside");
 	connect(_generate3DAction, &QAction::triggered, [this]() {
 		auto* widget = new Engine();
-		widget->init(_mapAction->project()->scene());
+		widget->init(_mapAction->project());
 		widget->show();
 		this->showMessage("Work In Progress");
 	});

@@ -13,7 +13,7 @@ class Qt3DWindow;
 }
 
 namespace eno {
-class Scene;
+class Project;
 class Material;
 
 class Engine : public QWidget {
@@ -23,19 +23,15 @@ public:
 	Engine(QWidget* parent = 0);
 	virtual ~Engine() = default;
 
-	void init(const Scene* scene);
+	void init(const Project* scene);
 
 private:
 	void initCamera();
 	void initLight();
-	void initCube();
 
 	Qt3DCore::QComponent* getMaterialBy(Material* color);
 
 	Qt3DExtras::Qt3DWindow* _view{ nullptr };
 	Qt3DCore::QEntity* _root{ nullptr };
-	Qt3DCore::QComponent* _mesh{ nullptr };
-
-	QMap<Material*, Qt3DCore::QComponent*> _materials{};
 };
 } // namespace eno
