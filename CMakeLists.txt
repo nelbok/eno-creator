@@ -47,6 +47,8 @@ set(PROJECT_SOURCES
 	
 	src/io/Eno.cpp
 	src/io/Eno.hpp
+	src/io/IOThread.cpp
+	src/io/IOThread.hpp
 	src/io/WavefrontOBJ.cpp
 	src/io/WavefrontOBJ.hpp
 

@@ -4,7 +4,6 @@
 #include <QDataStream>
 #include <QTextStream>
 
-#include "controller/MapAction.hpp"
 #include "data/Materials.hpp"
 #include "data/Material.hpp"
 #include "data/Project.hpp"
@@ -15,13 +14,10 @@ enum class EnoVersion : unsigned int {
 	v1 = 1u,
 };
 
-Eno::Eno(MapAction* mapAction)
-	: _project(mapAction->_project) {}
-
-bool Eno::save(const QString& path) {
+bool Eno::save() {
 	assert(_project);
 
-	QFile file(path);
+	QFile file(_path);
 	if (!file.open(QIODevice::WriteOnly)) {
 		return false;
 	}
@@ -56,16 +52,16 @@ bool Eno::save(const QString& path) {
 	}
 	file.close();
 
-	_project->setFilePath(path);
+	_project->setFilePath(_path);
 	_project->setIsModified(false);
 
 	return true;
 }
 
-bool Eno::load(const QString& path) {
+bool Eno::load() {
 	assert(_project);
 
-	QFile file(path);
+	QFile file(_path);
 	if (!file.open(QIODevice::ReadOnly)) {
 		assert(false);
 		return false;
@@ -73,11 +69,12 @@ bool Eno::load(const QString& path) {
 
 	// Reset and begin transaction
 	_project->blockSignals(true);
+	auto* materials = _project->materials();
+	materials->blockSignals(true);
 	_project->reset();
-	_project->setFilePath(path);
+	_project->setFilePath(_path);
 
 	// Remove default material
-	auto* materials = _project->materials();
 	auto* defaultMaterial = *(materials->begin());
 
 	QDataStream stream(&file);
@@ -103,11 +100,9 @@ bool Eno::load(const QString& path) {
 	// Remove old default material
 	materials->remove(defaultMaterial);
 
+	materials->blockSignals(false);
 	_project->blockSignals(false);
 	_project->setIsModified(false);
-	_project->materials()->updated();
-	_project->scene()->rectUpdated();
-	_project->scene()->dataUpdated();
 
 	return true;
 }

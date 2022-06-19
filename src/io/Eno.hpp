@@ -3,24 +3,24 @@
 #include <QMap>
 #include <QUuid>
 
+#include "IOThread.hpp"
+
 class QString;
 class QDataStream;
 
 namespace eno {
-class MapAction;
 class Material;
-class Project;
 
-class Eno {
+class Eno : public IOThread {
 public:
 	static constexpr auto fileType = "ENO file (*.eno)";
 	static constexpr auto fileVersion = 1u;
 
-	Eno(MapAction* mapAction);
-	virtual ~Eno() = default;
+	using IOThread::IOThread;
 
-	bool save(const QString& path);
-	bool load(const QString& path);
+protected:
+	virtual bool save() override;
+	virtual bool load() override;
 
 private:
 	void loadV1(QDataStream& stream);
@@ -30,7 +30,5 @@ private:
 
 	// Scene load functions
 	void loadSceneV1(QDataStream& stream, const QMap<QUuid, Material*>& mapMaterials);
-
-	Project* _project{ nullptr };
 };
 } // namespace eno

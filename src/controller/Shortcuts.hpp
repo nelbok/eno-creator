@@ -46,7 +46,7 @@ private:
 	void initOthers();
 
 	bool needToSave();
-	bool save(bool newPathRequested);
+	void save(bool newPathRequested);
 
 	MapAction* _mapAction{ nullptr };
 
@@ -73,5 +73,6 @@ private:
 signals:
 	void updated();
 	void showMessage(const QString& message);
+	void showProgressBar(bool visible);
 };
 } // namespace eno

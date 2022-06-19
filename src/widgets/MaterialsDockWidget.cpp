@@ -100,6 +100,7 @@ void MaterialsDockWidget::resetList() {
 	}
 	QListWidgetItem* currentItem = nullptr;
 
+	_list->blockSignals(true);
 	_list->clear();
 	for (auto* material : *_materials) {
 		auto* item = new QListWidgetItem;
@@ -112,6 +113,7 @@ void MaterialsDockWidget::resetList() {
 			currentItem = item;
 		}
 	}
+	_list->blockSignals(false);
 	if (currentItem) {
 		_list->setCurrentItem(currentItem);
 	} else {

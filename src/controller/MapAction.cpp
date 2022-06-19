@@ -85,6 +85,11 @@ const Project* MapAction::project() const {
 	return _project;
 }
 
+Project* MapAction::project() {
+	assert(_project);
+	return _project;
+}
+
 void MapAction::mousePressEvent(const QVector3D& pos) {
 	switch (_typeAction) {
 		case TypeAction::Remove:

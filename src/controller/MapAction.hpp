@@ -11,8 +11,6 @@ class Project;
 class Material;
 
 class MapAction : public QObject {
-	friend class Eno;
-
 	Q_OBJECT
 
 public:
@@ -59,6 +57,7 @@ public:
 	Zoom zoom() const;
 
 	const Project* project() const;
+	Project* project();
 
 	void mousePressEvent(const QVector3D& pos);
 	void mouseMoveEvent(const QVector3D& pos);

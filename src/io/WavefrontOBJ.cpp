@@ -16,16 +16,13 @@ bool operator==(const WavefrontOBJ::Triangle& p1, const WavefrontOBJ::Triangle& 
 	return (p1.one == p2.one) && (p1.two == p2.two) && (p1.three == p2.three);
 }
 
-WavefrontOBJ::WavefrontOBJ(const Project* project)
-	: _project(project) {}
-
-bool WavefrontOBJ::save(const QString& path) {
+bool WavefrontOBJ::save() {
 	assert(_project);
 	bool success = true;
 
 	compute();
-	success &= writeObjFile(path);
-	success &= writeMtlFile(path);
+	success &= writeObjFile();
+	success &= writeMtlFile();
 
 	return success;
 }
@@ -75,8 +72,8 @@ void WavefrontOBJ::insertTriangle(Material* material, const Triangle& triangle) 
 	}
 }
 
-bool WavefrontOBJ::writeObjFile(const QString& path) {
-	QFile file(path);
+bool WavefrontOBJ::writeObjFile() {
+	QFile file(_path);
 	if (!file.open(QIODevice::WriteOnly)) {
 		return false;
 	}
@@ -86,7 +83,7 @@ bool WavefrontOBJ::writeObjFile(const QString& path) {
 	tampon << "o " << _project->projectName() << Qt::endl;
 
 	// Material file name
-	QFileInfo fileInfo(path);
+	QFileInfo fileInfo(_path);
 	tampon << "mtllib " << fileInfo.baseName() << ".mtl" << Qt::endl;
 
 	tampon << "# vertices" << Qt::endl;
@@ -110,8 +107,8 @@ bool WavefrontOBJ::writeObjFile(const QString& path) {
 	return true;
 }
 
-bool WavefrontOBJ::writeMtlFile(const QString& path) {
-	QFileInfo fileInfo(path);
+bool WavefrontOBJ::writeMtlFile() {
+	QFileInfo fileInfo(_path);
 	QString pathMtl = fileInfo.path() + "/" + fileInfo.baseName() + ".mtl";
 
 	QFile file(pathMtl);

@@ -6,7 +6,9 @@
 #include <QFileDialog>
 #include <QMessageBox>
 
+#include "data/Materials.hpp"
 #include "data/Project.hpp"
+#include "data/Scene.hpp"
 #include "engine/Engine.hpp"
 #include "io/Eno.hpp"
 #include "io/WavefrontOBJ.hpp"
@@ -62,11 +64,23 @@ void Shortcuts::initFile() {
 		const auto& path = QFileDialog::getOpenFileName(qApp->activeWindow(), qApp->applicationName() + " - Open", "", Eno::fileType);
 		if (path.isEmpty())
 			return;
-		if (Eno(this->_mapAction).load(path)) {
-			this->showMessage(QString("Project [%1] loaded").arg(this->_mapAction->project()->projectName()));
-		} else {
-			this->showMessage(QString("Failed to load %1").arg(path));
-		}
+
+		showProgressBar(true);
+		auto* thread = new Eno(this->_mapAction->project(), path, IOThread::Type::Load);
+		connect(thread, &Eno::finished, this, [this, thread, path]() {
+			showProgressBar(false);
+			// Project has been loaded or it failed!
+			this->_mapAction->project()->materials()->updated();
+			this->_mapAction->project()->scene()->rectUpdated();
+			this->_mapAction->project()->scene()->dataUpdated();
+			if (thread->result()) {
+				showMessage(QString("Project [%1] loaded").arg(this->_mapAction->project()->projectName()));
+			} else {
+				showMessage(QString("Failed to load %1").arg(path));
+			}
+			thread->deleteLater();
+		});
+		thread->start();
 	});
 
 	_saveAction = new QAction("Save", this);
@@ -99,19 +113,19 @@ void Shortcuts::initTools() {
 		group->addAction(action);
 		return action;
 	};
-	_removeAction = createTools(QIcon(":items/remove.png"), "Eraser tool", "Select the tool to erase an item", [this]() {
+	_removeAction = createTools(QIcon(":items/remove.png"), "Eraser tool", "To erase an item on the map", [this]() {
 		this->_mapAction->setTypeAction(MapAction::TypeAction::Remove);
 		this->showMessage("Eraser tool selected");
 	});
-	_addAction = createTools(QIcon(":items/add.png"), "Pen tool", "Select the tool to add an item", [this]() {
+	_addAction = createTools(QIcon(":items/add.png"), "Pen tool", "To add an item on the map", [this]() {
 		this->_mapAction->setTypeAction(MapAction::TypeAction::Add);
 		this->showMessage("Add tool selected");
 	});
-	_pickerAction = createTools(QIcon(":items/picker.png"), "Picker tool", "Select the tool to pick a color on the map", [this]() {
+	_pickerAction = createTools(QIcon(":items/picker.png"), "Picker tool", "To pick a color on the map", [this]() {
 		this->_mapAction->setTypeAction(MapAction::TypeAction::Picker);
 		this->showMessage("Picker tool selected");
 	});
-	_resizeAction = createTools(QIcon(":items/resize.png"), "Resizing tool", "Select the tool to resize the map, warning, downgrade the size might erase a portion of the map!", [this]() {
+	_resizeAction = createTools(QIcon(":items/resize.png"), "Resizing tool", "To resize the map, warning, downgrade the size might erase a portion of the map!", [this]() {
 		this->_mapAction->setTypeAction(MapAction::TypeAction::Resize);
 		this->showMessage("Resize tool selected");
 	});
@@ -119,29 +133,34 @@ void Shortcuts::initTools() {
 
 void Shortcuts::initGenerate() {
 	_generateOBJAction = new QAction(QIcon(":export/generate.png"), "Generate OBJ file", this);
-	_generateOBJAction->setToolTip("Generate the OBJ file corresponding at the project in a file");
+	_generateOBJAction->setToolTip("Generate the OBJ file corresponding to the project");
 	connect(_generateOBJAction, &QAction::triggered, [this]() {
 		const auto& path = QFileDialog::getSaveFileName(qApp->activeWindow(), qApp->applicationName() + " - Export as", _mapAction->project()->projectName(), WavefrontOBJ::fileType);
 		if (path.isEmpty())
-			return false;
+			return;
 
-		const auto& name = this->_mapAction->project()->projectName();
-		if (WavefrontOBJ(this->_mapAction->project()).save(path)) {
-			showMessage(QString("Export %1 successed").arg(name));
-			return true;
-		} else {
-			showMessage(QString("Failed to export %1").arg(name));
-			return false;
-		}
+		showProgressBar(true);
+		auto* thread = new WavefrontOBJ(this->_mapAction->project(), path, IOThread::Type::Save);
+		connect(thread, &WavefrontOBJ::finished, this, [this, thread]() {
+			showProgressBar(false);
+			const auto& name = this->_mapAction->project()->projectName();
+			if (thread->result()) {
+				showMessage(QString("Export %1 successed").arg(name));
+			} else {
+				showMessage(QString("Failed to export %1").arg(name));
+			}
+			thread->deleteLater();
+		});
+		thread->start();
 	});
 
 	_generate3DAction = new QAction(QIcon(":export/opengl.png"), "Open 3D view", this);
-	_generate3DAction->setToolTip("Open the 3D view and show the current scene inside");
+	_generate3DAction->setToolTip("Show the project in the 3D view");
 	connect(_generate3DAction, &QAction::triggered, [this]() {
 		auto* widget = new Engine();
 		widget->init(_mapAction->project());
 		widget->show();
-		this->showMessage("Work In Progress");
+		this->showMessage("Loading");
 	});
 }
 
@@ -169,7 +188,7 @@ bool Shortcuts::needToSave() {
 	return true;
 }
 
-bool Shortcuts::save(bool newPathRequested) {
+void Shortcuts::save(bool newPathRequested) {
 	QString path = _mapAction->project()->filePath();
 
 	QFileInfo fileInfo(path);
@@ -184,16 +203,21 @@ bool Shortcuts::save(bool newPathRequested) {
 		path = QFileDialog::getSaveFileName(qApp->activeWindow(), qApp->applicationName() + " - Save as", currentPath, Eno::fileType);
 	}
 	if (path.isEmpty())
-		return false;
+		return;
 
-	const auto& name = this->_mapAction->project()->projectName();
-	if (Eno(this->_mapAction).save(path)) {
-		showMessage(QString("Project [%1] saved").arg(name));
-		return true;
-	} else {
-		showMessage(QString("Failed to save %1").arg(name));
-		return false;
-	}
+	showProgressBar(true);
+	auto* thread = new Eno(this->_mapAction->project(), path, IOThread::Type::Save);
+	connect(thread, &Eno::finished, this, [this, thread, path]() {
+		showProgressBar(false);
+		const auto& name = this->_mapAction->project()->projectName();
+		if (thread->result()) {
+			showMessage(QString("Project [%1] saved").arg(name));
+		} else {
+			showMessage(QString("Failed to save %1").arg(name));
+		}
+		thread->deleteLater();
+	});
+	thread->start();
 }
 
 } // namespace eno

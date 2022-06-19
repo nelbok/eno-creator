@@ -1,6 +1,7 @@
 #include "GraphicsShape.hpp"
 
 #include <QPainter>
+#include <QCoreApplication>
 
 #include "controller/MapAction.hpp"
 #include "data/Project.hpp"
@@ -24,6 +25,11 @@ QRectF GraphicsShape::boundingRect() const {
 }
 
 void GraphicsShape::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*) {
+	// Avoid scene graph update while loading a file
+	if (_mapAction->project()->thread() != QCoreApplication::instance()->thread()) {
+		return;
+	}
+
 	QPen pen;
 	QBrush brush{ Qt::SolidPattern };
 	if (_mode == Mode::Below) {

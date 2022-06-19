@@ -3,6 +3,7 @@
 #include <QCloseEvent>
 #include <QCoreApplication>
 #include <QMenuBar>
+#include <QProgressBar>
 #include <QStatusBar>
 #include <QToolBar>
 
@@ -46,6 +47,25 @@ void MainWindow::showMessage(const QString& message) {
 	statusBar()->showMessage(message, 2000);
 }
 
+void MainWindow::showProgressBar(bool visible) {
+	if (visible) {
+		if (!_progressBar) {
+			_progressBar = new QProgressBar;
+			_progressBar->setRange(0, 0);
+		}
+		statusBar()->addWidget(_progressBar);
+		setEnabled(false);
+	} else {
+		statusBar()->removeWidget(_progressBar);
+		if (_progressBar) {
+			_progressBar->deleteLater();
+			_progressBar = nullptr;
+		}
+		setEnabled(true);
+	}
+}
+
+
 void MainWindow::initUi() {
 	_project = new Project(this);
 	_project->init();
@@ -57,6 +77,7 @@ void MainWindow::initUi() {
 	_shortcuts = new Shortcuts(_mapAction, this);
 	_shortcuts->initActions();
 	connect(_shortcuts, &Shortcuts::showMessage, this, &MainWindow::showMessage);
+	connect(_shortcuts, &Shortcuts::showProgressBar, this, &MainWindow::showProgressBar);
 
 	_graphicsView = new GraphicsView(_mapAction, this);
 	_graphicsView->init();

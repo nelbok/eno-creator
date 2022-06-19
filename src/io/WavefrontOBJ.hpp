@@ -4,11 +4,14 @@
 #include <QMap>
 #include <QVector3D>
 
+#include "IOThread.hpp"
+
 namespace eno {
-class Project;
 class Material;
 
-class WavefrontOBJ {
+class WavefrontOBJ : public IOThread {
+	Q_OBJECT
+
 public:
 	struct Triangle {
 		int one{};
@@ -18,19 +21,18 @@ public:
 
 	static constexpr auto fileType = "Wavefront OBJ (*.obj)";
 
-	WavefrontOBJ(const Project* project);
-	virtual ~WavefrontOBJ() = default;
+	using IOThread::IOThread;
 
-	bool save(const QString& path);
+protected:
+	virtual bool save() override;
 
 private:
 	void compute();
 	int getIndexBy(const QVector3D& vertex);
 	void insertTriangle(Material* material, const Triangle& triangle);
-	bool writeObjFile(const QString& path);
-	bool writeMtlFile(const QString& path);
+	bool writeObjFile();
+	bool writeMtlFile();
 
-	const Project* _project{ nullptr };
 	QList<QVector3D> _vertices{};
 	QMap<Material*, QList<Triangle>> _triangles;
 };
