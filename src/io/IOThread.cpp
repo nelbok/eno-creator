@@ -20,19 +20,19 @@ IOThread::IOThread(Project* project, const QString& path, Type type)
 	}
 }
 
-bool IOThread::result() const {
+IOThread::Result IOThread::result() const {
 	return _result;
 }
 
 void IOThread::run() {
 	switch (_type) {
 		case Type::Load:
-			_result = load();
+			load();
 			// Not thread safe!!!
 			_project->moveToThread(QCoreApplication::instance()->thread());
 			break;
 		case Type::Save:
-			_result = save();
+			save();
 			break;
 		default:
 			assert(false);
@@ -40,14 +40,12 @@ void IOThread::run() {
 	}
 }
 
-bool IOThread::save() {
+void IOThread::save() {
 	assert(false);
-	return false;
 }
 
-bool IOThread::load() {
+void IOThread::load() {
 	assert(false);
-	return false;
 }
 
 } // namespace eno

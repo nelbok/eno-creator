@@ -65,18 +65,24 @@ void Shortcuts::initFile() {
 		if (path.isEmpty())
 			return;
 
-		showProgressBar(true);
 		auto* thread = new Eno(this->_mapAction->project(), path, IOThread::Type::Load);
+		showProgressDialog(true, thread);
 		connect(thread, &Eno::finished, this, [this, thread, path]() {
-			showProgressBar(false);
+			showProgressDialog(false);
 			// Project has been loaded or it failed!
 			this->_mapAction->project()->materials()->updated();
 			this->_mapAction->project()->scene()->rectUpdated();
 			this->_mapAction->project()->scene()->dataUpdated();
-			if (thread->result()) {
-				showMessage(QString("Project [%1] loaded").arg(this->_mapAction->project()->projectName()));
-			} else {
-				showMessage(QString("Failed to load %1").arg(path));
+			switch (thread->result()) {
+				case IOThread::Result::Success:
+					showMessage(QString("Project [%1] loaded").arg(this->_mapAction->project()->projectName()));
+					break;
+				case IOThread::Result::Canceled:
+					showMessage(QString("Loading project [%1] canceled").arg(this->_mapAction->project()->projectName()));
+					break;
+				default:
+					showMessage(QString("Failed to load %1").arg(path));
+					break;
 			}
 			thread->deleteLater();
 		});
@@ -139,15 +145,21 @@ void Shortcuts::initGenerate() {
 		if (path.isEmpty())
 			return;
 
-		showProgressBar(true);
 		auto* thread = new WavefrontOBJ(this->_mapAction->project(), path, IOThread::Type::Save);
+		showProgressDialog(true, thread);
 		connect(thread, &WavefrontOBJ::finished, this, [this, thread]() {
-			showProgressBar(false);
+			showProgressDialog(false);
 			const auto& name = this->_mapAction->project()->projectName();
-			if (thread->result()) {
-				showMessage(QString("Export %1 successed").arg(name));
-			} else {
-				showMessage(QString("Failed to export %1").arg(name));
+			switch (thread->result()) {
+				case IOThread::Result::Success:
+					showMessage(QString("Export %1 successed").arg(name));
+					break;
+				case IOThread::Result::Canceled:
+					showMessage(QString("Export %1 canceled").arg(name));
+					break;
+				default:
+					showMessage(QString("Failed to export %1").arg(name));
+					break;
 			}
 			thread->deleteLater();
 		});
@@ -205,15 +217,26 @@ void Shortcuts::save(bool newPathRequested) {
 	if (path.isEmpty())
 		return;
 
-	showProgressBar(true);
 	auto* thread = new Eno(this->_mapAction->project(), path, IOThread::Type::Save);
+	showProgressDialog(true, thread);
 	connect(thread, &Eno::finished, this, [this, thread, path]() {
-		showProgressBar(false);
+		showProgressDialog(false);
 		const auto& name = this->_mapAction->project()->projectName();
-		if (thread->result()) {
+		if (thread->result() == IOThread::Result::Success) {
 			showMessage(QString("Project [%1] saved").arg(name));
 		} else {
 			showMessage(QString("Failed to save %1").arg(name));
+		}
+		switch (thread->result()) {
+			case IOThread::Result::Success:
+				showMessage(QString("Project [%1] saved").arg(name));
+				break;
+			case IOThread::Result::Canceled:
+				showMessage(QString("Savind project [%1] canceled").arg(name));
+				break;
+			default:
+				showMessage(QString("Failed to save %1").arg(name));
+				break;
 		}
 		thread->deleteLater();
 	});

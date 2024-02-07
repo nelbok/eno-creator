@@ -2,7 +2,8 @@
 
 #include <QMainWindow>
 
-class QProgressBar;
+class QProgressDialog;
+class QThread;
 
 namespace eno {
 class Project;
@@ -25,7 +26,7 @@ protected:
 private slots:
 	void updateWindowTitle();
 	void showMessage(const QString& message);
-	void showProgressBar(bool visible);
+	void showProgressDialog(bool visible, QThread* thread = nullptr);
 
 private:
 	void initMainMenu();
@@ -42,6 +43,6 @@ private:
 
 	// Interface
 	GraphicsView* _graphicsView{ nullptr };
-	QProgressBar* _progressBar{ nullptr };
+	QProgressDialog* _progressDialog{ nullptr };
 };
 } // namespace eno

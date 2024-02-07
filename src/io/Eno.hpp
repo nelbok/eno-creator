@@ -19,8 +19,8 @@ public:
 	using IOThread::IOThread;
 
 protected:
-	virtual bool save() override;
-	virtual bool load() override;
+	virtual void save() override;
+	virtual void load() override;
 
 private:
 	void loadV1(QDataStream& stream);

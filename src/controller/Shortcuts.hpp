@@ -3,6 +3,7 @@
 #include <QObject>
 
 class QAction;
+class QThread;
 
 namespace eno {
 class MapAction;
@@ -73,6 +74,6 @@ private:
 signals:
 	void updated();
 	void showMessage(const QString& message);
-	void showProgressBar(bool visible);
+	void showProgressDialog(bool visible, QThread* thread = nullptr);
 };
 } // namespace eno

@@ -3,8 +3,9 @@
 #include <QCloseEvent>
 #include <QCoreApplication>
 #include <QMenuBar>
-#include <QProgressBar>
+#include <QProgressDialog>
 #include <QStatusBar>
+#include <QThread>
 #include <QToolBar>
 
 #include "data/Project.hpp"
@@ -47,20 +48,24 @@ void MainWindow::showMessage(const QString& message) {
 	statusBar()->showMessage(message, 2000);
 }
 
-void MainWindow::showProgressBar(bool visible) {
+void MainWindow::showProgressDialog(bool visible, QThread* thread) {
 	if (visible) {
-		if (!_progressBar) {
-			_progressBar = new QProgressBar;
-			_progressBar->setRange(0, 0);
-		}
-		statusBar()->addWidget(_progressBar);
+		assert(!_progressDialog);
+		assert(thread);
+		_progressDialog = new QProgressDialog;
+		_progressDialog->setWindowFlags(Qt::Window | Qt::WindowTitleHint | Qt::CustomizeWindowHint);
+		_progressDialog->setWindowModality(Qt::ApplicationModal);
+		_progressDialog->setFixedSize(250, 100);
+		_progressDialog->setRange(0, 0);
+		connect(_progressDialog, &QProgressDialog::canceled, [thread]() {
+			thread->requestInterruption();
+		});
+		_progressDialog->show();
 		setEnabled(false);
 	} else {
-		statusBar()->removeWidget(_progressBar);
-		if (_progressBar) {
-			_progressBar->deleteLater();
-			_progressBar = nullptr;
-		}
+		assert(_progressDialog);
+		_progressDialog->deleteLater();
+		_progressDialog = nullptr;
 		setEnabled(true);
 	}
 }
@@ -77,7 +82,7 @@ void MainWindow::initUi() {
 	_shortcuts = new Shortcuts(_mapAction, this);
 	_shortcuts->initActions();
 	connect(_shortcuts, &Shortcuts::showMessage, this, &MainWindow::showMessage);
-	connect(_shortcuts, &Shortcuts::showProgressBar, this, &MainWindow::showProgressBar);
+	connect(_shortcuts, &Shortcuts::showProgressDialog, this, &MainWindow::showProgressDialog);
 
 	_graphicsView = new GraphicsView(_mapAction, this);
 	_graphicsView->init();

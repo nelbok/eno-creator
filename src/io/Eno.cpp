@@ -1,8 +1,8 @@
 #include "Eno.hpp"
 
+#include <QSaveFile>
 #include <QFileInfo>
 #include <QDataStream>
-#include <QTextStream>
 
 #include "data/Materials.hpp"
 #include "data/Material.hpp"
@@ -14,12 +14,13 @@ enum class EnoVersion : unsigned int {
 	v1 = 1u,
 };
 
-bool Eno::save() {
+void Eno::save() {
 	assert(_project);
 
-	QFile file(_path);
+	QSaveFile file(_path);
 	if (!file.open(QIODevice::WriteOnly)) {
-		return false;
+		_result = Result::Error;
+		return;
 	}
 
 	QDataStream stream(&file);
@@ -34,6 +35,9 @@ bool Eno::save() {
 		auto nbMaterials = materials->count();
 		stream << nbMaterials;
 		for (auto* material : *materials) {
+			if (isInterruptionRequested()) {
+				break;
+			}
 			stream << material->_uuid << material->_name << material->_diffuse;
 		}
 	}
@@ -47,24 +51,35 @@ bool Eno::save() {
 		auto nbItems = scene->countItems();
 		stream << nbItems;
 		for (const auto& item : *scene) {
+			if (isInterruptionRequested()) {
+				break;
+			}
 			stream << item.first << item.second->_uuid;
 		}
 	}
-	file.close();
 
-	_project->setFilePath(_path);
-	_project->setIsModified(false);
+	if (isInterruptionRequested()) {
+		_result = Result::Canceled;
+		return;
+	}
 
-	return true;
+	if (file.commit()) {
+		_project->setFilePath(_path);
+		_project->setIsModified(false);
+
+		_result = Result::Success;
+	} else {
+		_result = Result::Error;
+	}
 }
 
-bool Eno::load() {
+void Eno::load() {
 	assert(_project);
 
 	QFile file(_path);
 	if (!file.open(QIODevice::ReadOnly)) {
-		assert(false);
-		return false;
+		_result = Result::Error;
+		return;
 	}
 
 	// Reset and begin transaction
@@ -100,11 +115,17 @@ bool Eno::load() {
 	// Remove old default material
 	materials->remove(defaultMaterial);
 
+	_result = Result::Success;
+
+	if (isInterruptionRequested()) {
+		_project->reset();
+		_result = Result::Canceled;
+		return;
+	}
+
 	materials->blockSignals(false);
 	_project->blockSignals(false);
 	_project->setIsModified(false);
-
-	return true;
 }
 
 void Eno::loadV1(QDataStream& stream) {
@@ -120,6 +141,9 @@ QMap<QUuid, Material*> Eno::loadMaterialsV1(QDataStream& stream) {
 		int nbMaterials = 0;
 		stream >> nbMaterials;
 		for (int i = 0; i < nbMaterials; ++i) {
+			if (isInterruptionRequested()) {
+				break;
+			}
 			auto* material = materials->createMaterial();
 			stream >> material->_uuid >> material->_name >> material->_diffuse;
 			materials->add(material);
@@ -140,6 +164,9 @@ void Eno::loadSceneV1(QDataStream& stream, const QMap<QUuid, Material*>& mapMate
 		int nbItems = 0;
 		stream >> nbItems;
 		for (int i = 0; i < nbItems; ++i) {
+			if (isInterruptionRequested()) {
+				break;
+			}
 			QVector3D pos;
 			QUuid uuid;
 			Material* material = nullptr;
