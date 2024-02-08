@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 
 set(ENO_NAME "Eno Creator")
-set(ENO_VERSION "1.0.1")
+set(ENO_VERSION "1.0.2")
 
 configure_file(src/Config.hpp.in src/Config.hpp)
 
