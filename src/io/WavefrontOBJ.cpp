@@ -17,6 +17,7 @@ bool operator==(const WavefrontOBJ::Triangle& p1, const WavefrontOBJ::Triangle& 
 void WavefrontOBJ::save() {
 	assert(_project);
 	_result = Result::Success;
+	_data = mergeData(_project->scene());
 	compute();
 	writeObjFile();
 	writeMtlFile();
@@ -39,33 +40,34 @@ void WavefrontOBJ::save() {
 }
 
 void WavefrontOBJ::compute() {
-	for (const auto& cube : *_project->scene()) {
+	for (const auto& cube : _data) {
 		if (isInterruptionRequested()) {
 			return;
 		}
-		const auto& vec = cube.first;
-		auto v1 = getIndexBy(vec + QVector3D(0.f, 0.f, 1.f));
-		auto v2 = getIndexBy(vec + QVector3D(1.f, 0.f, 1.f));
-		auto v3 = getIndexBy(vec + QVector3D(0.f, 1.f, 1.f));
-		auto v4 = getIndexBy(vec + QVector3D(1.f, 1.f, 1.f));
-		auto v5 = getIndexBy(vec + QVector3D(0.f, 1.f, 0.f));
-		auto v6 = getIndexBy(vec + QVector3D(1.f, 1.f, 0.f));
-		auto v7 = getIndexBy(vec + QVector3D(0.f, 0.f, 0.f));
-		auto v8 = getIndexBy(vec + QVector3D(1.f, 0.f, 0.f));
+		const auto& p = cube.position;
+		const auto& s = cube.scale;
+		auto v1 = getIndexBy(p + s * QVector3D(0.f, 0.f, 1.f));
+		auto v2 = getIndexBy(p + s * QVector3D(1.f, 0.f, 1.f));
+		auto v3 = getIndexBy(p + s * QVector3D(0.f, 1.f, 1.f));
+		auto v4 = getIndexBy(p + s * QVector3D(1.f, 1.f, 1.f));
+		auto v5 = getIndexBy(p + s * QVector3D(0.f, 1.f, 0.f));
+		auto v6 = getIndexBy(p + s * QVector3D(1.f, 1.f, 0.f));
+		auto v7 = getIndexBy(p + s * QVector3D(0.f, 0.f, 0.f));
+		auto v8 = getIndexBy(p + s * QVector3D(1.f, 0.f, 0.f));
 
-		const auto& material = cube.second;
-		insertTriangle(material, { v1, v2, v3 });
-		insertTriangle(material, { v3, v2, v4 });
-		insertTriangle(material, { v3, v4, v5 });
-		insertTriangle(material, { v5, v4, v6 });
-		insertTriangle(material, { v5, v6, v7 });
-		insertTriangle(material, { v7, v6, v8 });
-		insertTriangle(material, { v7, v8, v1 });
-		insertTriangle(material, { v1, v8, v2 });
-		insertTriangle(material, { v2, v8, v4 });
-		insertTriangle(material, { v4, v8, v6 });
-		insertTriangle(material, { v7, v1, v5 });
-		insertTriangle(material, { v5, v1, v3 });
+		auto* m = cube.material;
+		insertTriangle(m, { v1, v2, v3 });
+		insertTriangle(m, { v3, v2, v4 });
+		insertTriangle(m, { v3, v4, v5 });
+		insertTriangle(m, { v5, v4, v6 });
+		insertTriangle(m, { v5, v6, v7 });
+		insertTriangle(m, { v7, v6, v8 });
+		insertTriangle(m, { v7, v8, v1 });
+		insertTriangle(m, { v1, v8, v2 });
+		insertTriangle(m, { v2, v8, v4 });
+		insertTriangle(m, { v4, v8, v6 });
+		insertTriangle(m, { v7, v1, v5 });
+		insertTriangle(m, { v5, v1, v3 });
 	}
 }
 
@@ -86,6 +88,11 @@ void WavefrontOBJ::insertTriangle(Material* material, const Triangle& triangle) 
 	}
 }
 
+void WavefrontOBJ::writeCredentials(QTextStream& stream) {
+	stream << "# " << qApp->applicationName() << " " << qApp->applicationVersion() << ": " << _project->projectName() << Qt::endl;
+	stream << "# Created on " << QDateTime::currentDateTime().toString() << Qt::endl;
+}
+
 void WavefrontOBJ::writeObjFile() {
 	_objFile.setFileName(_path);
 	if (!_objFile.open(QIODevice::WriteOnly)) {
@@ -93,36 +100,36 @@ void WavefrontOBJ::writeObjFile() {
 		return;
 	}
 
-	QTextStream tampon(&_objFile);
-	tampon << "# " << qApp->applicationName() << " " << qApp->applicationVersion() << ": " << _project->projectName() << Qt::endl;
-	tampon << "o " << _project->projectName() << Qt::endl;
+	QTextStream stream(&_objFile);
+	writeCredentials(stream);
+	stream << "o " << _project->projectName() << Qt::endl;
 
 	// Material file name
 	QFileInfo fileInfo(_path);
-	tampon << "mtllib " << fileInfo.baseName() << ".mtl" << Qt::endl;
+	stream << "mtllib " << fileInfo.baseName() << ".mtl" << Qt::endl;
 
-	tampon << "# vertices" << Qt::endl;
+	stream << "# vertices" << Qt::endl;
 	for (const auto& vertex : _vertices) {
 		if (isInterruptionRequested()) {
 			return;
 		}
-		tampon << "v " << vertex.x() << " " << vertex.y() << " " << vertex.z() << Qt::endl;
+		stream << "v " << vertex.x() << " " << vertex.y() << " " << vertex.z() << Qt::endl;
 	}
 
-	tampon << "# triangles" << Qt::endl;
+	stream << "# triangles" << Qt::endl;
 	for (auto it = _triangles.constKeyValueBegin(); it != _triangles.constKeyValueEnd(); ++it) {
 		if (isInterruptionRequested()) {
 			return;
 		}
 		Material* material = it->first;
-		tampon << "g " << material->name() << Qt::endl;
-		tampon << "usemtl " << material->name() << Qt::endl;
+		stream << "g " << material->name() << Qt::endl;
+		stream << "usemtl " << material->name() << Qt::endl;
 		for (const auto& triangle : it->second) {
 			if (isInterruptionRequested()) {
 				return;
 			}
 			// The index begin at 1 and not 0 like in the list
-			tampon << "f " << triangle.one + 1 << " " << triangle.two + 1 << " " << triangle.three + 1 << Qt::endl;
+			stream << "f " << triangle.one + 1 << " " << triangle.two + 1 << " " << triangle.three + 1 << Qt::endl;
 		}
 	}
 }
@@ -137,16 +144,18 @@ void WavefrontOBJ::writeMtlFile() {
 		return;
 	}
 
-	QTextStream tampon(&_mtlFile);
+	QTextStream stream(&_mtlFile);
+	writeCredentials(stream);
+
 	for (auto it = _triangles.constKeyValueBegin(); it != _triangles.constKeyValueEnd(); ++it) {
 		if (isInterruptionRequested()) {
 			return;
 		}
 		Material* material = it->first;
 		const QColor& color = material->diffuse();
-		tampon << "newmtl " << material->name() << Qt::endl;
-		tampon << "Kd " << color.red() / 255.f << " " << color.green() / 255.f << " " << color.blue() / 255.f << Qt::endl;
-		tampon << Qt::endl;
+		stream << "newmtl " << material->name() << Qt::endl;
+		stream << "Kd " << color.red() / 255.f << " " << color.green() / 255.f << " " << color.blue() / 255.f << Qt::endl;
+		stream << Qt::endl;
 	}
 }
 } // namespace eno

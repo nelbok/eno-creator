@@ -48,7 +48,7 @@ void Engine::init(const Project* project) {
 
 		auto* def = new Qt3DCore::QEntity(_root);
 		def->addComponent(mesh);
-		def->addComponent(getMaterialBy(material));
+		def->addComponent(createMaterialComponent(material));
 		def->addComponent(new Qt3DCore::QTransform(_root));
 	}
 }
@@ -80,7 +80,7 @@ void Engine::initLight() {
 	entity->addComponent(transform);
 }
 
-Qt3DCore::QComponent* Engine::getMaterialBy(Material* mat) {
+Qt3DCore::QComponent* Engine::createMaterialComponent(Material* mat) {
 	assert(mat);
 
 	auto* material = new Qt3DExtras::QDiffuseSpecularMaterial(_root);

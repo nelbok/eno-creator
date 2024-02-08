@@ -29,7 +29,7 @@ private:
 	void initCamera();
 	void initLight();
 
-	Qt3DCore::QComponent* getMaterialBy(Material* color);
+	Qt3DCore::QComponent* createMaterialComponent(Material* color);
 
 	Qt3DExtras::Qt3DWindow* _view{ nullptr };
 	Qt3DCore::QEntity* _root{ nullptr };

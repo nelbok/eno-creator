@@ -33,6 +33,8 @@ set(PROJECT_SOURCES
 	src/data/Material.hpp
 	src/data/Materials.cpp
 	src/data/Materials.hpp
+	src/data/Merger.cpp
+	src/data/Merger.hpp
 	src/data/Project.cpp
 	src/data/Project.hpp
 	src/data/Scene.cpp
