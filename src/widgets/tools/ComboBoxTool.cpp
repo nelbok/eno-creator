@@ -1,4 +1,4 @@
-#include "ComboBoxWidget.hpp"
+#include "ComboBoxTool.hpp"
 
 #include <QBoxLayout>
 #include <QLabel>

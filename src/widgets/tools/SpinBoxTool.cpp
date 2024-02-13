@@ -1,4 +1,4 @@
-#include "SpinBoxWidget.hpp"
+#include "SpinBoxTool.hpp"
 
 #include <QBoxLayout>
 #include <QLabel>

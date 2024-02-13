@@ -6,21 +6,6 @@
 
 namespace eno {
 
-QString MapAction::toString(MapAction::Zoom zoom) {
-	switch (zoom) {
-		case MapAction::Zoom::x50:
-			return " x50";
-		case MapAction::Zoom::x100:
-			return " x100";
-		case MapAction::Zoom::x200:
-			return " x200";
-		case MapAction::Zoom::x400:
-			return " x400";
-	}
-	assert(false);
-	return {};
-}
-
 MapAction::MapAction(Project* project, QObject* parent)
 	: QObject(parent)
 	, _project(project) {}
@@ -28,18 +13,18 @@ MapAction::MapAction(Project* project, QObject* parent)
 
 void MapAction::reset() {
 	_project->reset();
-	setTypeAction(TypeAction::Add);
+	setTypeAction(Preferences::TypeAction::Add);
 	setMaterial(*(_project->materials()->begin()));
-	setDepth(0.f);
-	setPenWidth(1);
-	setZoom(Zoom::x100);
+	setDepth(Preferences::mapActionDepth());
+	setPenWidth(Preferences::mapActionPenWidth());
+	setZoom(Preferences::mapActionZoom());
 }
 
-void MapAction::setTypeAction(TypeAction value) {
+void MapAction::setTypeAction(Preferences::TypeAction value) {
 	_typeAction = value;
 }
 
-MapAction::TypeAction MapAction::typeAction() const {
+Preferences::TypeAction MapAction::typeAction() const {
 	return _typeAction;
 }
 
@@ -53,12 +38,12 @@ Material* MapAction::material() const {
 	return _material;
 }
 
-void MapAction::setDepth(float depth) {
+void MapAction::setDepth(int depth) {
 	_depth = depth;
 	depthUpdated();
 }
 
-float MapAction::depth() const {
+int MapAction::depth() const {
 	return _depth;
 }
 
@@ -71,11 +56,11 @@ int MapAction::penWidth() const {
 	return _penWidth;
 }
 
-MapAction::Zoom MapAction::zoom() const {
+Preferences::Zoom MapAction::zoom() const {
 	return _zoom;
 }
 
-void MapAction::setZoom(MapAction::Zoom zoom) {
+void MapAction::setZoom(Preferences::Zoom zoom) {
 	_zoom = zoom;
 	zoomUpdated();
 }
@@ -92,16 +77,16 @@ Project* MapAction::project() {
 
 void MapAction::mousePressEvent(const QVector3D& pos) {
 	switch (_typeAction) {
-		case TypeAction::Remove:
+		case Preferences::TypeAction::Remove :
 			removeItem(pos);
 			break;
-		case TypeAction::Add:
+		case Preferences::TypeAction::Add:
 			addItem(pos);
 			break;
-		case TypeAction::Picker:
+		case Preferences::TypeAction::Picker:
 			pickColor(pos);
 			break;
-		case TypeAction::Resize:
+		case Preferences::TypeAction::Resize:
 			_currentPos = { pos.x(), pos.z() };
 			break;
 	}
@@ -109,16 +94,16 @@ void MapAction::mousePressEvent(const QVector3D& pos) {
 
 void MapAction::mouseMoveEvent(const QVector3D& pos) {
 	switch (_typeAction) {
-		case TypeAction::Remove:
+		case Preferences::TypeAction::Remove:
 			removeItem(pos);
 			break;
-		case TypeAction::Add:
+		case Preferences::TypeAction::Add:
 			addItem(pos);
 			break;
-		case TypeAction::Picker:
+		case Preferences::TypeAction::Picker:
 			// Nothing to do
 			break;
-		case TypeAction::Resize:
+		case Preferences::TypeAction::Resize:
 			resize({ pos.x(), pos.z() });
 			break;
 	}
@@ -127,16 +112,16 @@ void MapAction::mouseMoveEvent(const QVector3D& pos) {
 const Qt::CursorShape MapAction::cursorShape(const QVector3D& pos) const {
 	auto shape = Qt::CursorShape::ArrowCursor;
 	switch (_typeAction) {
-		case TypeAction::Remove:
+		case Preferences::TypeAction::Remove:
 			// Nothing to do
 			break;
-		case TypeAction::Add:
+		case Preferences::TypeAction::Add:
 			// Nothing to do
 			break;
-		case TypeAction::Picker:
+		case Preferences::TypeAction::Picker:
 			shape = Qt::CrossCursor;
 			break;
-		case TypeAction::Resize:
+		case Preferences::TypeAction::Resize:
 			shape = Qt::SizeAllCursor;
 			break;
 	}

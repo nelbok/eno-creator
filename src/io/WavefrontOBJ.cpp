@@ -4,6 +4,7 @@
 #include <QFileInfo>
 
 #include "data/Material.hpp"
+#include "data/Preferences.hpp"
 #include "data/Project.hpp"
 #include "data/Scene.hpp"
 
@@ -17,7 +18,10 @@ bool operator==(const WavefrontOBJ::Triangle& p1, const WavefrontOBJ::Triangle& 
 void WavefrontOBJ::save() {
 	assert(_project);
 	_result = Result::Success;
-	_data = mergeData(_project->scene());
+	_data = fillData(_project->scene());
+	if (Preferences::generationOptimized()) {
+		_data = mergeData(_data);
+	}
 	compute();
 	writeObjFile();
 	writeMtlFile();

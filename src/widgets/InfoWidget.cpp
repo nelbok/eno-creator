@@ -2,10 +2,10 @@
 
 #include <QBoxLayout>
 #include <QLabel>
-#include <QSpinBox>
 
 #include "data/Scene.hpp"
 #include "view/GraphicsView.hpp"
+#include "widgets/common/SpinBox.hpp"
 
 namespace eno {
 
@@ -21,10 +21,15 @@ void InfoWidget::init(Scene* scene, GraphicsView* graphicsView) {
 	_labelPosition = new QLabel(this);
 	_labelPosition->setFixedWidth(60);
 
-	_minXSpinBox = createSpinBox(false);
-	_minYSpinBox = createSpinBox(false);
-	_maxXSpinBox = createSpinBox(true);
-	_maxYSpinBox = createSpinBox(true);
+	_minXSpinBox = new SpinBox(this);
+	_minYSpinBox = new SpinBox(this);
+	_maxXSpinBox = new SpinBox(this);
+	_maxYSpinBox = new SpinBox(this);
+
+	_minXSpinBox->init(false);
+	_minYSpinBox->init(false);
+	_maxXSpinBox->init(true);
+	_maxYSpinBox->init(true);
 
 	QHBoxLayout* layout = new QHBoxLayout(this);
 	layout->addWidget(new QLabel("Position: ", this));
@@ -66,16 +71,5 @@ void InfoWidget::updateData() {
 	_minYSpinBox->setValue(min.y());
 	_maxXSpinBox->setValue(max.x());
 	_maxYSpinBox->setValue(max.y());
-}
-
-QSpinBox* InfoWidget::createSpinBox(bool positive) {
-	auto* widget = new QSpinBox(this);
-	widget->setFixedWidth(48);
-	if (positive) {
-		widget->setRange(5, 999);
-	} else {
-		widget->setRange(-999, -5);
-	}
-	return widget;
 }
 } // namespace eno

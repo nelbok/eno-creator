@@ -2,6 +2,7 @@
 
 #include "data/Material.hpp"
 #include "data/Project.hpp"
+#include "data/Preferences.hpp"
 #include "Utils.hpp"
 
 namespace eno {
@@ -10,8 +11,8 @@ Scene::Scene(Project* project)
 	, _project(project) {}
 
 void Scene::reset() {
-	setMin({ -5, -5 });
-	setMax({ 5, 5 });
+	setMin(Preferences::sceneMin());
+	setMax(Preferences::sceneMax());
 
 	_sceneData.clear();
 	dataUpdated();
@@ -19,12 +20,13 @@ void Scene::reset() {
 
 void Scene::setMin(const QPoint& min) {
 	if (_min != min) {
+		auto v = Preferences::defaultSceneMin;
 		_min = min;
-		if (_min.x() > -5) {
-			_min.setX(-5);
+		if (_min.x() > v.x()) {
+			_min.setX(v.x());
 		}
-		if (_min.y() > -5) {
-			_min.setY(-5);
+		if (_min.y() > v.y()) {
+			_min.setY(v.y());
 		}
 		_project->setIsModified(true);
 		updateScene();
@@ -33,12 +35,13 @@ void Scene::setMin(const QPoint& min) {
 }
 void Scene::setMax(const QPoint& max) {
 	if (_max != max) {
+		auto v = Preferences::defaultSceneMax;
 		_max = max;
-		if (_max.x() < 5) {
-			_max.setX(5);
+		if (_max.x() < v.x()) {
+			_max.setX(v.x());
 		}
-		if (_max.y() < 5) {
-			_max.setY(5);
+		if (_max.y() < v.y()) {
+			_max.setY(v.y());
 		}
 		_project->setIsModified(true);
 		updateScene();

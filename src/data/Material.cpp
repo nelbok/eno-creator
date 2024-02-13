@@ -1,12 +1,15 @@
 #include "Material.hpp"
 
 #include "data/Project.hpp"
+#include "data/Preferences.hpp"
 #include "data/Materials.hpp"
 
 namespace eno {
 Material::Material(Project* project)
 	: QObject(project)
-	, _project(project) {}
+	, _project{ project }
+	, _name{ Preferences::materialName() }
+	, _diffuse{ Preferences::materialDiffuse() } {}
 
 void Material::setName(const QString& name) {
 	if (_name != name) {

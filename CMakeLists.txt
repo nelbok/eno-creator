@@ -36,6 +36,8 @@ set(PROJECT_SOURCES
 	src/data/Materials.hpp
 	src/data/Merger.cpp
 	src/data/Merger.hpp
+	src/data/Preferences.cpp
+	src/data/Preferences.hpp
 	src/data/Project.cpp
 	src/data/Project.hpp
 	src/data/Scene.cpp
@@ -61,15 +63,23 @@ set(PROJECT_SOURCES
 	src/view/GraphicsView.hpp
 	src/view/MainWindow.cpp
 	src/view/MainWindow.hpp
+	src/view/PreferencesWindow.cpp
+	src/view/PreferencesWindow.hpp
 
-	src/widgets/ComboBoxWidget.cpp
-	src/widgets/ComboBoxWidget.hpp
+	src/widgets/common/ColorButton.cpp
+	src/widgets/common/ColorButton.hpp
+	src/widgets/common/SpinBox.cpp
+	src/widgets/common/SpinBox.hpp
+	src/widgets/tools/ComboBoxTool.cpp
+	src/widgets/tools/ComboBoxTool.hpp
+	src/widgets/tools/SpinBoxTool.cpp
+	src/widgets/tools/SpinBoxTool.hpp
 	src/widgets/InfoWidget.cpp
 	src/widgets/InfoWidget.hpp
+	src/widgets/LocationWidget.cpp
+	src/widgets/LocationWidget.hpp
 	src/widgets/MaterialsDockWidget.cpp
 	src/widgets/MaterialsDockWidget.hpp
-	src/widgets/SpinBoxWidget.cpp
-	src/widgets/SpinBoxWidget.hpp
 
 	src/Config.hpp.in
 	${CMAKE_CURRENT_BINARY_DIR}/src/Config.hpp
@@ -105,6 +115,8 @@ set_target_properties(EnoCreator PROPERTIES
 	MACOSX_BUNDLE TRUE
 	WIN32_EXECUTABLE TRUE
 )
+
+set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT EnoCreator)
 
 if(QT_VERSION_MAJOR EQUAL 6)
 	qt_finalize_executable(EnoCreator)

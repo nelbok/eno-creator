@@ -1,18 +1,17 @@
 #include "MaterialsDockWidget.hpp"
 
-#include "controller/MapAction.hpp"
-#include "data/Material.hpp"
-#include "data/Materials.hpp"
-
 #include <QApplication>
 #include <QBoxLayout>
-#include <QColorDialog>
 #include <QFormLayout>
 #include <QLabel>
 #include <QListWidget>
 #include <QLineEdit>
-#include <QPushButton>
 #include <QToolBar>
+
+#include "controller/MapAction.hpp"
+#include "data/Material.hpp"
+#include "data/Materials.hpp"
+#include "widgets/common/ColorButton.hpp"
 
 namespace eno {
 MaterialsDockWidget::MaterialsDockWidget(QWidget* parent)
@@ -46,12 +45,12 @@ void MaterialsDockWidget::init(Materials* materials, MapAction* mapAction) {
 
 	_list = new QListWidget(w);
 	_name = new QLineEdit(w);
-	_diffuse = new QPushButton(w);
+	_diffuse = new ColorButton(w);
 	_refCount = new QLabel(w);
 
 	_list->setSortingEnabled(true);
 
-	auto* form = new QFormLayout(w);
+	auto* form = new QFormLayout;
 	form->addRow("Name:", _name);
 	form->addRow("Diffuse:", _diffuse);
 	form->addRow(_refCount);
@@ -84,7 +83,12 @@ void MaterialsDockWidget::init(Materials* materials, MapAction* mapAction) {
 		this->_list->currentItem()->setText(name);
 		this->currentMaterialSelected()->setName(name);
 	});
-	connect(_diffuse, &QPushButton::clicked, this, &MaterialsDockWidget::chooseDiffuse);
+	connect(_diffuse, &ColorButton::currentColorChanged, [this](const QColor& color) {
+		auto* material = this->currentMaterialSelected();
+		material->setDiffuse(color);
+		this->showMessage(QString("Color changed to %1").arg(color.name()));
+		updateForm();
+	});
 }
 
 Material* MaterialsDockWidget::currentMaterialSelected() const {
@@ -124,28 +128,8 @@ void MaterialsDockWidget::resetList() {
 void MaterialsDockWidget::updateForm() {
 	auto* material = currentMaterialSelected();
 	_name->setText(material->name());
-
-	_diffuse->setText(material->diffuse().name());
-	{
-		auto image = QImage(48, 48, QImage::Format_RGB32);
-		image.fill(material->diffuse());
-		_diffuse->setIcon({ QPixmap::fromImage(image) });
-	}
-
+	_diffuse->setColor(material->diffuse());
 	_refCount->setText(QString("Numbers of time used by a cube: %1").arg(material->refCount()));
-}
-
-void MaterialsDockWidget::chooseDiffuse() {
-	auto* material = this->currentMaterialSelected();
-	QColorDialog* dialog = new QColorDialog(material->diffuse(), qApp->activeWindow());
-	connect(dialog, &QColorDialog::currentColorChanged, [this, material](const QColor& color) {
-		if (color.isValid()) {
-			material->setDiffuse(color);
-			this->showMessage(QString("Color changed to %1").arg(color.name()));
-			updateForm();
-		}
-	});
-	dialog->exec();
 }
 
 } // namespace eno

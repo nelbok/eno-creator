@@ -5,9 +5,9 @@
 class QLabel;
 class QLineEdit;
 class QListWidget;
-class QPushButton;
 
 namespace eno {
+class ColorButton;
 class MapAction;
 class Material;
 class Materials;
@@ -26,7 +26,6 @@ public:
 private slots:
 	void resetList();
 	void updateForm();
-	void chooseDiffuse();
 
 private:
 	Materials* _materials{ nullptr };
@@ -34,7 +33,7 @@ private:
 
 	QListWidget* _list{ nullptr };
 	QLineEdit* _name{ nullptr };
-	QPushButton* _diffuse{ nullptr };
+	ColorButton* _diffuse{ nullptr };
 	QLabel* _refCount{ nullptr };
 
 signals:

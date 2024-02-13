@@ -3,11 +3,10 @@
 #include <QWidget>
 
 class QLabel;
-class QSpinBox;
-class QHBoxLayout;
 
 namespace eno {
 class Scene;
+class SpinBox;
 class GraphicsView;
 
 class InfoWidget : public QWidget {
@@ -23,15 +22,14 @@ private slots:
 	void updateData();
 
 private:
-	QSpinBox* createSpinBox(bool positive);
 
 	Scene* _scene{ nullptr };
 	GraphicsView* _graphicsView{ nullptr };
 
 	QLabel* _labelPosition{ nullptr };
-	QSpinBox* _minXSpinBox{ nullptr };
-	QSpinBox* _minYSpinBox{ nullptr };
-	QSpinBox* _maxXSpinBox{ nullptr };
-	QSpinBox* _maxYSpinBox{ nullptr };
+	SpinBox* _minXSpinBox{ nullptr };
+	SpinBox* _minYSpinBox{ nullptr };
+	SpinBox* _maxXSpinBox{ nullptr };
+	SpinBox* _maxYSpinBox{ nullptr };
 };
 } // namespace eno

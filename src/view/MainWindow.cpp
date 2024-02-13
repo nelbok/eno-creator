@@ -11,11 +11,10 @@
 #include "data/Project.hpp"
 #include "controller/MapAction.hpp"
 #include "controller/Shortcuts.hpp"
-
-#include "widgets/ComboBoxWidget.hpp"
+#include "widgets/tools/ComboBoxTool.hpp"
+#include "widgets/tools/SpinBoxTool.hpp"
 #include "widgets/InfoWidget.hpp"
 #include "widgets/MaterialsDockWidget.hpp"
-#include "widgets/SpinBoxWidget.hpp"
 #include "GraphicsView.hpp"
 
 namespace eno {
@@ -70,7 +69,6 @@ void MainWindow::showProgressDialog(bool visible, QThread* thread) {
 	}
 }
 
-
 void MainWindow::initUi() {
 	_project = new Project(this);
 	_project->init();
@@ -107,6 +105,7 @@ void MainWindow::initUi() {
 
 	showMessage("Ready!");
 }
+
 void MainWindow::initMainMenu() {
 	auto* menuFile = menuBar()->addMenu("File");
 
@@ -115,6 +114,8 @@ void MainWindow::initMainMenu() {
 	menuFile->addSeparator();
 	menuFile->addAction(_shortcuts->saveAction());
 	menuFile->addAction(_shortcuts->saveAsAction());
+	menuFile->addSeparator();
+	menuFile->addAction(_shortcuts->preferenceAction());
 	menuFile->addSeparator();
 	menuFile->addAction(_shortcuts->quitAction());
 }
@@ -142,7 +143,7 @@ void MainWindow::initLayers() {
 	auto* wLevel = new SpinBoxTool(this);
 	{
 		wLevel->init(":items/depth.png");
-		wLevel->setRange(MapAction::minDepth, MapAction::maxDepth);
+		wLevel->setRange(Preferences::minDepth, Preferences::maxDepth);
 		connect(wLevel, &SpinBoxTool::valueChanged, [this](int value) {
 			this->_mapAction->setDepth(value);
 			showMessage(QString("Depth changed to %1").arg(value));
@@ -155,7 +156,7 @@ void MainWindow::initLayers() {
 	auto* wPen = new SpinBoxTool(this);
 	{
 		wPen->init(":items/width.png");
-		wPen->setRange(MapAction::minPenWidth, MapAction::maxPenWidth);
+		wPen->setRange(Preferences::minPenWidth, Preferences::maxPenWidth);
 		connect(wPen, &SpinBoxTool::valueChanged, [this](int value) {
 			this->_mapAction->setPenWidth(value);
 			showMessage(QString("Pen width changed to %1pt").arg(value));
@@ -168,14 +169,14 @@ void MainWindow::initLayers() {
 	auto* wZoom = new ComboBoxTool(this);
 	{
 		wZoom->init(":items/zoom.png");
-		wZoom->addItem(MapAction::toString(MapAction::Zoom::x50), QVariant::fromValue(MapAction::Zoom::x50));
-		wZoom->addItem(MapAction::toString(MapAction::Zoom::x100), QVariant::fromValue(MapAction::Zoom::x100));
-		wZoom->addItem(MapAction::toString(MapAction::Zoom::x200), QVariant::fromValue(MapAction::Zoom::x200));
-		wZoom->addItem(MapAction::toString(MapAction::Zoom::x400), QVariant::fromValue(MapAction::Zoom::x400));
+		wZoom->addItem(Preferences::toString(Preferences::Zoom::x25), QVariant::fromValue(Preferences::Zoom::x25));
+		wZoom->addItem(Preferences::toString(Preferences::Zoom::x50), QVariant::fromValue(Preferences::Zoom::x50));
+		wZoom->addItem(Preferences::toString(Preferences::Zoom::x100), QVariant::fromValue(Preferences::Zoom::x100));
+		wZoom->addItem(Preferences::toString(Preferences::Zoom::x200), QVariant::fromValue(Preferences::Zoom::x200));
 		connect(wZoom, &ComboBoxTool::currentItemChanged, [this](const QVariant& item) {
-			auto zoom = item.value<MapAction::Zoom>();
+			auto zoom = item.value<Preferences::Zoom>();
 			this->_mapAction->setZoom(zoom);
-			showMessage(QString("Zoom changed to %1").arg(MapAction::toString(zoom)));
+			showMessage(QString("Zoom changed to %1").arg(Preferences::toString(zoom)));
 		});
 		connect(_mapAction, &MapAction::zoomUpdated, [this, wZoom]() {
 			wZoom->setCurrentItem(QVariant::fromValue(this->_mapAction->zoom()));

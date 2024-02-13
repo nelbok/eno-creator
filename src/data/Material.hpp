@@ -33,8 +33,8 @@ private:
 	Project* _project{ nullptr };
 
 	QUuid _uuid{ QUuid::createUuid() };
-	QString _name{ "default" };
-	QColor _diffuse{ "#ffaa00" };
+	QString _name{};
+	QColor _diffuse{};
 	int _refCount{ 0 };
 
 signals:

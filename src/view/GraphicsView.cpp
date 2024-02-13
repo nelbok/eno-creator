@@ -91,14 +91,14 @@ void GraphicsView::updateRect() {
 
 void GraphicsView::updateZoom() {
 	auto transform = QTransform{};
-	auto zoom = std::underlying_type_t<MapAction::Zoom>(_mapAction->zoom()) / 100.0;
+	auto zoom = std::underlying_type_t<Preferences::Zoom>(_mapAction->zoom()) / 100.0;
 	transform.scale(zoom, zoom);
 	setTransform(transform);
 }
 
 const QVector3D GraphicsView::mapToData(const QPoint& pos) const {
 	const auto& posF = mapToScene(pos);
-	return { floorf(posF.x() / 10.f), _mapAction->depth(), floorf(posF.y() / 10.f) };
+	return { floorf(posF.x() / 10.f), floorf(_mapAction->depth()), floorf(posF.y() / 10.f) };
 }
 
 } // namespace eno

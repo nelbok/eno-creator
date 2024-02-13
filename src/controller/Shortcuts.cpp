@@ -7,11 +7,13 @@
 #include <QMessageBox>
 
 #include "data/Materials.hpp"
+#include "data/Preferences.hpp"
 #include "data/Project.hpp"
 #include "data/Scene.hpp"
 #include "engine/Engine.hpp"
 #include "io/Eno.hpp"
 #include "io/WavefrontOBJ.hpp"
+#include "view/PreferencesWindow.hpp"
 #include "MapAction.hpp"
 
 namespace eno {
@@ -31,16 +33,16 @@ void Shortcuts::initActions() {
 void Shortcuts::resetActions() {
 	assert(_mapAction);
 	switch (_mapAction->typeAction()) {
-		case MapAction::TypeAction::Remove:
+		case Preferences::TypeAction::Remove:
 			_removeAction->setChecked(true);
 			break;
-		case MapAction::TypeAction::Add:
+		case Preferences::TypeAction::Add:
 			_addAction->setChecked(true);
 			break;
-		case MapAction::TypeAction::Picker:
+		case Preferences::TypeAction::Picker:
 			_pickerAction->setChecked(true);
 			break;
-		case MapAction::TypeAction::Resize:
+		case Preferences::TypeAction::Resize:
 			_resizeAction->setChecked(true);
 			break;
 	}
@@ -61,7 +63,7 @@ void Shortcuts::initFile() {
 	connect(_openAction, &QAction::triggered, [this]() {
 		if (!needToSave())
 			return;
-		const auto& path = QFileDialog::getOpenFileName(qApp->activeWindow(), qApp->applicationName() + " - Open", "", Eno::fileType);
+		const auto& path = QFileDialog::getOpenFileName(qApp->activeWindow(), qApp->applicationName() + " - Open", Preferences::projectLocation(), Eno::fileType);
 		if (path.isEmpty())
 			return;
 
@@ -99,6 +101,13 @@ void Shortcuts::initFile() {
 		save(true);
 	});
 
+	_preferenceAction = new QAction("Preferences", this);
+	connect(_preferenceAction, &QAction::triggered, [this]() {
+		auto* w = new PreferencesWindow;
+		w->initUi();
+		w->show();
+	});
+
 	_quitAction = new QAction("Quit", this);
 	connect(_quitAction, &QAction::triggered, [this]() {
 		if (!needToSave())
@@ -120,19 +129,19 @@ void Shortcuts::initTools() {
 		return action;
 	};
 	_removeAction = createTools(QIcon(":items/remove.png"), "Eraser tool", "To erase an item on the map", [this]() {
-		this->_mapAction->setTypeAction(MapAction::TypeAction::Remove);
+		this->_mapAction->setTypeAction(Preferences::TypeAction::Remove);
 		this->showMessage("Eraser tool selected");
 	});
 	_addAction = createTools(QIcon(":items/add.png"), "Pen tool", "To add an item on the map", [this]() {
-		this->_mapAction->setTypeAction(MapAction::TypeAction::Add);
+		this->_mapAction->setTypeAction(Preferences::TypeAction::Add);
 		this->showMessage("Add tool selected");
 	});
 	_pickerAction = createTools(QIcon(":items/picker.png"), "Picker tool", "To pick a color on the map", [this]() {
-		this->_mapAction->setTypeAction(MapAction::TypeAction::Picker);
+		this->_mapAction->setTypeAction(Preferences::TypeAction::Picker);
 		this->showMessage("Picker tool selected");
 	});
 	_resizeAction = createTools(QIcon(":items/resize.png"), "Resizing tool", "To resize the map, warning, downgrade the size might erase a portion of the map!", [this]() {
-		this->_mapAction->setTypeAction(MapAction::TypeAction::Resize);
+		this->_mapAction->setTypeAction(Preferences::TypeAction::Resize);
 		this->showMessage("Resize tool selected");
 	});
 }
@@ -141,7 +150,7 @@ void Shortcuts::initGenerate() {
 	_generateOBJAction = new QAction(QIcon(":export/generate.png"), "Generate OBJ file", this);
 	_generateOBJAction->setToolTip("Generate the OBJ file corresponding to the project");
 	connect(_generateOBJAction, &QAction::triggered, [this]() {
-		const auto& path = QFileDialog::getSaveFileName(qApp->activeWindow(), qApp->applicationName() + " - Export as", _mapAction->project()->projectName(), WavefrontOBJ::fileType);
+		const auto& path = QFileDialog::getSaveFileName(qApp->activeWindow(), qApp->applicationName() + " - Export as", Preferences::generateLocation(), WavefrontOBJ::fileType);
 		if (path.isEmpty())
 			return;
 
@@ -210,7 +219,7 @@ void Shortcuts::save(bool newPathRequested) {
 	if (newPathRequested || !isFile || !isWritable) {
 		QString currentPath = _mapAction->project()->filePath();
 		if (currentPath.isEmpty()) {
-			currentPath = _mapAction->project()->projectName();
+			currentPath = Preferences::projectLocation();
 		}
 		path = QFileDialog::getSaveFileName(qApp->activeWindow(), qApp->applicationName() + " - Save as", currentPath, Eno::fileType);
 	}

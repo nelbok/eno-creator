@@ -24,6 +24,7 @@ public:
 	QAction* openAction() const { return _openAction; }
 	QAction* saveAction() const { return _saveAction; }
 	QAction* saveAsAction() const { return _saveAsAction; }
+	QAction* preferenceAction() const { return _preferenceAction; }
 	QAction* quitAction() const { return _quitAction; }
 
 	// Tools
@@ -56,6 +57,7 @@ private:
 	QAction* _openAction{ nullptr };
 	QAction* _saveAction{ nullptr };
 	QAction* _saveAsAction{ nullptr };
+	QAction* _preferenceAction{ nullptr };
 	QAction* _quitAction{ nullptr };
 
 	// Tools action

@@ -4,6 +4,8 @@
 #include <QVector2D>
 #include <QVector3D>
 
+#include "data/Preferences.hpp"
+
 class QMouseEvent;
 
 namespace eno {
@@ -14,47 +16,25 @@ class MapAction : public QObject {
 	Q_OBJECT
 
 public:
-	enum class TypeAction {
-		Remove,
-		Add,
-		Picker,
-		Resize,
-	};
-	Q_ENUM(TypeAction)
-
-	enum class Zoom : int {
-		x50 = 50,
-		x100 = 100,
-		x200 = 200,
-		x400 = 400,
-	};
-	Q_ENUM(Zoom)
-	static QString toString(Zoom zoom);
-
-	static constexpr auto minDepth = -100;
-	static constexpr auto maxDepth = 100;
-	static constexpr auto minPenWidth = 1;
-	static constexpr auto maxPenWidth = 50;
-
 	MapAction(Project* project, QObject* parent = nullptr);
 	virtual ~MapAction() = default;
 
 	void reset();
 
-	void setTypeAction(TypeAction value);
-	TypeAction typeAction() const;
+	void setTypeAction(Preferences::TypeAction value);
+	Preferences::TypeAction typeAction() const;
 
 	void setMaterial(Material* material);
 	Material* material() const;
 
-	void setDepth(float depth);
-	float depth() const;
+	void setDepth(int depth);
+	int depth() const;
 
 	void setPenWidth(int depth);
 	int penWidth() const;
 
-	void setZoom(Zoom zoom);
-	Zoom zoom() const;
+	void setZoom(Preferences::Zoom zoom);
+	Preferences::Zoom zoom() const;
 
 	const Project* project() const;
 	Project* project();
@@ -70,11 +50,11 @@ private:
 	void pickColor(const QVector3D& pos);
 	void resize(const QVector2D& pos);
 
-	TypeAction _typeAction{};
+	Preferences::TypeAction _typeAction{};
 	Material* _material{ nullptr };
-	float _depth{};
+	int _depth{};
 	int _penWidth{};
-	Zoom _zoom{};
+	Preferences::Zoom _zoom{};
 	Project* _project{ nullptr };
 	QVector2D _currentPos{};
 
