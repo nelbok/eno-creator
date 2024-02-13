@@ -10,6 +10,7 @@ class QSpinBox;
 
 namespace eno {
 class ColorButton;
+class KeyButton;
 class LocationWidget;
 class SpinBox;
 
@@ -29,6 +30,7 @@ private:
 	void initGeneral();
 	void initProject();
 	void initMaterial();
+	void initKeyBinding();
 
 	QFormLayout* initTab(const QString& name, const QString& description);
 
@@ -55,5 +57,12 @@ private:
 	// Material
 	QLineEdit* _name{ nullptr };
 	ColorButton* _diffuse{ nullptr };
+
+	// Key binding
+	KeyButton* _remove{ nullptr };
+	KeyButton* _add{ nullptr };
+	KeyButton* _picker{ nullptr };
+	KeyButton* _resize{ nullptr };
+	KeyButton* _3DView{ nullptr };
 };
 } // namespace eno

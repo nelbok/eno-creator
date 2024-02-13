@@ -64,6 +64,22 @@ public:
 	static bool generationOptimized();
 	static void setGenerationOptimized(bool enabled);
 
+	// Key binding
+	static Qt::Key keyRemove();
+	static void setKeyRemove(Qt::Key key);
+
+	static Qt::Key keyAdd();
+	static void setKeyAdd(Qt::Key key);
+
+	static Qt::Key keyPicker();
+	static void setKeyPicker(Qt::Key key);
+
+	static Qt::Key keyResize();
+	static void setKeyResize(Qt::Key key);
+
+	static Qt::Key key3DView();
+	static void setKey3DView(Qt::Key key);
+
 private:
 	Preferences() = default;
 	virtual ~Preferences() = default;

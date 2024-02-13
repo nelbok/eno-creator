@@ -119,28 +119,29 @@ void Shortcuts::initFile() {
 void Shortcuts::initTools() {
 	auto* group = new QActionGroup(this);
 
-	auto createTools = [this, group](const QIcon& icon, const QString& title, const QString& toolTip, std::function<void(void)> lambda) -> QAction* {
+	auto createTools = [this, group](const QIcon& icon, const QString& title, const QString& toolTip, const QKeySequence& shortcut, std::function<void(void)> lambda) -> QAction* {
 		auto* action = new QAction(icon, title, this);
 		action->setToolTip(toolTip);
+		action->setShortcut(shortcut);
 		action->setCheckable(true);
 		action->setIconVisibleInMenu(false);
 		connect(action, &QAction::triggered, lambda);
 		group->addAction(action);
 		return action;
 	};
-	_removeAction = createTools(QIcon(":items/remove.png"), "Eraser tool", "To erase an item on the map", [this]() {
+	_removeAction = createTools(QIcon(":items/remove.png"), "Eraser tool", "To erase an item on the map", Preferences::keyRemove(), [this]() {
 		this->_mapAction->setTypeAction(Preferences::TypeAction::Remove);
 		this->showMessage("Eraser tool selected");
 	});
-	_addAction = createTools(QIcon(":items/add.png"), "Pen tool", "To add an item on the map", [this]() {
+	_addAction = createTools(QIcon(":items/add.png"), "Pen tool", "To add an item on the map", Preferences::keyAdd(), [this]() {
 		this->_mapAction->setTypeAction(Preferences::TypeAction::Add);
 		this->showMessage("Add tool selected");
 	});
-	_pickerAction = createTools(QIcon(":items/picker.png"), "Picker tool", "To pick a color on the map", [this]() {
+	_pickerAction = createTools(QIcon(":items/picker.png"), "Picker tool", "To pick a color on the map", Preferences::keyPicker(), [this]() {
 		this->_mapAction->setTypeAction(Preferences::TypeAction::Picker);
 		this->showMessage("Picker tool selected");
 	});
-	_resizeAction = createTools(QIcon(":items/resize.png"), "Resizing tool", "To resize the map, warning, downgrade the size might erase a portion of the map!", [this]() {
+	_resizeAction = createTools(QIcon(":items/resize.png"), "Resizing tool", "To resize the map", Preferences::keyResize(), [this]() {
 		this->_mapAction->setTypeAction(Preferences::TypeAction::Resize);
 		this->showMessage("Resize tool selected");
 	});
@@ -177,6 +178,7 @@ void Shortcuts::initGenerate() {
 
 	_generate3DAction = new QAction(QIcon(":export/opengl.png"), "Open 3D view", this);
 	_generate3DAction->setToolTip("Show the project in the 3D view");
+	_generate3DAction->setShortcut(Preferences::key3DView());
 	connect(_generate3DAction, &QAction::triggered, [this]() {
 		auto* widget = new Engine();
 		widget->init(_mapAction->project());

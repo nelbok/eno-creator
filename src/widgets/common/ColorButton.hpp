@@ -22,6 +22,10 @@ private slots:
 
 private:
 	using QPushButton::QPushButton;
+	using QPushButton::setIcon;
+	using QPushButton::setIconSize;
+	using QPushButton::setText;
+	using QPushButton::setToolTip;
 
 	void updateColor();
 

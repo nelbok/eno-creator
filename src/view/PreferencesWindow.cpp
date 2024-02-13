@@ -12,6 +12,7 @@
 
 #include "data/Preferences.hpp"
 #include "widgets/common/ColorButton.hpp"
+#include "widgets/common/KeyButton.hpp"
 #include "widgets/common/SpinBox.hpp"
 #include "widgets/LocationWidget.hpp"
 
@@ -21,6 +22,7 @@ PreferencesWindow::PreferencesWindow(QWidget* parent)
 	: QMainWindow(parent) {
 	setWindowIcon(QIcon(":/logo/logo.png"));
 	setWindowTitle(qApp->applicationName() + " - Preferences");
+	setAttribute(Qt::WA_DeleteOnClose);
 }
 
 void PreferencesWindow::initUi() {
@@ -34,6 +36,7 @@ void PreferencesWindow::initUi() {
 	initGeneral();
 	initProject();
 	initMaterial();
+	initKeyBinding();
 }
 
 void PreferencesWindow::closeEvent(QCloseEvent* e) {
@@ -68,6 +71,15 @@ void PreferencesWindow::closeEvent(QCloseEvent* e) {
 	{
 		Preferences::setMaterialName(_name->text());
 		Preferences::setMaterialDiffuse(_diffuse->color());
+	}
+
+	// Key binding
+	{
+		Preferences::setKeyRemove(_remove->key());
+		Preferences::setKeyAdd(_add->key());
+		Preferences::setKeyPicker(_picker->key());
+		Preferences::setKeyResize(_resize->key());
+		Preferences::setKey3DView(_3DView->key());
 	}
 
 	QMainWindow::closeEvent(e);
@@ -167,6 +179,28 @@ void PreferencesWindow::initMaterial() {
 
 	form->addRow("Name:", _name);
 	form->addRow("Diffuse:", _diffuse);
+}
+
+void PreferencesWindow::initKeyBinding() {
+	auto* form = initTab("Key Binding", "Key configuration");
+
+	_remove = new KeyButton;
+	_add = new KeyButton;
+	_picker = new KeyButton;
+	_resize = new KeyButton;
+	_3DView = new KeyButton;
+
+	_remove->setKey(Preferences::keyRemove());
+	_add->setKey(Preferences::keyAdd());
+	_picker->setKey(Preferences::keyPicker());
+	_resize->setKey(Preferences::keyResize());
+	_3DView->setKey(Preferences::key3DView());
+
+	form->addRow("Remove:", _remove);
+	form->addRow("Add:", _add);
+	form->addRow("Picker:", _picker);
+	form->addRow("Resize:", _resize);
+	form->addRow("3D View:", _3DView);
 }
 
 QFormLayout* PreferencesWindow::initTab(const QString& name, const QString& description) {

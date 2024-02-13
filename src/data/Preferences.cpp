@@ -105,4 +105,45 @@ void Preferences::setGenerationOptimized(bool enabled) {
 	QSettings().setValue("optimization/wavefront", enabled);
 }
 
+// Key binding
+Qt::Key Preferences::keyRemove() {
+	return QSettings().value("keybinding/remove", Qt::Key_1).value<Qt::Key>();
+}
+
+void Preferences::setKeyRemove(Qt::Key key) {
+	QSettings().setValue("keybinding/remove", key);
+}
+
+Qt::Key Preferences::keyAdd() {
+	return QSettings().value("keybinding/add", Qt::Key_2).value<Qt::Key>();
+}
+
+void Preferences::setKeyAdd(Qt::Key key) {
+	QSettings().setValue("keybinding/add", key);
+}
+
+Qt::Key Preferences::keyPicker() {
+	return QSettings().value("keybinding/picker", Qt::Key_3).value<Qt::Key>();
+}
+
+void Preferences::setKeyPicker(Qt::Key key) {
+	QSettings().setValue("keybinding/picker", key);
+}
+
+Qt::Key Preferences::keyResize() {
+	return QSettings().value("keybinding/resize", Qt::Key_4).value<Qt::Key>();
+}
+
+void Preferences::setKeyResize(Qt::Key key) {
+	QSettings().setValue("keybinding/resize", key);
+}
+
+Qt::Key Preferences::key3DView() {
+	return QSettings().value("keybinding/3dview", Qt::Key_F5).value<Qt::Key>();
+}
+
+void Preferences::setKey3DView(Qt::Key key) {
+	QSettings().setValue("keybinding/3dview", key);
+}
+
 } // namespace eno
