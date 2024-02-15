@@ -12,7 +12,7 @@ int main(int argc, char* argv[]) {
 	a.setWindowIcon(QIcon(":/logo/logo.png"));
 
 	QQmlApplicationEngine engine;
-	const QUrl url(u"qrc:/EnoViewer/qml/Main.qml"_qs);
+	const QUrl url(u"qrc:/Viewer/qml/Main.qml"_qs);
 	QObject::connect(
 		&engine, &QQmlApplicationEngine::objectCreated, &a,
 		[url](QObject* obj, const QUrl& objUrl) {
