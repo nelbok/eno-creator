@@ -27,13 +27,13 @@ So the interface could look old.
 
 ## Requirements
 
-- CMake 3.24+
-- C++
-- Qt 5.15.2 or Qt6
+- CMake 3.27+
+- C++ 17
+- Qt 6.6
 
 ## Compilation
 
 - cmake -D "CMAKE_PREFIX_PATH=Path to Qt" -B "build" .
 - cmake --build build
 
-Path to Qt, example for Windows: C:/Qt/6.6.1/msvc2019_64
+Path to Qt, example for Windows: C:/Qt/6.6.2/msvc2019_64

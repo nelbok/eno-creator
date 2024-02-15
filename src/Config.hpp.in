@@ -1,7 +1,0 @@
-#pragma once
-
-namespace eno::Config {
-constexpr auto organization = "@ENO_ORGANIZATION@";
-constexpr auto name = "@ENO_NAME@";
-constexpr auto version = "@ENO_VERSION@";
-} // namespace eno::Config
