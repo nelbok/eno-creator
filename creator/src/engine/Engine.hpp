@@ -6,10 +6,10 @@
 namespace Qt3DCore {
 class QEntity;
 class QComponent;
-}
+} // namespace Qt3DCore
 namespace Qt3DExtras {
 class Qt3DWindow;
-}
+} // namespace Qt3DExtras
 
 namespace eno {
 class Project;

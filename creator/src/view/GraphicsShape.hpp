@@ -17,10 +17,10 @@ public:
 	void setMode(Mode mode);
 
 	virtual QRectF boundingRect() const override;
-	virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0);
+	virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0) override;
 
 private:
-	MapAction* _mapAction{nullptr};
+	MapAction* _mapAction{ nullptr };
 	Mode _mode{ Mode::Normal };
 };
-} // namespace srp_creator
+} // namespace eno

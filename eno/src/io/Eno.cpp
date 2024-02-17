@@ -133,7 +133,7 @@ void Eno::loadV1(QDataStream& stream) {
 	loadSceneV1(stream, mapMaterials);
 }
 
-	// Materials load functions
+// Materials load functions
 QMap<QUuid, Material*> Eno::loadMaterialsV1(QDataStream& stream) {
 	QMap<QUuid, Material*> mapMaterials;
 	auto* materials = _project->materials();

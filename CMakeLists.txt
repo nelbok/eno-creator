@@ -13,8 +13,8 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(QT NAMES Qt6 REQUIRED COMPONENTS Widgets Quick 3DExtras 3DCore 3DRender)
-find_package(Qt6 REQUIRED COMPONENTS Widgets Quick 3DExtras 3DCore 3DRender)
+find_package(QT NAMES Qt6 REQUIRED COMPONENTS Widgets Quick Quick3D 3DExtras 3DCore 3DRender)
+find_package(Qt6 REQUIRED COMPONENTS Widgets Quick Quick3D 3DExtras 3DCore 3DRender)
 
 include(cmake/deployqt.cmake)
 

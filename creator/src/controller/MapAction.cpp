@@ -77,7 +77,7 @@ Project* MapAction::project() {
 
 void MapAction::mousePressEvent(const QVector3D& pos) {
 	switch (_typeAction) {
-		case Preferences::TypeAction::Remove :
+		case Preferences::TypeAction::Remove:
 			removeItem(pos);
 			break;
 		case Preferences::TypeAction::Add:
