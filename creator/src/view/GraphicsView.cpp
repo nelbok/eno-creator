@@ -16,8 +16,8 @@
 namespace eno {
 
 GraphicsView::GraphicsView(MapAction* mapAction, QWidget* parent)
-	: _mapAction(mapAction)
-	, QGraphicsView(parent) {}
+	: QGraphicsView(parent)
+	, _mapAction(mapAction) {}
 
 void GraphicsView::init() {
 	setMouseTracking(true);
@@ -70,7 +70,7 @@ void GraphicsView::mouseMoveEvent(QMouseEvent* e) {
 		_mapAction->mouseMoveEvent(pos);
 	}
 	pointerPositionUpdated();
-	setCursor(_mapAction->cursorShape(pos));
+	setCursor(_mapAction->cursorShape());
 }
 
 void GraphicsView::updateShapes() {

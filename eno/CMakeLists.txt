@@ -22,6 +22,7 @@ set(PROJECT_SOURCES
 	src/io/IOThread.cpp
 
 	src/tools/Merger.cpp
+	src/tools/Utils.cpp
 )
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" PREFIX "" FILES ${PROJECT_SOURCES})
 include_directories(.)

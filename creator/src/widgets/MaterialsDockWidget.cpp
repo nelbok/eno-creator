@@ -110,11 +110,11 @@ void MaterialsDockWidget::resetList() {
 	for (auto* material : *_materials) {
 		auto* item = new QListWidgetItem;
 		item->setText(material->name());
-		auto data = QVariant::fromValue(material);
-		item->setData(Qt::UserRole, data);
+		auto d = QVariant::fromValue(material);
+		item->setData(Qt::UserRole, d);
 		_list->addItem(item);
 
-		if (current == data) {
+		if (current == d) {
 			currentItem = item;
 		}
 	}

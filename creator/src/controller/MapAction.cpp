@@ -109,7 +109,7 @@ void MapAction::mouseMoveEvent(const QVector3D& pos) {
 	}
 }
 
-const Qt::CursorShape MapAction::cursorShape(const QVector3D& pos) const {
+Qt::CursorShape MapAction::cursorShape() const {
 	auto shape = Qt::CursorShape::ArrowCursor;
 	switch (_typeAction) {
 		case Preferences::TypeAction::Remove:

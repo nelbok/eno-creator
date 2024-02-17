@@ -23,13 +23,13 @@ void ComboBoxTool::init(const QString& icon) {
 	});
 }
 
-void ComboBoxTool::addItem(const QString& text, const QVariant& data) {
+void ComboBoxTool::addItem(const QString& text, const QVariant& d) {
 	assert(_comboBox);
-	_comboBox->addItem(text, data);
+	_comboBox->addItem(text, d);
 }
 
-void ComboBoxTool::setCurrentItem(const QVariant& data) {
-	auto index = _comboBox->findData(data);
+void ComboBoxTool::setCurrentItem(const QVariant& d) {
+	auto index = _comboBox->findData(d);
 	assert(index != -1);
 	_comboBox->setCurrentIndex(index);
 }
