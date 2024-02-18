@@ -10,7 +10,7 @@ namespace eno {
 class ColorButton;
 class MapAction;
 class Material;
-class Materials;
+class Project;
 
 class MaterialsDockWidget : public QDockWidget {
 	Q_OBJECT
@@ -19,17 +19,15 @@ public:
 	MaterialsDockWidget(QWidget* parent = 0);
 	virtual ~MaterialsDockWidget() = default;
 
-	void init(Materials* materials, MapAction* mapAction);
-
-	Material* currentMaterialSelected() const;
+	void init(MapAction* mapAction);
 
 private slots:
 	void resetList();
 	void updateForm();
 
 private:
-	Materials* _materials{ nullptr };
 	MapAction* _mapAction{ nullptr };
+	Material* _current{ nullptr };
 
 	QListWidget* _list{ nullptr };
 	QLineEdit* _name{ nullptr };

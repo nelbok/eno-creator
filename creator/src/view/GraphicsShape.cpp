@@ -3,8 +3,9 @@
 #include <QtCore/QCoreApplication>
 #include <QtGui/QPainter>
 
-#include <eno/data/Project.hpp>
 #include <eno/data/Material.hpp>
+#include <eno/data/Object.hpp>
+#include <eno/data/Project.hpp>
 #include <eno/data/Scene.hpp>
 
 #include "controller/MapAction.hpp"
@@ -38,10 +39,10 @@ void GraphicsShape::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QW
 		brush.setStyle(Qt::Dense4Pattern);
 	}
 	painter->setPen(pen);
-	for (const auto& pair : *(_mapAction->project()->scene())) {
-		const auto& pos = pair.first;
+	for (auto* object : _mapAction->project()->scene()->objects()) {
+		const auto& pos = object->position();
 		if ((pos.y() == _mapAction->depth() && _mode == Mode::Normal) || (pos.y() == _mapAction->depth() - 1 && _mode == Mode::Below)) {
-			brush.setColor(pair.second->diffuse());
+			brush.setColor(object->material()->diffuse());
 			painter->setBrush(brush);
 			painter->drawRect(pos.x() * 10, pos.z() * 10, 9, 9);
 		}

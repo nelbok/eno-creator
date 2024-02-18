@@ -2,7 +2,6 @@
 
 #include <eno/data/Project.hpp>
 #include <eno/data/Preferences.hpp>
-#include <eno/data/Materials.hpp>
 
 namespace eno {
 Material::Material(Project* project)
@@ -11,12 +10,15 @@ Material::Material(Project* project)
 	, _name{ Preferences::materialName() }
 	, _diffuse{ Preferences::materialDiffuse() } {}
 
+Material::~Material() {
+	assert(_refCount == 0);
+}
+
 void Material::setName(const QString& name) {
 	if (_name != name) {
 		_name = name;
 		_project->setIsModified(true);
-		_project->materials()->materialUpdated();
-		nameUpdated();
+		emit nameUpdated();
 	}
 }
 
@@ -24,19 +26,18 @@ void Material::setDiffuse(const QColor& color) {
 	if (_diffuse != color) {
 		_diffuse = color;
 		_project->setIsModified(true);
-		_project->materials()->materialUpdated();
-		diffuseUpdated();
+		emit diffuseUpdated();
 	}
 }
 
 void Material::increaseRefCount() {
 	++_refCount;
-	refCountUpdated();
+	emit refCountUpdated();
 }
 
 void Material::decreaseRefCount() {
 	assert(_refCount > 0);
 	--_refCount;
-	refCountUpdated();
+	emit refCountUpdated();
 }
 } // namespace eno

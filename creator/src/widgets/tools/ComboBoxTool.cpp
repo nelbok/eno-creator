@@ -18,8 +18,8 @@ void ComboBoxTool::init(const QString& icon) {
 	layout->addWidget(_comboBox);
 	layout->addWidget(label);
 
-	connect(_comboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), [this](int index) {
-		this->currentItemChanged(this->_comboBox->itemData(index));
+	connect(_comboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this](int index) {
+		emit currentItemChanged(_comboBox->itemData(index));
 	});
 }
 

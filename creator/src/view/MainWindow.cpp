@@ -55,7 +55,7 @@ void MainWindow::showProgressDialog(bool visible, QThread* thread) {
 		_progressDialog->setWindowModality(Qt::ApplicationModal);
 		_progressDialog->setFixedSize(250, 100);
 		_progressDialog->setRange(0, 0);
-		connect(_progressDialog, &QProgressDialog::canceled, [thread]() {
+		connect(_progressDialog, &QProgressDialog::canceled, this, [thread]() {
 			thread->requestInterruption();
 		});
 		_progressDialog->show();
@@ -143,12 +143,12 @@ void MainWindow::initLayers() {
 	{
 		wLevel->init(":items/depth.png");
 		wLevel->setRange(Preferences::minDepth, Preferences::maxDepth);
-		connect(wLevel, &SpinBoxTool::valueChanged, [this](int value) {
-			this->_mapAction->setDepth(value);
+		connect(wLevel, &SpinBoxTool::valueChanged, this, [this](int value) {
+			_mapAction->setDepth(value);
 			showMessage(QString("Depth changed to %1").arg(value));
 		});
-		connect(_mapAction, &MapAction::depthUpdated, [this, wLevel]() {
-			wLevel->setValue(this->_mapAction->depth());
+		connect(_mapAction, &MapAction::depthUpdated, this, [this, wLevel]() {
+			wLevel->setValue(_mapAction->depth());
 		});
 	}
 
@@ -156,12 +156,12 @@ void MainWindow::initLayers() {
 	{
 		wPen->init(":items/width.png");
 		wPen->setRange(Preferences::minPenWidth, Preferences::maxPenWidth);
-		connect(wPen, &SpinBoxTool::valueChanged, [this](int value) {
-			this->_mapAction->setPenWidth(value);
+		connect(wPen, &SpinBoxTool::valueChanged, this, [this](int value) {
+			_mapAction->setPenWidth(value);
 			showMessage(QString("Pen width changed to %1pt").arg(value));
 		});
-		connect(_mapAction, &MapAction::penWidthUpdated, [this, wPen]() {
-			wPen->setValue(this->_mapAction->penWidth());
+		connect(_mapAction, &MapAction::penWidthUpdated, this, [this, wPen]() {
+			wPen->setValue(_mapAction->penWidth());
 		});
 	}
 
@@ -172,13 +172,13 @@ void MainWindow::initLayers() {
 		wZoom->addItem(Preferences::toString(Preferences::Zoom::x50), QVariant::fromValue(Preferences::Zoom::x50));
 		wZoom->addItem(Preferences::toString(Preferences::Zoom::x100), QVariant::fromValue(Preferences::Zoom::x100));
 		wZoom->addItem(Preferences::toString(Preferences::Zoom::x200), QVariant::fromValue(Preferences::Zoom::x200));
-		connect(wZoom, &ComboBoxTool::currentItemChanged, [this](const QVariant& item) {
+		connect(wZoom, &ComboBoxTool::currentItemChanged, this, [this](const QVariant& item) {
 			auto zoom = item.value<Preferences::Zoom>();
-			this->_mapAction->setZoom(zoom);
+			_mapAction->setZoom(zoom);
 			showMessage(QString("Zoom changed to %1").arg(Preferences::toString(zoom)));
 		});
-		connect(_mapAction, &MapAction::zoomUpdated, [this, wZoom]() {
-			wZoom->setCurrentItem(QVariant::fromValue(this->_mapAction->zoom()));
+		connect(_mapAction, &MapAction::zoomUpdated, this, [this, wZoom]() {
+			wZoom->setCurrentItem(QVariant::fromValue(_mapAction->zoom()));
 		});
 	}
 
@@ -205,7 +205,7 @@ void MainWindow::initDocks() {
 	auto* menuDocks = menuBar()->addMenu("Views");
 
 	auto* dock = new MaterialsDockWidget(this);
-	dock->init(_project->materials(), _mapAction);
+	dock->init(_mapAction);
 	connect(dock, &MaterialsDockWidget::showMessage, this, &MainWindow::showMessage);
 	addDockWidget(Qt::LeftDockWidgetArea, dock);
 	menuDocks->addAction(dock->toggleViewAction());

@@ -63,13 +63,17 @@ private:
 	void changeItem(const QVector3D& pos, Func lambda) {
 		const int min = 0 - _penWidth / 2;
 		const int max = _penWidth - _penWidth / 2;
+		QList<QVector3D> vecs;
 		for (int x = min; x < max; ++x) {
 			for (int y = min; y < max; ++y) {
 				const QVector3D vec{ pos.x() + x, pos.y(), pos.z() + y };
 				if (validPosition(vec)) {
-					lambda(vec);
+					vecs.append(vec);
 				}
 			}
+		}
+		if (!vecs.isEmpty()) {
+			lambda(vecs);
 		}
 	}
 

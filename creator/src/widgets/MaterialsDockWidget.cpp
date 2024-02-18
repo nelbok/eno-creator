@@ -9,7 +9,7 @@
 #include <QtWidgets/QToolBar>
 
 #include <eno/data/Material.hpp>
-#include <eno/data/Materials.hpp>
+#include <eno/data/Project.hpp>
 
 #include "controller/MapAction.hpp"
 #include "widgets/common/ColorButton.hpp"
@@ -18,11 +18,8 @@ namespace eno {
 MaterialsDockWidget::MaterialsDockWidget(QWidget* parent)
 	: QDockWidget(parent) {}
 
-void MaterialsDockWidget::init(Materials* materials, MapAction* mapAction) {
-	assert(materials);
+void MaterialsDockWidget::init(MapAction* mapAction) {
 	assert(mapAction);
-
-	_materials = materials;
 	_mapAction = mapAction;
 
 	setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
@@ -33,14 +30,14 @@ void MaterialsDockWidget::init(Materials* materials, MapAction* mapAction) {
 
 	auto* tb = new QToolBar(w);
 	tb->addAction("Add material", [this]() {
-		auto* material = this->_materials->createMaterial();
+		auto* material = new Material(_mapAction->project());
 		material->setName("New material");
-		this->_materials->add(material);
+		_mapAction->project()->add(material);
+		_mapAction->setMaterial(material);
 	});
 	tb->addAction("Remove material", [this]() {
-		auto* material = this->currentMaterialSelected();
-		if (this->_materials->canRemove(material)) {
-			this->_materials->remove(material);
+		if (_mapAction->project()->canRemove(_current)) {
+			_mapAction->project()->remove(_current);
 		}
 	});
 
@@ -62,39 +59,48 @@ void MaterialsDockWidget::init(Materials* materials, MapAction* mapAction) {
 
 	setWidget(w);
 
-	connect(_mapAction, &MapAction::materialUpdated, [this]() {
-		for (int row = 0; row < this->_list->count(); ++row) {
-			auto* item = this->_list->item(row);
+	connect(_mapAction, &MapAction::materialUpdated, this, [this]() {
+		for (int row = 0; row < _list->count(); ++row) {
+			auto* item = _list->item(row);
 			auto* material = item->data(Qt::UserRole).value<Material*>();
 			if (_mapAction->material() == material) {
-				this->_list->setCurrentItem(item);
+				_list->setCurrentItem(item);
 			}
 		}
 	});
-	connect(_materials, &Materials::updated, this, &MaterialsDockWidget::resetList);
+	connect(_mapAction->project(), &Project::materialsUpdated, this, &MaterialsDockWidget::resetList);
 
-	connect(_list, &QListWidget::itemSelectionChanged, this, &MaterialsDockWidget::updateForm);
-	connect(_list, &QListWidget::itemSelectionChanged, [this]() {
-		auto* material = this->currentMaterialSelected();
-		this->_mapAction->setMaterial(material);
-	});
+	connect(_list, &QListWidget::itemSelectionChanged, this, [this]() {
+		// Disconnect Material's signals
+		if (_current) {
+			disconnect(_current, &Material::nameUpdated, this, &MaterialsDockWidget::updateForm);
+			disconnect(_current, &Material::diffuseUpdated, this, &MaterialsDockWidget::updateForm);
+			disconnect(_current, &Material::refCountUpdated, this, &MaterialsDockWidget::updateForm);
+		}
 
-	connect(_name, &QLineEdit::returnPressed, [this]() {
-		const auto& name = _name->text();
-		this->_list->currentItem()->setText(name);
-		this->currentMaterialSelected()->setName(name);
-	});
-	connect(_diffuse, &ColorButton::currentColorChanged, [this](const QColor& color) {
-		auto* material = this->currentMaterialSelected();
-		material->setDiffuse(color);
-		this->showMessage(QString("Color changed to %1").arg(color.name()));
+		_current = _list->currentItem()->data(Qt::UserRole).value<Material*>();
+		_mapAction->setMaterial(_current);
+
+		// Connect Material's signals
+		if (_current) {
+			connect(_current, &Material::nameUpdated, this, &MaterialsDockWidget::updateForm);
+			connect(_current, &Material::diffuseUpdated, this, &MaterialsDockWidget::updateForm);
+			connect(_current, &Material::refCountUpdated, this, &MaterialsDockWidget::updateForm);
+		}
+
 		updateForm();
 	});
-}
 
-Material* MaterialsDockWidget::currentMaterialSelected() const {
-	auto* item = _list->currentItem();
-	return item->data(Qt::UserRole).value<Material*>();
+	connect(_name, &QLineEdit::returnPressed, this, [this]() {
+		const auto& name = _name->text();
+		_list->currentItem()->setText(name);
+		_current->setName(name);
+		emit showMessage(QString("Material's name changed to %1").arg(name));
+	});
+	connect(_diffuse, &ColorButton::currentColorChanged, this, [this](const QColor& color) {
+		_current->setDiffuse(color);
+		emit showMessage(QString("Material's diffuse color changed to %1").arg(color.name()));
+	});
 }
 
 void MaterialsDockWidget::resetList() {
@@ -107,7 +113,7 @@ void MaterialsDockWidget::resetList() {
 
 	_list->blockSignals(true);
 	_list->clear();
-	for (auto* material : *_materials) {
+	for (auto* material : _mapAction->project()->materials()) {
 		auto* item = new QListWidgetItem;
 		item->setText(material->name());
 		auto d = QVariant::fromValue(material);
@@ -127,10 +133,9 @@ void MaterialsDockWidget::resetList() {
 }
 
 void MaterialsDockWidget::updateForm() {
-	auto* material = currentMaterialSelected();
-	_name->setText(material->name());
-	_diffuse->setColor(material->diffuse());
-	_refCount->setText(QString("Numbers of time used by a cube: %1").arg(material->refCount()));
+	_name->setText(_current->name());
+	_diffuse->setColor(_current->diffuse());
+	_refCount->setText(QString("Numbers of time used by a cube: %1").arg(_current->refCount()));
 }
 
 } // namespace eno

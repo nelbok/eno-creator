@@ -18,8 +18,8 @@ void SpinBoxTool::init(const QString& icon) {
 	layout->addWidget(_spinBox);
 	layout->addWidget(label);
 
-	connect(_spinBox, QOverload<int>::of(&QSpinBox::valueChanged), [this](int value) {
-		this->valueChanged(value);
+	connect(_spinBox, QOverload<int>::of(&QSpinBox::valueChanged), this, [this](int value) {
+		emit valueChanged(value);
 	});
 }
 

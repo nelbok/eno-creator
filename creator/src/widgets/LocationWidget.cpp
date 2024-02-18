@@ -22,7 +22,7 @@ void LocationWidget::init() {
 	layout->setSpacing(0);
 
 	connect(_lineEdit, &QLineEdit::textChanged, this, &LocationWidget::locationChanged);
-	connect(browse, &QPushButton::clicked, [this]() {
+	connect(browse, &QPushButton::clicked, this, [this]() {
 		const auto& dir = QFileDialog::getExistingDirectory(qApp->activeWindow(), qApp->applicationName() + " - Choose", location());
 		if (dir.isEmpty())
 			return;

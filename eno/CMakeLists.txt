@@ -1,7 +1,7 @@
 set(CMAKE_DEBUG_POSTFIX _d)
 set(PROJECT_SOURCES
 	include/eno/data/Material.hpp
-	include/eno/data/Materials.hpp
+	include/eno/data/Object.hpp
 	include/eno/data/Preferences.hpp
 	include/eno/data/Project.hpp
 	include/eno/data/Scene.hpp
@@ -13,7 +13,7 @@ set(PROJECT_SOURCES
 	include/eno/tools/Utils.hpp
 
 	src/data/Material.cpp
-	src/data/Materials.cpp
+	src/data/Object.cpp
 	src/data/Preferences.cpp
 	src/data/Project.cpp
 	src/data/Scene.cpp

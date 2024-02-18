@@ -11,12 +11,18 @@ class Material : public QObject {
 	friend class Eno;
 
 	Q_OBJECT
+	Q_PROPERTY(QUuid uuid READ uuid NOTIFY uuidUpdated)
+	Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameUpdated)
+	Q_PROPERTY(QColor diffuse READ diffuse WRITE setDiffuse NOTIFY diffuseUpdated)
+	Q_PROPERTY(int refCount READ refCount NOTIFY refCountUpdated)
 
 public:
 	Material(Project* project);
-	virtual ~Material() = default;
+	virtual ~Material();
 
 	// clang-format off
+	const QUuid& uuid() const { return _uuid; }
+
 	const QString& name() const { return _name; }
 	void setName(const QString& name);
 
@@ -37,6 +43,7 @@ private:
 	int _refCount{ 0 };
 
 signals:
+	void uuidUpdated();
 	void nameUpdated();
 	void diffuseUpdated();
 	void refCountUpdated();

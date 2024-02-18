@@ -1,15 +1,16 @@
 #include <eno/tools/Merger.hpp>
 
+#include <eno/data/Object.hpp>
 #include <eno/data/Scene.hpp>
 
 namespace eno {
 QList<Cuboid> fillData(Scene* scene) {
 	QList<Cuboid> data;
 
-	for (const auto& cube : *scene) {
+	for (auto* object : scene->objects()) {
 		Cuboid c;
-		c.position = cube.first;
-		c.material = cube.second;
+		c.position = object->position();
+		c.material = object->material();
 		data.push_back(c);
 	}
 

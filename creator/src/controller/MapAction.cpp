@@ -1,6 +1,6 @@
 #include "MapAction.hpp"
 
-#include <eno/data/Materials.hpp>
+#include <eno/data/Object.hpp>
 #include <eno/data/Project.hpp>
 #include <eno/data/Scene.hpp>
 
@@ -14,7 +14,7 @@ MapAction::MapAction(Project* project, QObject* parent)
 void MapAction::reset() {
 	_project->reset();
 	setTypeAction(Preferences::TypeAction::Add);
-	setMaterial(*(_project->materials()->begin()));
+	setMaterial(*(_project->materials().begin()));
 	setDepth(Preferences::mapActionDepth());
 	setPenWidth(Preferences::mapActionPenWidth());
 	setZoom(Preferences::mapActionZoom());
@@ -31,7 +31,7 @@ Preferences::TypeAction MapAction::typeAction() const {
 void MapAction::setMaterial(Material* material) {
 	assert(material);
 	_material = material;
-	materialUpdated();
+	emit materialUpdated();
 }
 
 Material* MapAction::material() const {
@@ -40,7 +40,7 @@ Material* MapAction::material() const {
 
 void MapAction::setDepth(int depth) {
 	_depth = depth;
-	depthUpdated();
+	emit depthUpdated();
 }
 
 int MapAction::depth() const {
@@ -49,7 +49,7 @@ int MapAction::depth() const {
 
 void MapAction::setPenWidth(int penWidth) {
 	_penWidth = penWidth;
-	penWidthUpdated();
+	emit penWidthUpdated();
 }
 
 int MapAction::penWidth() const {
@@ -62,7 +62,7 @@ Preferences::Zoom MapAction::zoom() const {
 
 void MapAction::setZoom(Preferences::Zoom zoom) {
 	_zoom = zoom;
-	zoomUpdated();
+	emit zoomUpdated();
 }
 
 const Project* MapAction::project() const {
@@ -134,21 +134,40 @@ bool MapAction::validPosition(const QVector3D& pos) const {
 }
 
 void MapAction::removeItem(const QVector3D& pos) {
-	changeItem(pos, [this](const QVector3D& vec) {
-		this->_project->scene()->removeItem(vec);
+	changeItem(pos, [this](const QList<QVector3D>& vecs) {
+		Scene* scene = _project->scene();
+		QList<Object*> objects;
+		for (const auto& vec : vecs) {
+			for (auto* object : scene->objects()) {
+				if (object->position() == vec) {
+					objects.append(object);
+					break;
+				}
+			}
+		}
+		scene->remove(objects);
 	});
 }
 
 void MapAction::addItem(const QVector3D& pos) {
-	changeItem(pos, [this](const QVector3D& vec) {
-		this->_project->scene()->addItem(vec, this->_material);
+	changeItem(pos, [this](const QList<QVector3D>& vecs) {
+		QList<Object*> objects;
+		for (const auto& vec : vecs) {
+			auto* object = new Object(_project);
+			object->setPosition(vec);
+			object->setMaterial(_material);
+			objects.append(object);
+		}
+		_project->scene()->add(objects);
 	});
 }
 
 void MapAction::pickColor(const QVector3D& pos) {
-	if (_project->scene()->findItem(pos)) {
-		_material = _project->scene()->materialAt(pos);
-		materialUpdated();
+	for (auto* object : _project->scene()->objects()) {
+		if (object->position() == pos) {
+			_material = object->material();
+			emit materialUpdated();
+		}
 	}
 }
 

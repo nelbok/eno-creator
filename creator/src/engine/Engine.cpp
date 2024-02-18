@@ -12,7 +12,6 @@
 #include <Qt3DRender/QPointLight>
 
 #include <eno/data/Material.hpp>
-#include <eno/data/Materials.hpp>
 #include <eno/data/Project.hpp>
 #include <eno/tools/Utils.hpp>
 
@@ -40,7 +39,7 @@ void Engine::init(const Project* project) {
 	initCamera();
 	initLight();
 
-	for (const auto& material : *(project->materials())) {
+	for (auto* material : project->materials()) {
 		auto* mesh = new CuboidMesh();
 		mesh->init(project->scene(), material);
 

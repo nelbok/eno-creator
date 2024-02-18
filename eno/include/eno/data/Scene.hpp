@@ -22,37 +22,34 @@ namespace eno {
 //  +-------+
 // 0 = min (X,Z)
 
-class Material;
+class Object;
 class Project;
-
-using SceneData = QMap<QVector3D, Material*>;
 
 class Scene : public QObject {
 	friend class Eno;
 
 	Q_OBJECT
+	Q_PROPERTY(QPoint min READ min WRITE setMin NOTIFY rectUpdated)
+	Q_PROPERTY(QPoint max READ max WRITE setMax NOTIFY rectUpdated)
+	Q_PROPERTY(QList<Object*> objects READ objects NOTIFY objectsUpdated)
 
 public:
 	Scene(Project* project);
-	virtual ~Scene() = default;
+	virtual ~Scene();
 
 	void reset();
+	void clear();
 
 	// clang-format off
 	const QPoint& min() const { return _min; }
 	const QPoint& max() const { return _max; }
 	void setMin(const QPoint& min);
 	void setMax(const QPoint& max);
+
+	void add(const QList<Object*>& objects);
+	void remove(const QList<Object*>& objects);
+	QList<Object*> objects() const { return _objects; }
 	// clang-format on
-
-	void addItem(const QVector3D& pos, Material* material);
-	void removeItem(const QVector3D& pos);
-	bool findItem(const QVector3D& pos) const;
-	int countItems() const;
-	Material* materialAt(const QVector3D& pos) const;
-
-	SceneData::const_key_value_iterator begin() const;
-	SceneData::const_key_value_iterator end() const;
 
 private:
 	void updateScene();
@@ -62,10 +59,10 @@ private:
 	QPoint _min{};
 	QPoint _max{};
 
-	SceneData _sceneData{};
+	QList<Object*> _objects{};
 
 signals:
 	void rectUpdated();
-	void dataUpdated();
+	void objectsUpdated();
 };
 } // namespace eno

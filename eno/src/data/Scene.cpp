@@ -1,6 +1,6 @@
 #include <eno/data/Scene.hpp>
 
-#include <eno/data/Material.hpp>
+#include <eno/data/Object.hpp>
 #include <eno/data/Project.hpp>
 #include <eno/data/Preferences.hpp>
 #include <eno/tools/Utils.hpp>
@@ -10,12 +10,23 @@ Scene::Scene(Project* project)
 	: QObject(project)
 	, _project(project) {}
 
+Scene::~Scene() {
+	clear();
+}
+
 void Scene::reset() {
 	setMin(Preferences::sceneMin());
 	setMax(Preferences::sceneMax());
+	clear();
+}
 
-	_sceneData.clear();
-	dataUpdated();
+void Scene::clear() {
+	for (auto* object : _objects) {
+		// We can't use deleteLater
+		// Material needs to be informed immediately when an object is about to be deleted
+		delete object;
+	}
+	_objects.clear();
 }
 
 void Scene::setMin(const QPoint& min) {
@@ -30,9 +41,10 @@ void Scene::setMin(const QPoint& min) {
 		}
 		_project->setIsModified(true);
 		updateScene();
-		rectUpdated();
+		emit rectUpdated();
 	}
 }
+
 void Scene::setMax(const QPoint& max) {
 	if (_max != max) {
 		auto v = Preferences::defaultSceneMax;
@@ -45,67 +57,64 @@ void Scene::setMax(const QPoint& max) {
 		}
 		_project->setIsModified(true);
 		updateScene();
-		rectUpdated();
+		emit rectUpdated();
 	}
 }
 
-void Scene::addItem(const QVector3D& pos, Material* material) {
-	assert(material);
-	if (findItem(pos)) {
-		if (_sceneData[pos] == material) {
-			return;
+void Scene::add(const QList<Object*>& objects) {
+	QList<Object*> objectsToDelete{};
+	for (auto* o1 : objects) {
+		assert(o1);
+
+		// Check if another object is at that position
+		for (auto* o2 : _objects) {
+			if (o2->position() == o1->position()) {
+				assert(o2 != o1);
+				objectsToDelete.append(o2);
+				break;
+			}
 		}
-		materialAt(pos)->decreaseRefCount();
 	}
-	material->increaseRefCount();
-	_sceneData[pos] = material;
+
+	blockSignals(true);
+	remove(objectsToDelete);
+	blockSignals(false);
+
+	// Add the object
+	_objects.append(objects);
 	_project->setIsModified(true);
-	dataUpdated();
+	emit objectsUpdated();
 }
 
-void Scene::removeItem(const QVector3D& pos) {
-	if (_sceneData.contains(pos)) {
-		materialAt(pos)->decreaseRefCount();
-		_sceneData.remove(pos);
-		_project->setIsModified(true);
-		dataUpdated();
+void Scene::remove(const QList<Object*>& objects) {
+	for (auto* object : objects) {
+		assert(object);
+		assert(_objects.contains(object));
+		_objects.removeAll(object);
+		// We can't use deleteLater
+		// Material needs to be informed immediately when an object is about to be deleted
+		delete object;
 	}
-}
-
-bool Scene::findItem(const QVector3D& pos) const {
-	return _sceneData.contains(pos);
-}
-
-int Scene::countItems() const {
-	return _sceneData.count();
-}
-
-Material* Scene::materialAt(const QVector3D& pos) const {
-	assert(findItem(pos));
-	return _sceneData.value(pos, {});
-}
-
-SceneData::const_key_value_iterator Scene::begin() const {
-	return _sceneData.constKeyValueBegin();
-}
-
-SceneData::const_key_value_iterator Scene::end() const {
-	return _sceneData.constKeyValueEnd();
+	_project->setIsModified(true);
+	emit objectsUpdated();
 }
 
 void Scene::updateScene() {
-	QList<QVector3D> itemsToDelete{};
-	for (const auto& item : _sceneData.keys()) {
-		if (item.x() < _min.x() || item.x() > _max.x() || item.y() < _min.y() || item.y() > _max.y()) {
-			itemsToDelete.append(item);
+	QList<Object*> objectsToDelete{};
+	for (auto* object : _objects) {
+		const auto& pos = object->position();
+		if (pos.x() < _min.x() || pos.x() > _max.x() || pos.y() < _min.y() || pos.y() > _max.y()) {
+			objectsToDelete.append(object);
 		}
 	}
-	for (const auto& item : itemsToDelete) {
-		removeItem(item);
-	}
-	if (!itemsToDelete.isEmpty()) {
+
+	blockSignals(true);
+	remove(objectsToDelete);
+	blockSignals(false);
+
+	if (!objectsToDelete.isEmpty()) {
 		_project->setIsModified(true);
-		dataUpdated();
+		emit objectsUpdated();
 	}
 }
 } // namespace eno

@@ -21,7 +21,7 @@ void ColorButton::chooseColor() {
 	if (color != _color && color.isValid()) {
 		_color = color;
 		updateColor();
-		currentColorChanged(_color);
+		emit currentColorChanged(_color);
 	}
 }
 

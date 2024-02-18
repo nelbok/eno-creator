@@ -2,16 +2,21 @@
 
 #include <QtCore/QObject>
 
+// For Q_PROPERTY
+#include <eno/data/Scene.hpp>
+
 namespace eno {
-class Materials;
-class Scene;
+class Material;
 
 class Project : public QObject {
 	Q_OBJECT
+	Q_PROPERTY(QString filePath READ filePath WRITE setFilePath NOTIFY filePathUpdated)
+	Q_PROPERTY(bool isModified READ isModified WRITE setIsModified NOTIFY isModifiedUpdated)
+	Q_PROPERTY(Scene* scene READ scene CONSTANT)
 
 public:
 	Project(QObject* parent = nullptr);
-	virtual ~Project() = default;
+	virtual ~Project();
 
 	void init();
 	void reset();
@@ -25,8 +30,10 @@ public:
 	bool isModified() const { return _isModified; }
 	void setIsModified(bool isModifed);
 
-	Materials* materials() { return _materials; }
-	const Materials* materials() const { return _materials; }
+	void add(Material* material);
+	bool canRemove(Material* material);
+	void remove(Material* material);
+	QList<Material*> materials() const { return _materials; }
 
 	Scene* scene() { return _scene; }
 	const Scene* scene() const { return _scene; }
@@ -36,11 +43,12 @@ private:
 	QString _filePath{};
 	bool _isModified{ false };
 
-	Materials* _materials{ nullptr };
+	QList<Material*> _materials{};
 	Scene* _scene{ nullptr };
 
 signals:
 	void filePathUpdated();
 	void isModifiedUpdated();
+	void materialsUpdated();
 };
 } // namespace eno

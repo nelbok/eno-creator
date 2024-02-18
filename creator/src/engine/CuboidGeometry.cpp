@@ -7,22 +7,19 @@
 
 // See source: https://code.woboq.org/qt5/qt3d/src/extras/geometries/qcuboidgeometry.cpp.html
 
-#if QT_VERSION > QT_VERSION_CHECK(6, 0, 0)
-#	include <Qt3DCore/QAttribute>
-#	include <Qt3DCore/QBuffer>
-using namespace Qt3DCore;
-#else
-#	include <Qt3DRender/QAttribute>
-#	include <Qt3DRender/QBuffer>
-using namespace Qt3DRender;
-#endif
+#include <Qt3DCore/QAttribute>
+#include <Qt3DCore/QBuffer>
 
+#include <eno/data/Object.hpp>
 #include <eno/data/Scene.hpp>
+
+using namespace Qt3DCore;
 
 namespace eno {
 namespace detail {
 
 enum PlaneNormal { PositiveX, NegativeX, PositiveY, NegativeY, PositiveZ, NegativeZ };
+
 void createPlaneVertexData(PlaneNormal normal, const QVector3D& position, float* vertices) {
 	switch (normal) {
 		case NegativeX:
@@ -178,6 +175,7 @@ void createPlaneVertexData(PlaneNormal normal, const QVector3D& position, float*
 		}
 	} // switch (normal)
 }
+
 void createPlaneIndexData(unsigned int* indices, unsigned int& baseIndex) {
 	// Populate indices taking care to get correct CCW winding on all faces
 	// Iterate over v direction (rows)
@@ -197,6 +195,7 @@ void createPlaneIndexData(unsigned int* indices, unsigned int& baseIndex) {
 	}
 	baseIndex += 4;
 }
+
 QByteArray createCuboidVertexData(const QVector3D& position) {
 	const int yzVerts = 4;
 	const int xzVerts = 4;
@@ -220,6 +219,7 @@ QByteArray createCuboidVertexData(const QVector3D& position) {
 	createPlaneVertexData(NegativeZ, position, vertices);
 	return vertexBytes;
 }
+
 QByteArray createCuboidIndexData(unsigned int& baseIndex) {
 	const int yzIndices = 2 * 3;
 	const int xzIndices = 2 * 3;
@@ -265,10 +265,10 @@ void CuboidGeometry::init(const Scene* scene, const Material* material) {
 	auto* bufferIndexes = new QBuffer(this);
 	QByteArray arrayVertices;
 	QByteArray arrayIndexes;
-	for (const auto& item : *scene) {
-		if (item.second != material)
+	for (Object* object : scene->objects()) {
+		if (object->material() != material)
 			continue;
-		arrayVertices += detail::createCuboidVertexData(item.first);
+		arrayVertices += detail::createCuboidVertexData(object->position());
 		arrayIndexes += detail::createCuboidIndexData(verticesCount);
 	}
 	bufferVertices->setData(arrayVertices);

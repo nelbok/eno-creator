@@ -7,7 +7,6 @@
 #include <QtWidgets/QGraphicsLineItem>
 
 #include <eno/data/Project.hpp>
-#include <eno/data/Materials.hpp>
 #include <eno/data/Scene.hpp>
 
 #include "controller/MapAction.hpp"
@@ -44,9 +43,9 @@ void GraphicsView::init() {
 	_scene->addItem(_yAxis);
 	setScene(_scene);
 
-	connect(_mapAction->project()->scene(), &Scene::dataUpdated, this, &GraphicsView::updateShapes);
+	connect(_mapAction->project()->scene(), &Scene::objectsUpdated, this, &GraphicsView::updateShapes);
 	connect(_mapAction->project()->scene(), &Scene::rectUpdated, this, &GraphicsView::updateRect);
-	connect(_mapAction->project()->materials(), &Materials::materialUpdated, this, &GraphicsView::updateShapes);
+	connect(_mapAction->project(), &Project::materialsUpdated, this, &GraphicsView::updateShapes);
 	connect(_mapAction, &MapAction::depthUpdated, this, &GraphicsView::updateShapes);
 	connect(_mapAction, &MapAction::zoomUpdated, this, &GraphicsView::updateZoom);
 }
@@ -69,7 +68,7 @@ void GraphicsView::mouseMoveEvent(QMouseEvent* e) {
 	if (e->buttons() == Qt::LeftButton) {
 		_mapAction->mouseMoveEvent(pos);
 	}
-	pointerPositionUpdated();
+	emit pointerPositionUpdated();
 	setCursor(_mapAction->cursorShape());
 }
 

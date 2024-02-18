@@ -48,16 +48,16 @@ void InfoWidget::init(Scene* scene, GraphicsView* graphicsView) {
 	connect(_scene, &Scene::rectUpdated, this, &InfoWidget::updateData);
 	connect(_graphicsView, &GraphicsView::pointerPositionUpdated, this, &InfoWidget::updateData);
 
-	connect(_minXSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), [this]() {
+	connect(_minXSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), this, [this]() {
 		_scene->setMin({ _minXSpinBox->value(), _scene->min().y() });
 	});
-	connect(_minYSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), [this]() {
+	connect(_minYSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), this, [this]() {
 		_scene->setMin({ _scene->min().x(), _minYSpinBox->value() });
 	});
-	connect(_maxXSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), [this]() {
+	connect(_maxXSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), this, [this]() {
 		_scene->setMax({ _maxXSpinBox->value(), _scene->max().y() });
 	});
-	connect(_maxYSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), [this]() {
+	connect(_maxYSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), this, [this]() {
 		_scene->setMax({ _scene->max().x(), _maxYSpinBox->value() });
 	});
 }

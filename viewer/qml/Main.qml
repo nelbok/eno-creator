@@ -2,20 +2,12 @@ import QtQuick
 import QtQuick3D
 import QtQuick3D.Helpers
 
+import Eno
+
 Window {
     width: 1200
     height: 800
     visible: true
-    title: qsTr("Hello World")
-
-    ListModel {
-        id: enoData
-        ListElement { x: 0; y: 0; z: 0; color: "red" }
-        ListElement { x: 2; y: 0; z: 0; color: "blue" }
-        ListElement { x: 0; y: 0; z: 2; color: "pink" }
-        ListElement { x: 2; y: 0; z: 2; color: "yellow" }
-        ListElement { x: 1; y: 1; z: 1; color: "black" }
-    }
 
     View3D {
         id: view
@@ -44,14 +36,14 @@ Window {
         }
 
         Repeater3D {
-            model: enoData
+            model: MyProject.scene.objects
             delegate: Model {
                 source: "#Cube"
-                position: Qt.vector3d(enoData.get(index).x * 50, enoData.get(index).y * 50, enoData.get(index).z * 50)
+                position: Qt.vector3d(model.modelData.position.x * 50, model.modelData.position.y * 50, model.modelData.position.z * 50)
                 scale: Qt.vector3d(0.5, 0.5, 0.5)
 
                 materials: [ DefaultMaterial {
-                        diffuseColor: enoData.get(index).color
+                        diffuseColor: model.modelData.material.diffuse
                     }
                 ]
             }
