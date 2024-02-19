@@ -1,7 +1,7 @@
 set(ENO_ORGANIZATION "Foxxy Soft")
 set(ENO_CREATOR "Eno Creator")
 set(ENO_VIEWER "Eno Viewer")
-set(ENO_VERSION "1.0.2")
+set(ENO_VERSION "1.0.3")
 string(TIMESTAMP ENO_YEAR %Y)
 set(ENO_COPYRIGHT "Copyright (C) 2011-${ENO_YEAR} ${ENO_ORGANIZATION}")
 

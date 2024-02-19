@@ -72,7 +72,7 @@ void MaterialsDockWidget::init(MapAction* mapAction) {
 
 	connect(_list, &QListWidget::itemSelectionChanged, this, [this]() {
 		// Disconnect Material's signals
-		if (_current) {
+		if (_current && _mapAction->project()->materials().contains(_current)) {
 			disconnect(_current, &Material::nameUpdated, this, &MaterialsDockWidget::updateForm);
 			disconnect(_current, &Material::diffuseUpdated, this, &MaterialsDockWidget::updateForm);
 			disconnect(_current, &Material::refCountUpdated, this, &MaterialsDockWidget::updateForm);
