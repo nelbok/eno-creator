@@ -11,7 +11,9 @@
 #include <eno/data/Material.hpp>
 #include <eno/data/Project.hpp>
 
+#include "controller/command/MaterialCommand.hpp"
 #include "controller/MapAction.hpp"
+#include "controller/UndoRedo.hpp"
 #include "widgets/common/ColorButton.hpp"
 
 namespace eno {
@@ -93,12 +95,11 @@ void MaterialsDockWidget::init(MapAction* mapAction) {
 
 	connect(_name, &QLineEdit::returnPressed, this, [this]() {
 		const auto& name = _name->text();
-		_list->currentItem()->setText(name);
-		_current->setName(name);
+		MaterialCommand::setName(_mapAction->undoRedo(), _current, name);
 		emit showMessage(QString("Material's name changed to %1").arg(name));
 	});
 	connect(_diffuse, &ColorButton::currentColorChanged, this, [this](const QColor& color) {
-		_current->setDiffuse(color);
+		MaterialCommand::setDiffuse(_mapAction->undoRedo(), _current, color);
 		emit showMessage(QString("Material's diffuse color changed to %1").arg(color.name()));
 	});
 }
@@ -115,6 +116,10 @@ void MaterialsDockWidget::resetList() {
 	_list->clear();
 	for (auto* material : _mapAction->project()->materials()) {
 		auto* item = new QListWidgetItem;
+		disconnect(material, nullptr, _list, nullptr);
+		connect(material, &Material::nameUpdated, _list, [item, material]() {
+			item->setText(material->name());
+		});
 		item->setText(material->name());
 		auto d = QVariant::fromValue(material);
 		item->setData(Qt::UserRole, d);

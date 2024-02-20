@@ -27,6 +27,10 @@ public:
 	QAction* preferenceAction() const { return _preferenceAction; }
 	QAction* quitAction() const { return _quitAction; }
 
+	// Edit
+	QAction* undoAction() const { return _undoAction; }
+	QAction* redoAction() const { return _redoAction; }
+
 	// Tools
 	QAction* removeAction() const { return _removeAction; }
 	QAction* addAction() const { return _addAction; }
@@ -43,6 +47,7 @@ public:
 
 private:
 	void initFile();
+	void initEdit();
 	void initTools();
 	void initGenerate();
 	void initOthers();
@@ -59,6 +64,10 @@ private:
 	QAction* _saveAsAction{ nullptr };
 	QAction* _preferenceAction{ nullptr };
 	QAction* _quitAction{ nullptr };
+
+	// Edit action
+	QAction* _undoAction{ nullptr };
+	QAction* _redoAction{ nullptr };
 
 	// Tools action
 	QAction* _removeAction{ nullptr };

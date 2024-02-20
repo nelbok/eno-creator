@@ -9,8 +9,9 @@
 class QMouseEvent;
 
 namespace eno {
-class Project;
 class Material;
+class Project;
+class UndoRedo;
 
 class MapAction : public QObject {
 	Q_OBJECT
@@ -39,6 +40,9 @@ public:
 	const Project* project() const;
 	Project* project();
 
+	const UndoRedo* undoRedo() const;
+	UndoRedo* undoRedo();
+
 	void mousePressEvent(const QVector3D& pos);
 	void mouseMoveEvent(const QVector3D& pos);
 	Qt::CursorShape cursorShape() const;
@@ -57,6 +61,7 @@ private:
 	Preferences::Zoom _zoom{};
 	Project* _project{ nullptr };
 	QVector2D _currentPos{};
+	UndoRedo* _undoRedo{};
 
 private:
 	template<class Func>

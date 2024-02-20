@@ -92,6 +92,7 @@ void MainWindow::initUi() {
 	setMinimumSize(1280, 780);
 
 	initMainMenu();
+	initEdit();
 	initTools();
 	initLayers();
 	initGenerate();
@@ -117,6 +118,12 @@ void MainWindow::initMainMenu() {
 	menuFile->addAction(_shortcuts->preferenceAction());
 	menuFile->addSeparator();
 	menuFile->addAction(_shortcuts->quitAction());
+}
+
+void MainWindow::initEdit() {
+	auto* menu = menuBar()->addMenu("Edit");
+	menu->addAction(_shortcuts->undoAction());
+	menu->addAction(_shortcuts->redoAction());
 }
 
 void MainWindow::initTools() {

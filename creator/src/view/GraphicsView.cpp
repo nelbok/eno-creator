@@ -10,6 +10,7 @@
 #include <eno/data/Scene.hpp>
 
 #include "controller/MapAction.hpp"
+#include "controller/UndoRedo.hpp"
 #include "GraphicsShape.hpp"
 
 namespace eno {
@@ -45,7 +46,7 @@ void GraphicsView::init() {
 
 	connect(_mapAction->project()->scene(), &Scene::objectsUpdated, this, &GraphicsView::updateShapes);
 	connect(_mapAction->project()->scene(), &Scene::rectUpdated, this, &GraphicsView::updateRect);
-	connect(_mapAction->project(), &Project::materialsUpdated, this, &GraphicsView::updateShapes);
+	connect(_mapAction->undoRedo(), &UndoRedo::updated, this, &GraphicsView::updateShapes);
 	connect(_mapAction, &MapAction::depthUpdated, this, &GraphicsView::updateShapes);
 	connect(_mapAction, &MapAction::zoomUpdated, this, &GraphicsView::updateZoom);
 }

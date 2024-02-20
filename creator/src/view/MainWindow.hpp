@@ -30,6 +30,7 @@ private slots:
 
 private:
 	void initMainMenu();
+	void initEdit();
 	void initTools();
 	void initLayers();
 	void initGenerate();

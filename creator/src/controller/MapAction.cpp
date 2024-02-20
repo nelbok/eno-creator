@@ -4,15 +4,19 @@
 #include <eno/data/Project.hpp>
 #include <eno/data/Scene.hpp>
 
+#include "UndoRedo.hpp"
+
 namespace eno {
 
 MapAction::MapAction(Project* project, QObject* parent)
 	: QObject(parent)
-	, _project(project) {}
+	, _project(project)
+	, _undoRedo(new UndoRedo(this)) {}
 
 
 void MapAction::reset() {
 	_project->reset();
+	_undoRedo->reset();
 	setTypeAction(Preferences::TypeAction::Add);
 	setMaterial(*(_project->materials().begin()));
 	setDepth(Preferences::mapActionDepth());
@@ -73,6 +77,16 @@ const Project* MapAction::project() const {
 Project* MapAction::project() {
 	assert(_project);
 	return _project;
+}
+
+const UndoRedo* MapAction::undoRedo() const {
+	assert(_undoRedo);
+	return _undoRedo;
+}
+
+UndoRedo* MapAction::undoRedo() {
+	assert(_undoRedo);
+	return _undoRedo;
 }
 
 void MapAction::mousePressEvent(const QVector3D& pos) {

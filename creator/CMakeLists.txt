@@ -1,8 +1,14 @@
 set(PROJECT_SOURCES
+	src/controller/command/BaseCommand.cpp
+	src/controller/command/BaseCommand.hpp
+	src/controller/command/MaterialCommand.cpp
+	src/controller/command/MaterialCommand.hpp
 	src/controller/MapAction.cpp
 	src/controller/MapAction.hpp
 	src/controller/Shortcuts.cpp
 	src/controller/Shortcuts.hpp
+	src/controller/UndoRedo.cpp
+	src/controller/UndoRedo.hpp
 
 	src/engine/CuboidGeometry.cpp
 	src/engine/CuboidGeometry.hpp

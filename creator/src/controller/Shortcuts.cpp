@@ -15,6 +15,7 @@
 #include "io/WavefrontOBJ.hpp"
 #include "view/PreferencesWindow.hpp"
 #include "MapAction.hpp"
+#include "UndoRedo.hpp"
 
 namespace eno {
 
@@ -25,6 +26,7 @@ Shortcuts::Shortcuts(MapAction* mapAction, QObject* parent)
 
 void Shortcuts::initActions() {
 	initFile();
+	initEdit();
 	initTools();
 	initGenerate();
 	initOthers();
@@ -114,6 +116,28 @@ void Shortcuts::initFile() {
 			return;
 		_mapAction->reset();
 		qApp->exit();
+	});
+}
+
+void Shortcuts::initEdit() {
+	_undoAction = new QAction("Undo", this);
+	_undoAction->setShortcut({ Qt::CTRL | Qt::Key_Z });
+	connect(_mapAction->undoRedo(), &UndoRedo::updated, this, [this]() {
+		_undoAction->setEnabled(_mapAction->undoRedo()->canUndo());
+	});
+	connect(_undoAction, &QAction::triggered, this, [this]() {
+		_mapAction->undoRedo()->undo();
+		emit showMessage("Action undone");
+	});
+
+	_redoAction = new QAction("Redo", this);
+	_redoAction->setShortcut({ Qt::CTRL | Qt::Key_Y });
+	connect(_mapAction->undoRedo(), &UndoRedo::updated, this, [this]() {
+		_redoAction->setEnabled(_mapAction->undoRedo()->canRedo());
+	});
+	connect(_redoAction, &QAction::triggered, this, [this]() {
+		_mapAction->undoRedo()->redo();
+		emit showMessage("Action redone");
 	});
 }
 
