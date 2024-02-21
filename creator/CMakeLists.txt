@@ -3,8 +3,12 @@ set(PROJECT_SOURCES
 	src/controller/command/BaseCommand.hpp
 	src/controller/command/MaterialCommand.cpp
 	src/controller/command/MaterialCommand.hpp
-	src/controller/MapAction.cpp
-	src/controller/MapAction.hpp
+	src/controller/Core.cpp
+	src/controller/Core.hpp
+	src/controller/Graphics.cpp
+	src/controller/Graphics.hpp
+	src/controller/Preferences.cpp
+	src/controller/Preferences.hpp
 	src/controller/Shortcuts.cpp
 	src/controller/Shortcuts.hpp
 	src/controller/UndoRedo.cpp

@@ -2,7 +2,6 @@
 
 #include <eno/data/Object.hpp>
 #include <eno/data/Project.hpp>
-#include <eno/data/Preferences.hpp>
 #include <eno/tools/Utils.hpp>
 
 namespace eno {
@@ -15,8 +14,6 @@ Scene::~Scene() {
 }
 
 void Scene::reset() {
-	setMin(Preferences::sceneMin());
-	setMax(Preferences::sceneMax());
 	clear();
 }
 
@@ -31,7 +28,7 @@ void Scene::clear() {
 
 void Scene::setMin(const QPoint& min) {
 	if (_min != min) {
-		auto v = Preferences::defaultSceneMin;
+		auto v = Scene::defaultSceneMin;
 		_min = min;
 		if (_min.x() > v.x()) {
 			_min.setX(v.x());
@@ -47,7 +44,7 @@ void Scene::setMin(const QPoint& min) {
 
 void Scene::setMax(const QPoint& max) {
 	if (_max != max) {
-		auto v = Preferences::defaultSceneMax;
+		auto v = Scene::defaultSceneMax;
 		_max = max;
 		if (_max.x() < v.x()) {
 			_max.setX(v.x());

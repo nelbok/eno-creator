@@ -6,7 +6,6 @@
 #include <QtWidgets/QFileDialog>
 #include <QtWidgets/QMessageBox>
 
-#include <eno/data/Preferences.hpp>
 #include <eno/data/Project.hpp>
 #include <eno/data/Scene.hpp>
 #include <eno/io/Eno.hpp>
@@ -14,14 +13,16 @@
 #include "engine/Engine.hpp"
 #include "io/WavefrontOBJ.hpp"
 #include "view/PreferencesWindow.hpp"
-#include "MapAction.hpp"
+#include "Core.hpp"
+#include "Graphics.hpp"
+#include "Preferences.hpp"
 #include "UndoRedo.hpp"
 
 namespace eno {
 
-Shortcuts::Shortcuts(MapAction* mapAction, QObject* parent)
+Shortcuts::Shortcuts(Core* core, QObject* parent)
 	: QObject(parent)
-	, _mapAction(mapAction) {}
+	, _core(core) {}
 
 
 void Shortcuts::initActions() {
@@ -33,8 +34,8 @@ void Shortcuts::initActions() {
 }
 
 void Shortcuts::resetActions() {
-	assert(_mapAction);
-	switch (_mapAction->typeAction()) {
+	assert(_core);
+	switch (_core->graphics()->typeAction()) {
 		case Preferences::TypeAction::Remove:
 			_removeAction->setChecked(true);
 			break;
@@ -55,7 +56,7 @@ void Shortcuts::initFile() {
 	connect(_newAction, &QAction::triggered, this, [this]() {
 		if (!needToSave())
 			return;
-		_mapAction->reset();
+		_core->reset();
 		resetActions();
 		emit showMessage("New map created");
 		emit updated();
@@ -69,20 +70,20 @@ void Shortcuts::initFile() {
 		if (path.isEmpty())
 			return;
 
-		auto* thread = new Eno(_mapAction->project(), path, IOThread::Type::Load);
+		auto* thread = new Eno(_core->project(), path, IOThread::Type::Load);
 		emit showProgressDialog(true, thread);
 		connect(thread, &Eno::finished, this, [this, thread, path]() {
 			emit showProgressDialog(false);
 			// Project has been loaded or it failed!
-			emit _mapAction->project()->materialsUpdated();
-			emit _mapAction->project()->scene()->rectUpdated();
-			emit _mapAction->project()->scene()->objectsUpdated();
+			emit _core->project()->materialsUpdated();
+			emit _core->project()->scene()->rectUpdated();
+			emit _core->project()->scene()->objectsUpdated();
 			switch (thread->result()) {
 				case IOThread::Result::Success:
-					emit showMessage(QString("Project [%1] loaded").arg(_mapAction->project()->projectName()));
+					emit showMessage(QString("Project [%1] loaded").arg(_core->project()->projectName()));
 					break;
 				case IOThread::Result::Canceled:
-					emit showMessage(QString("Loading project [%1] canceled").arg(_mapAction->project()->projectName()));
+					emit showMessage(QString("Loading project [%1] canceled").arg(_core->project()->projectName()));
 					break;
 				default:
 					emit showMessage(QString("Failed to load %1").arg(path));
@@ -114,7 +115,7 @@ void Shortcuts::initFile() {
 	connect(_quitAction, &QAction::triggered, this, [this]() {
 		if (!needToSave())
 			return;
-		_mapAction->reset();
+		_core->reset();
 		qApp->exit();
 	});
 }
@@ -122,21 +123,21 @@ void Shortcuts::initFile() {
 void Shortcuts::initEdit() {
 	_undoAction = new QAction("Undo", this);
 	_undoAction->setShortcut({ Qt::CTRL | Qt::Key_Z });
-	connect(_mapAction->undoRedo(), &UndoRedo::updated, this, [this]() {
-		_undoAction->setEnabled(_mapAction->undoRedo()->canUndo());
+	connect(_core->undoRedo(), &UndoRedo::updated, this, [this]() {
+		_undoAction->setEnabled(_core->undoRedo()->canUndo());
 	});
 	connect(_undoAction, &QAction::triggered, this, [this]() {
-		_mapAction->undoRedo()->undo();
+		_core->undoRedo()->undo();
 		emit showMessage("Action undone");
 	});
 
 	_redoAction = new QAction("Redo", this);
 	_redoAction->setShortcut({ Qt::CTRL | Qt::Key_Y });
-	connect(_mapAction->undoRedo(), &UndoRedo::updated, this, [this]() {
-		_redoAction->setEnabled(_mapAction->undoRedo()->canRedo());
+	connect(_core->undoRedo(), &UndoRedo::updated, this, [this]() {
+		_redoAction->setEnabled(_core->undoRedo()->canRedo());
 	});
 	connect(_redoAction, &QAction::triggered, this, [this]() {
-		_mapAction->undoRedo()->redo();
+		_core->undoRedo()->redo();
 		emit showMessage("Action redone");
 	});
 }
@@ -155,19 +156,19 @@ void Shortcuts::initTools() {
 		return action;
 	};
 	_removeAction = createTools(QIcon(":items/remove.png"), "Eraser tool", "To erase an item on the map", Preferences::keyRemove(), [this]() {
-		_mapAction->setTypeAction(Preferences::TypeAction::Remove);
+		_core->graphics()->setTypeAction(Preferences::TypeAction::Remove);
 		emit showMessage("Eraser tool selected");
 	});
 	_addAction = createTools(QIcon(":items/add.png"), "Pen tool", "To add an item on the map", Preferences::keyAdd(), [this]() {
-		_mapAction->setTypeAction(Preferences::TypeAction::Add);
+		_core->graphics()->setTypeAction(Preferences::TypeAction::Add);
 		emit showMessage("Add tool selected");
 	});
 	_pickerAction = createTools(QIcon(":items/picker.png"), "Picker tool", "To pick a color on the map", Preferences::keyPicker(), [this]() {
-		_mapAction->setTypeAction(Preferences::TypeAction::Picker);
+		_core->graphics()->setTypeAction(Preferences::TypeAction::Picker);
 		emit showMessage("Picker tool selected");
 	});
 	_resizeAction = createTools(QIcon(":items/resize.png"), "Resizing tool", "To resize the map", Preferences::keyResize(), [this]() {
-		_mapAction->setTypeAction(Preferences::TypeAction::Resize);
+		_core->graphics()->setTypeAction(Preferences::TypeAction::Resize);
 		emit showMessage("Resize tool selected");
 	});
 }
@@ -177,15 +178,15 @@ void Shortcuts::initGenerate() {
 	_generateOBJAction->setToolTip("Generate the OBJ file corresponding to the project");
 	connect(_generateOBJAction, &QAction::triggered, this, [this]() {
 		const auto& path = QFileDialog::getSaveFileName(
-			qApp->activeWindow(), qApp->applicationName() + " - Export as", Preferences::generateLocation() + "/" + _mapAction->project()->projectName(), WavefrontOBJ::fileType);
+			qApp->activeWindow(), qApp->applicationName() + " - Export as", Preferences::generateLocation() + "/" + _core->project()->projectName(), WavefrontOBJ::fileType);
 		if (path.isEmpty())
 			return;
 
-		auto* thread = new WavefrontOBJ(_mapAction->project(), path, IOThread::Type::Save);
+		auto* thread = new WavefrontOBJ(_core->project(), path, IOThread::Type::Save);
 		emit showProgressDialog(true, thread);
 		connect(thread, &WavefrontOBJ::finished, this, [this, thread]() {
 			emit showProgressDialog(false);
-			const auto& name = _mapAction->project()->projectName();
+			const auto& name = _core->project()->projectName();
 			switch (thread->result()) {
 				case IOThread::Result::Success:
 					emit showMessage(QString("Export %1 successed").arg(name));
@@ -207,7 +208,7 @@ void Shortcuts::initGenerate() {
 	_generate3DAction->setShortcut(Preferences::key3DView());
 	connect(_generate3DAction, &QAction::triggered, this, [this]() {
 		auto* widget = new Engine();
-		widget->init(_mapAction->project());
+		widget->init(_core->project());
 		widget->show();
 		emit showMessage("Loading");
 	});
@@ -221,7 +222,7 @@ void Shortcuts::initOthers() {
 }
 
 bool Shortcuts::needToSave() {
-	if (_mapAction->project()->isModified()) {
+	if (_core->project()->isModified()) {
 		const auto& button = QMessageBox::warning(qApp->activeWindow(), qApp->applicationName(), "The project has been modified.\nDo you want to save your changes?",
 			QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel, QMessageBox::Save);
 		switch (button) {
@@ -238,14 +239,14 @@ bool Shortcuts::needToSave() {
 }
 
 void Shortcuts::save(bool newPathRequested) {
-	QString path = _mapAction->project()->filePath();
+	QString path = _core->project()->filePath();
 
 	QFileInfo fileInfo(path);
 	auto isFile = fileInfo.isFile();
 	auto isWritable = fileInfo.isWritable();
 
 	if (newPathRequested || !isFile || !isWritable) {
-		QString currentPath = _mapAction->project()->filePath();
+		QString currentPath = _core->project()->filePath();
 		if (currentPath.isEmpty()) {
 			currentPath = Preferences::projectLocation();
 		}
@@ -254,11 +255,11 @@ void Shortcuts::save(bool newPathRequested) {
 	if (path.isEmpty())
 		return;
 
-	auto* thread = new Eno(_mapAction->project(), path, IOThread::Type::Save);
+	auto* thread = new Eno(_core->project(), path, IOThread::Type::Save);
 	emit showProgressDialog(true, thread);
 	connect(thread, &Eno::finished, this, [this, thread, path]() {
 		emit showProgressDialog(false);
-		const auto& name = _mapAction->project()->projectName();
+		const auto& name = _core->project()->projectName();
 		if (thread->result() == IOThread::Result::Success) {
 			emit showMessage(QString("Project [%1] saved").arg(name));
 		} else {

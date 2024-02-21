@@ -26,8 +26,6 @@ public:
 	Q_ENUM(Zoom)
 	static QString toString(Zoom zoom);
 
-	static constexpr QPoint defaultSceneMin = { -5, -5 };
-	static constexpr QPoint defaultSceneMax = { 5, 5 };
 	static constexpr auto minDepth = -100;
 	static constexpr auto maxDepth = 100;
 	static constexpr auto minPenWidth = 1;
@@ -40,13 +38,13 @@ public:
 	static void setSceneMin(const QPoint& min);
 	static void setSceneMax(const QPoint& max);
 
-	// Map action
-	static int mapActionDepth();
-	static int mapActionPenWidth();
-	static Zoom mapActionZoom();
-	static void setMapActionDepth(int depth);
-	static void setMapActionPenWidth(int penWidth);
-	static void setMapActionZoom(Zoom zoom);
+	// Map
+	static int mapDepth();
+	static int mapPenWidth();
+	static Zoom mapZoom();
+	static void setMapDepth(int depth);
+	static void setMapPenWidth(int penWidth);
+	static void setMapZoom(Zoom zoom);
 
 	// Material
 	static QString materialName();

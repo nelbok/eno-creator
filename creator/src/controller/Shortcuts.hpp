@@ -6,12 +6,12 @@ class QAction;
 class QThread;
 
 namespace eno {
-class MapAction;
+class Core;
 class Shortcuts : public QObject {
 	Q_OBJECT
 
 public:
-	Shortcuts(MapAction* mapAction, QObject* parent = nullptr);
+	Shortcuts(Core* core, QObject* parent = nullptr);
 	virtual ~Shortcuts() = default;
 
 	void initActions();
@@ -55,7 +55,7 @@ private:
 	bool needToSave();
 	void save(bool newPathRequested);
 
-	MapAction* _mapAction{ nullptr };
+	Core* _core{ nullptr };
 
 	// Tools action
 	QAction* _newAction{ nullptr };

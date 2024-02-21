@@ -4,21 +4,20 @@
 #include <QtGui/QVector2D>
 #include <QtGui/QVector3D>
 
-#include <eno/data/Preferences.hpp>
+#include "Preferences.hpp"
 
 class QMouseEvent;
 
 namespace eno {
 class Material;
 class Project;
-class UndoRedo;
 
-class MapAction : public QObject {
+class Graphics : public QObject {
 	Q_OBJECT
 
 public:
-	MapAction(Project* project, QObject* parent = nullptr);
-	virtual ~MapAction() = default;
+	Graphics(Project* project, QObject* parent = nullptr);
+	virtual ~Graphics() = default;
 
 	void reset();
 
@@ -36,12 +35,6 @@ public:
 
 	void setZoom(Preferences::Zoom zoom);
 	Preferences::Zoom zoom() const;
-
-	const Project* project() const;
-	Project* project();
-
-	const UndoRedo* undoRedo() const;
-	UndoRedo* undoRedo();
 
 	void mousePressEvent(const QVector3D& pos);
 	void mouseMoveEvent(const QVector3D& pos);
@@ -61,7 +54,6 @@ private:
 	Preferences::Zoom _zoom{};
 	Project* _project{ nullptr };
 	QVector2D _currentPos{};
-	UndoRedo* _undoRedo{};
 
 private:
 	template<class Func>

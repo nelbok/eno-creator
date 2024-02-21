@@ -8,7 +8,7 @@ class QThread;
 namespace eno {
 class Project;
 class GraphicsView;
-class MapAction;
+class Core;
 class Shortcuts;
 
 class MainWindow : public QMainWindow {
@@ -39,7 +39,7 @@ private:
 	Project* _project{ nullptr };
 
 	// Controllers
-	MapAction* _mapAction{ nullptr };
+	Core* _core{ nullptr };
 	Shortcuts* _shortcuts{ nullptr };
 
 	// Interface

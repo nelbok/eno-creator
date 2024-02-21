@@ -3,7 +3,7 @@
 #include <QtWidgets/QGraphicsItem>
 
 namespace eno {
-class MapAction;
+class Core;
 
 class GraphicsShape : public QGraphicsItem {
 public:
@@ -12,7 +12,7 @@ public:
 		Below,
 	};
 
-	GraphicsShape(MapAction* mapAction, QGraphicsItem* parent = 0);
+	GraphicsShape(Core* core, QGraphicsItem* parent = 0);
 
 	void setMode(Mode mode);
 
@@ -20,7 +20,7 @@ public:
 	virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0) override;
 
 private:
-	MapAction* _mapAction{ nullptr };
+	Core* _core{ nullptr };
 	Mode _mode{ Mode::Normal };
 };
 } // namespace eno

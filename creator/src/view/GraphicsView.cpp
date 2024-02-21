@@ -9,15 +9,17 @@
 #include <eno/data/Project.hpp>
 #include <eno/data/Scene.hpp>
 
-#include "controller/MapAction.hpp"
+#include "controller/Core.hpp"
+#include "controller/Graphics.hpp"
 #include "controller/UndoRedo.hpp"
 #include "GraphicsShape.hpp"
 
 namespace eno {
 
-GraphicsView::GraphicsView(MapAction* mapAction, QWidget* parent)
+GraphicsView::GraphicsView(Core* core, QWidget* parent)
 	: QGraphicsView(parent)
-	, _mapAction(mapAction) {}
+	, _core(core)
+	, _graphics(core->graphics()) {}
 
 void GraphicsView::init() {
 	setMouseTracking(true);
@@ -31,8 +33,8 @@ void GraphicsView::init() {
 	_xAxis->setPen(pen);
 	_yAxis->setPen(pen);
 
-	_shapeNormal = new GraphicsShape(_mapAction);
-	_shapeBelow = new GraphicsShape(_mapAction);
+	_shapeNormal = new GraphicsShape(_core);
+	_shapeBelow = new GraphicsShape(_core);
 	_shapeBelow->setMode(GraphicsShape::Mode::Below);
 
 	// We need to respect the order for the paint event
@@ -44,11 +46,12 @@ void GraphicsView::init() {
 	_scene->addItem(_yAxis);
 	setScene(_scene);
 
-	connect(_mapAction->project()->scene(), &Scene::objectsUpdated, this, &GraphicsView::updateShapes);
-	connect(_mapAction->project()->scene(), &Scene::rectUpdated, this, &GraphicsView::updateRect);
-	connect(_mapAction->undoRedo(), &UndoRedo::updated, this, &GraphicsView::updateShapes);
-	connect(_mapAction, &MapAction::depthUpdated, this, &GraphicsView::updateShapes);
-	connect(_mapAction, &MapAction::zoomUpdated, this, &GraphicsView::updateZoom);
+	// FIXME: We have now undo redo maybe we don't need this two connections
+	connect(_core->project()->scene(), &Scene::objectsUpdated, this, &GraphicsView::updateShapes);
+	connect(_core->project()->scene(), &Scene::rectUpdated, this, &GraphicsView::updateRect);
+	connect(_core->undoRedo(), &UndoRedo::updated, this, &GraphicsView::updateShapes);
+	connect(_graphics, &Graphics::depthUpdated, this, &GraphicsView::updateShapes);
+	connect(_graphics, &Graphics::zoomUpdated, this, &GraphicsView::updateZoom);
 }
 
 const QVector2D& GraphicsView::pointerPosition() const {
@@ -58,7 +61,7 @@ const QVector2D& GraphicsView::pointerPosition() const {
 void GraphicsView::mousePressEvent(QMouseEvent* e) {
 	QGraphicsView::mousePressEvent(e);
 	if (e->buttons() == Qt::LeftButton) {
-		_mapAction->mousePressEvent(mapToData(e->pos()));
+		_graphics->mousePressEvent(mapToData(e->pos()));
 	}
 }
 
@@ -67,10 +70,10 @@ void GraphicsView::mouseMoveEvent(QMouseEvent* e) {
 	const auto& pos = mapToData(e->pos());
 	_pointerPosition = { pos.x(), pos.z() };
 	if (e->buttons() == Qt::LeftButton) {
-		_mapAction->mouseMoveEvent(pos);
+		_graphics->mouseMoveEvent(pos);
 	}
 	emit pointerPositionUpdated();
-	setCursor(_mapAction->cursorShape());
+	setCursor(_graphics->cursorShape());
 }
 
 void GraphicsView::updateShapes() {
@@ -79,7 +82,7 @@ void GraphicsView::updateShapes() {
 }
 
 void GraphicsView::updateRect() {
-	const auto* scene = _mapAction->project()->scene();
+	const auto* scene = _core->project()->scene();
 	const auto min = scene->min() * 10;
 	const auto max = scene->max() * 10;
 
@@ -92,14 +95,14 @@ void GraphicsView::updateRect() {
 
 void GraphicsView::updateZoom() {
 	auto transform = QTransform{};
-	auto zoom = std::underlying_type_t<Preferences::Zoom>(_mapAction->zoom()) / 100.0;
+	auto zoom = std::underlying_type_t<Preferences::Zoom>(_graphics->zoom()) / 100.0;
 	transform.scale(zoom, zoom);
 	setTransform(transform);
 }
 
 const QVector3D GraphicsView::mapToData(const QPoint& pos) const {
 	const auto& posF = mapToScene(pos);
-	return { floorf(posF.x() / 10.f), floorf(_mapAction->depth()), floorf(posF.y() / 10.f) };
+	return { floorf(posF.x() / 10.f), floorf(_graphics->depth()), floorf(posF.y() / 10.f) };
 }
 
 } // namespace eno

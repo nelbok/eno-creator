@@ -8,7 +8,7 @@ class QListWidget;
 
 namespace eno {
 class ColorButton;
-class MapAction;
+class Core;
 class Material;
 class Project;
 
@@ -19,14 +19,14 @@ public:
 	MaterialsDockWidget(QWidget* parent = 0);
 	virtual ~MaterialsDockWidget() = default;
 
-	void init(MapAction* mapAction);
+	void init(Core* core);
 
 private slots:
 	void resetList();
 	void updateForm();
 
 private:
-	MapAction* _mapAction{ nullptr };
+	Core* _core{ nullptr };
 	Material* _current{ nullptr };
 
 	QListWidget* _list{ nullptr };

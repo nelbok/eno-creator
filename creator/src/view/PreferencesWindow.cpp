@@ -10,8 +10,7 @@
 #include <QtWidgets/QSpinBox>
 #include <QtWidgets/QTabWidget>
 
-#include <eno/data/Preferences.hpp>
-
+#include "controller/Preferences.hpp"
 #include "widgets/common/ColorButton.hpp"
 #include "widgets/common/KeyButton.hpp"
 #include "widgets/common/SpinBox.hpp"
@@ -47,9 +46,9 @@ void PreferencesWindow::closeEvent(QCloseEvent* e) {
 		Preferences::setGenerateLocation(_generate->location());
 
 		// Tools
-		Preferences::setMapActionDepth(_depth->value());
-		Preferences::setMapActionPenWidth(_penWidth->value());
-		Preferences::setMapActionZoom(_zoom->currentData().value<Preferences::Zoom>());
+		Preferences::setMapDepth(_depth->value());
+		Preferences::setMapPenWidth(_penWidth->value());
+		Preferences::setMapZoom(_zoom->currentData().value<Preferences::Zoom>());
 
 		// Optimizations
 		Preferences::setGenerationOptimized(_opti1->isChecked());
@@ -121,9 +120,9 @@ void PreferencesWindow::initGeneral() {
 	_penWidth->setMaximumWidth(60);
 	_zoom->setMaximumWidth(60);
 
-	_depth->setValue(Preferences::mapActionDepth());
-	_penWidth->setValue(Preferences::mapActionPenWidth());
-	_zoom->setCurrentIndex(_zoom->findData(QVariant::fromValue(Preferences::mapActionZoom())));
+	_depth->setValue(Preferences::mapDepth());
+	_penWidth->setValue(Preferences::mapPenWidth());
+	_zoom->setCurrentIndex(_zoom->findData(QVariant::fromValue(Preferences::mapZoom())));
 
 	form->addRow("Default depth:", _depth);
 	form->addRow("Default pen width:", _penWidth);

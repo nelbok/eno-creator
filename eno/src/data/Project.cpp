@@ -28,7 +28,6 @@ void Project::reset() {
 		material->deleteLater();
 	}
 	_materials.clear();
-	add(new Material(this));
 
 	// Finalize
 	setFilePath("");
@@ -84,4 +83,13 @@ void Project::remove(Material* material) {
 	}
 }
 
+QList<Material*> Project::materials() const {
+	QList<Material*> materials;
+	for (auto* material : _materials) {
+		if (material->isAlive()) {
+			materials.push_back(material);
+		}
+	}
+	return materials;
+}
 } // namespace eno

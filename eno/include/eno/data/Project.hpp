@@ -33,7 +33,7 @@ public:
 	void add(Material* material);
 	bool canRemove(Material* material);
 	void remove(Material* material);
-	QList<Material*> materials() const { return _materials; }
+	QList<Material*> materials() const;
 
 	Scene* scene() { return _scene; }
 	const Scene* scene() const { return _scene; }

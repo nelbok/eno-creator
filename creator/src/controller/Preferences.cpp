@@ -1,7 +1,9 @@
-#include <eno/data/Preferences.hpp>
+#include "Preferences.hpp"
 
 #include <QtCore/QSettings>
 #include <QtCore/QStandardPaths>
+
+#include <eno/data/Scene.hpp>
 
 namespace eno {
 
@@ -22,11 +24,11 @@ QString Preferences::toString(Preferences::Zoom zoom) {
 
 // Scene
 QPoint Preferences::sceneMin() {
-	return QSettings().value("scene/min", defaultSceneMin).toPoint();
+	return QSettings().value("scene/min", Scene::defaultSceneMin).toPoint();
 }
 
 QPoint Preferences::sceneMax() {
-	return QSettings().value("scene/max", defaultSceneMax).toPoint();
+	return QSettings().value("scene/max", Scene::defaultSceneMax).toPoint();
 }
 
 void Preferences::setSceneMin(const QPoint& min) {
@@ -37,34 +39,34 @@ void Preferences::setSceneMax(const QPoint& max) {
 	QSettings().setValue("scene/max", max);
 }
 
-// Map action
-int Preferences::mapActionDepth() {
-	return QSettings().value("action/depth", 0.f).toInt();
+// Map
+int Preferences::mapDepth() {
+	return QSettings().value("map/depth", 0.f).toInt();
 }
 
-int Preferences::mapActionPenWidth() {
-	return QSettings().value("action/penwidth", 1).toInt();
+int Preferences::mapPenWidth() {
+	return QSettings().value("map/penwidth", 1).toInt();
 }
 
-Preferences::Zoom Preferences::mapActionZoom() {
-	return QSettings().value("action/zoom", QVariant::fromValue(Zoom::x100)).value<Preferences::Zoom>();
+Preferences::Zoom Preferences::mapZoom() {
+	return QSettings().value("map/zoom", QVariant::fromValue(Zoom::x100)).value<Preferences::Zoom>();
 }
 
-void Preferences::setMapActionDepth(int depth) {
-	QSettings().setValue("action/depth", depth);
+void Preferences::setMapDepth(int depth) {
+	QSettings().setValue("map/depth", depth);
 }
 
-void Preferences::setMapActionPenWidth(int penWidth) {
-	QSettings().setValue("action/penwidth", penWidth);
+void Preferences::setMapPenWidth(int penWidth) {
+	QSettings().setValue("map/penwidth", penWidth);
 }
 
-void Preferences::setMapActionZoom(Zoom zoom) {
-	QSettings().setValue("action/zoom", QVariant::fromValue(zoom));
+void Preferences::setMapZoom(Zoom zoom) {
+	QSettings().setValue("map/zoom", QVariant::fromValue(zoom));
 }
 
 // Material
 QString Preferences::materialName() {
-	return QSettings().value("material/name", "default").toString();
+	return QSettings().value("material/name", "My material").toString();
 }
 
 void Preferences::setMaterialName(const QString& name) {

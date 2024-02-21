@@ -4,11 +4,11 @@
 #include <QtCore/QFileInfo>
 
 #include <eno/data/Material.hpp>
-#include <eno/data/Preferences.hpp>
 #include <eno/data/Project.hpp>
 #include <eno/data/Scene.hpp>
-
 #include <eno/tools/Utils.hpp>
+
+#include "controller/Preferences.hpp"
 
 namespace eno {
 bool operator==(const WavefrontOBJ::Triangle& p1, const WavefrontOBJ::Triangle& p2) {

@@ -1,95 +1,71 @@
-#include "MapAction.hpp"
+#include "Graphics.hpp"
 
+#include <eno/data/Material.hpp>
 #include <eno/data/Object.hpp>
 #include <eno/data/Project.hpp>
 #include <eno/data/Scene.hpp>
 
-#include "UndoRedo.hpp"
-
 namespace eno {
 
-MapAction::MapAction(Project* project, QObject* parent)
+Graphics::Graphics(Project* project, QObject* parent)
 	: QObject(parent)
-	, _project(project)
-	, _undoRedo(new UndoRedo(this)) {}
+	, _project(project) {}
 
 
-void MapAction::reset() {
-	_project->reset();
-	_undoRedo->reset();
+void Graphics::reset() {
 	setTypeAction(Preferences::TypeAction::Add);
 	setMaterial(*(_project->materials().begin()));
-	setDepth(Preferences::mapActionDepth());
-	setPenWidth(Preferences::mapActionPenWidth());
-	setZoom(Preferences::mapActionZoom());
+	setDepth(Preferences::mapDepth());
+	setPenWidth(Preferences::mapPenWidth());
+	setZoom(Preferences::mapZoom());
 }
 
-void MapAction::setTypeAction(Preferences::TypeAction value) {
+void Graphics::setTypeAction(Preferences::TypeAction value) {
 	_typeAction = value;
 }
 
-Preferences::TypeAction MapAction::typeAction() const {
+Preferences::TypeAction Graphics::typeAction() const {
 	return _typeAction;
 }
 
-void MapAction::setMaterial(Material* material) {
+void Graphics::setMaterial(Material* material) {
 	assert(material);
 	_material = material;
 	emit materialUpdated();
 }
 
-Material* MapAction::material() const {
+Material* Graphics::material() const {
 	return _material;
 }
 
-void MapAction::setDepth(int depth) {
+void Graphics::setDepth(int depth) {
 	_depth = depth;
 	emit depthUpdated();
 }
 
-int MapAction::depth() const {
+int Graphics::depth() const {
 	return _depth;
 }
 
-void MapAction::setPenWidth(int penWidth) {
+void Graphics::setPenWidth(int penWidth) {
 	_penWidth = penWidth;
 	emit penWidthUpdated();
 }
 
-int MapAction::penWidth() const {
+int Graphics::penWidth() const {
 	return _penWidth;
 }
 
-Preferences::Zoom MapAction::zoom() const {
+Preferences::Zoom Graphics::zoom() const {
 	return _zoom;
 }
 
-void MapAction::setZoom(Preferences::Zoom zoom) {
+void Graphics::setZoom(Preferences::Zoom zoom) {
 	_zoom = zoom;
 	emit zoomUpdated();
 }
 
-const Project* MapAction::project() const {
-	assert(_project);
-	return _project;
-}
-
-Project* MapAction::project() {
-	assert(_project);
-	return _project;
-}
-
-const UndoRedo* MapAction::undoRedo() const {
-	assert(_undoRedo);
-	return _undoRedo;
-}
-
-UndoRedo* MapAction::undoRedo() {
-	assert(_undoRedo);
-	return _undoRedo;
-}
-
-void MapAction::mousePressEvent(const QVector3D& pos) {
+void Graphics::mousePressEvent(const QVector3D& pos) {
 	switch (_typeAction) {
 		case Preferences::TypeAction::Remove:
 			removeItem(pos);
@@ -106,7 +82,7 @@ void MapAction::mousePressEvent(const QVector3D& pos) {
 	}
 }
 
-void MapAction::mouseMoveEvent(const QVector3D& pos) {
+void Graphics::mouseMoveEvent(const QVector3D& pos) {
 	switch (_typeAction) {
 		case Preferences::TypeAction::Remove:
 			removeItem(pos);
@@ -123,7 +99,7 @@ void MapAction::mouseMoveEvent(const QVector3D& pos) {
 	}
 }
 
-Qt::CursorShape MapAction::cursorShape() const {
+Qt::CursorShape Graphics::cursorShape() const {
 	auto shape = Qt::CursorShape::ArrowCursor;
 	switch (_typeAction) {
 		case Preferences::TypeAction::Remove:
@@ -142,12 +118,12 @@ Qt::CursorShape MapAction::cursorShape() const {
 	return shape;
 }
 
-bool MapAction::validPosition(const QVector3D& pos) const {
+bool Graphics::validPosition(const QVector3D& pos) const {
 	auto* scene = _project->scene();
 	return (scene->min().x() <= pos.x() && pos.x() < scene->max().x()) && (scene->min().y() <= pos.z() && pos.z() < scene->max().y());
 }
 
-void MapAction::removeItem(const QVector3D& pos) {
+void Graphics::removeItem(const QVector3D& pos) {
 	changeItem(pos, [this](const QList<QVector3D>& vecs) {
 		Scene* scene = _project->scene();
 		QList<Object*> objects;
@@ -163,7 +139,7 @@ void MapAction::removeItem(const QVector3D& pos) {
 	});
 }
 
-void MapAction::addItem(const QVector3D& pos) {
+void Graphics::addItem(const QVector3D& pos) {
 	changeItem(pos, [this](const QList<QVector3D>& vecs) {
 		QList<Object*> objects;
 		for (const auto& vec : vecs) {
@@ -176,7 +152,7 @@ void MapAction::addItem(const QVector3D& pos) {
 	});
 }
 
-void MapAction::pickColor(const QVector3D& pos) {
+void Graphics::pickColor(const QVector3D& pos) {
 	for (auto* object : _project->scene()->objects()) {
 		if (object->position() == pos) {
 			_material = object->material();
@@ -185,7 +161,7 @@ void MapAction::pickColor(const QVector3D& pos) {
 	}
 }
 
-void MapAction::resize(const QVector2D& pos) {
+void Graphics::resize(const QVector2D& pos) {
 	if (_currentPos == pos) {
 		return;
 	}

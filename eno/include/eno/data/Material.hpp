@@ -32,6 +32,9 @@ public:
 	int refCount() const { return _refCount; }
 	void increaseRefCount();
 	void decreaseRefCount();
+
+	bool isAlive() const { return _isAlive; }
+	void setIsAlive(bool isAlive);
 	// clang-format on
 
 private:
@@ -41,6 +44,7 @@ private:
 	QString _name{};
 	QColor _diffuse{};
 	int _refCount{ 0 };
+	bool _isAlive{ true };
 
 signals:
 	void uuidUpdated();

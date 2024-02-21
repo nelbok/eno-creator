@@ -10,7 +10,9 @@
 
 #include <eno/data/Project.hpp>
 
-#include "controller/MapAction.hpp"
+#include "controller/Core.hpp"
+#include "controller/Graphics.hpp"
+#include "controller/Preferences.hpp"
 #include "controller/Shortcuts.hpp"
 #include "widgets/tools/ComboBoxTool.hpp"
 #include "widgets/tools/SpinBoxTool.hpp"
@@ -74,14 +76,14 @@ void MainWindow::initUi() {
 	connect(_project, &Project::filePathUpdated, this, &MainWindow::updateWindowTitle);
 	connect(_project, &Project::isModifiedUpdated, this, &MainWindow::updateWindowTitle);
 
-	_mapAction = new MapAction(_project, this);
+	_core = new Core(_project, this);
 
-	_shortcuts = new Shortcuts(_mapAction, this);
+	_shortcuts = new Shortcuts(_core, this);
 	_shortcuts->initActions();
 	connect(_shortcuts, &Shortcuts::showMessage, this, &MainWindow::showMessage);
 	connect(_shortcuts, &Shortcuts::showProgressDialog, this, &MainWindow::showProgressDialog);
 
-	_graphicsView = new GraphicsView(_mapAction, this);
+	_graphicsView = new GraphicsView(_core, this);
 	_graphicsView->init();
 	setCentralWidget(_graphicsView);
 
@@ -100,7 +102,7 @@ void MainWindow::initUi() {
 
 	menuBar()->addAction(_shortcuts->aboutQtAction());
 
-	_mapAction->reset();
+	_core->reset();
 	_shortcuts->resetActions();
 
 	showMessage("Ready!");
@@ -151,11 +153,11 @@ void MainWindow::initLayers() {
 		wLevel->init(":items/depth.png");
 		wLevel->setRange(Preferences::minDepth, Preferences::maxDepth);
 		connect(wLevel, &SpinBoxTool::valueChanged, this, [this](int value) {
-			_mapAction->setDepth(value);
+			_core->graphics()->setDepth(value);
 			showMessage(QString("Depth changed to %1").arg(value));
 		});
-		connect(_mapAction, &MapAction::depthUpdated, this, [this, wLevel]() {
-			wLevel->setValue(_mapAction->depth());
+		connect(_core->graphics(), &Graphics::depthUpdated, this, [this, wLevel]() {
+			wLevel->setValue(_core->graphics()->depth());
 		});
 	}
 
@@ -164,11 +166,11 @@ void MainWindow::initLayers() {
 		wPen->init(":items/width.png");
 		wPen->setRange(Preferences::minPenWidth, Preferences::maxPenWidth);
 		connect(wPen, &SpinBoxTool::valueChanged, this, [this](int value) {
-			_mapAction->setPenWidth(value);
+			_core->graphics()->setPenWidth(value);
 			showMessage(QString("Pen width changed to %1pt").arg(value));
 		});
-		connect(_mapAction, &MapAction::penWidthUpdated, this, [this, wPen]() {
-			wPen->setValue(_mapAction->penWidth());
+		connect(_core->graphics(), &Graphics::penWidthUpdated, this, [this, wPen]() {
+			wPen->setValue(_core->graphics()->penWidth());
 		});
 	}
 
@@ -181,11 +183,11 @@ void MainWindow::initLayers() {
 		wZoom->addItem(Preferences::toString(Preferences::Zoom::x200), QVariant::fromValue(Preferences::Zoom::x200));
 		connect(wZoom, &ComboBoxTool::currentItemChanged, this, [this](const QVariant& item) {
 			auto zoom = item.value<Preferences::Zoom>();
-			_mapAction->setZoom(zoom);
+			_core->graphics()->setZoom(zoom);
 			showMessage(QString("Zoom changed to %1").arg(Preferences::toString(zoom)));
 		});
-		connect(_mapAction, &MapAction::zoomUpdated, this, [this, wZoom]() {
-			wZoom->setCurrentItem(QVariant::fromValue(_mapAction->zoom()));
+		connect(_core->graphics(), &Graphics::zoomUpdated, this, [this, wZoom]() {
+			wZoom->setCurrentItem(QVariant::fromValue(_core->graphics()->zoom()));
 		});
 	}
 
@@ -212,7 +214,7 @@ void MainWindow::initDocks() {
 	auto* menuDocks = menuBar()->addMenu("Views");
 
 	auto* dock = new MaterialsDockWidget(this);
-	dock->init(_mapAction);
+	dock->init(_core);
 	connect(dock, &MaterialsDockWidget::showMessage, this, &MainWindow::showMessage);
 	addDockWidget(Qt::LeftDockWidgetArea, dock);
 	menuDocks->addAction(dock->toggleViewAction());

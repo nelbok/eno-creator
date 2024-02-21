@@ -7,14 +7,15 @@ class QGraphicsRectItem;
 class QGraphicsLineItem;
 
 namespace eno {
-class MapAction;
+class Core;
+class Graphics;
 class GraphicsShape;
 
 class GraphicsView : public QGraphicsView {
 	Q_OBJECT
 
 public:
-	GraphicsView(MapAction* mapAction, QWidget* parent = 0);
+	GraphicsView(Core* core, QWidget* parent = 0);
 	virtual ~GraphicsView() = default;
 
 	void init();
@@ -32,7 +33,8 @@ private slots:
 private:
 	const QVector3D mapToData(const QPoint& pos) const;
 
-	MapAction* _mapAction{ nullptr };
+	Core* _core{ nullptr };
+	Graphics* _graphics{ nullptr };
 	QVector2D _pointerPosition{};
 
 	QGraphicsScene* _scene{ nullptr };

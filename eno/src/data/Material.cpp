@@ -1,14 +1,11 @@
 #include <eno/data/Material.hpp>
 
 #include <eno/data/Project.hpp>
-#include <eno/data/Preferences.hpp>
 
 namespace eno {
 Material::Material(Project* project)
 	: QObject(project)
-	, _project{ project }
-	, _name{ Preferences::materialName() }
-	, _diffuse{ Preferences::materialDiffuse() } {}
+	, _project{ project } {}
 
 Material::~Material() {
 	assert(_refCount == 0);
@@ -40,4 +37,12 @@ void Material::decreaseRefCount() {
 	--_refCount;
 	emit refCountUpdated();
 }
+
+void Material::setIsAlive(bool isAlive) {
+	if (_isAlive != isAlive) {
+		_isAlive = isAlive;
+		emit _project->materialsUpdated();
+	}
+}
+
 } // namespace eno

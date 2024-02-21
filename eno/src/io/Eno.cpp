@@ -87,9 +87,6 @@ void Eno::load() {
 	_project->reset();
 	_project->setFilePath(_path);
 
-	// Remove default material
-	auto* defaultMaterial = *(_project->materials().begin());
-
 	QDataStream stream(&file);
 	stream.setVersion(QDataStream::Qt_5_15);
 
@@ -109,9 +106,6 @@ void Eno::load() {
 		_project->reset();
 	}
 	file.close();
-
-	// Remove old default material
-	_project->remove(defaultMaterial);
 
 	_result = Result::Success;
 

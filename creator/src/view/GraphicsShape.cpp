@@ -8,19 +8,20 @@
 #include <eno/data/Project.hpp>
 #include <eno/data/Scene.hpp>
 
-#include "controller/MapAction.hpp"
+#include "controller/Core.hpp"
+#include "controller/Graphics.hpp"
 
 namespace eno {
-GraphicsShape::GraphicsShape(MapAction* mapAction, QGraphicsItem* parent)
+GraphicsShape::GraphicsShape(Core* core, QGraphicsItem* parent)
 	: QGraphicsItem(parent)
-	, _mapAction(mapAction) {}
+	, _core(core) {}
 
 void GraphicsShape::setMode(Mode mode) {
 	_mode = mode;
 }
 
 QRectF GraphicsShape::boundingRect() const {
-	const auto* scene = _mapAction->project()->scene();
+	const auto* scene = _core->project()->scene();
 	const auto min = scene->min() * 10;
 	const auto max = scene->max() * 10;
 	return { min, max };
@@ -28,7 +29,7 @@ QRectF GraphicsShape::boundingRect() const {
 
 void GraphicsShape::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*) {
 	// Avoid scene graph update while loading a file
-	if (_mapAction->project()->thread() != QCoreApplication::instance()->thread()) {
+	if (_core->project()->thread() != QCoreApplication::instance()->thread()) {
 		return;
 	}
 
@@ -39,9 +40,11 @@ void GraphicsShape::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QW
 		brush.setStyle(Qt::Dense4Pattern);
 	}
 	painter->setPen(pen);
-	for (auto* object : _mapAction->project()->scene()->objects()) {
+
+	auto depth = _core->graphics()->depth();
+	for (auto* object : _core->project()->scene()->objects()) {
 		const auto& pos = object->position();
-		if ((pos.y() == _mapAction->depth() && _mode == Mode::Normal) || (pos.y() == _mapAction->depth() - 1 && _mode == Mode::Below)) {
+		if ((pos.y() == depth && _mode == Mode::Normal) || (pos.y() == depth - 1 && _mode == Mode::Below)) {
 			brush.setColor(object->material()->diffuse());
 			painter->setBrush(brush);
 			painter->drawRect(pos.x() * 10, pos.z() * 10, 9, 9);

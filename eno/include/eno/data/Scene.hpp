@@ -34,6 +34,9 @@ class Scene : public QObject {
 	Q_PROPERTY(QList<Object*> objects READ objects NOTIFY objectsUpdated)
 
 public:
+	static constexpr QPoint defaultSceneMin = { -5, -5 };
+	static constexpr QPoint defaultSceneMax = { 5, 5 };
+
 	Scene(Project* project);
 	virtual ~Scene();
 
