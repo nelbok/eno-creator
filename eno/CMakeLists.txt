@@ -1,5 +1,6 @@
 set(CMAKE_DEBUG_POSTFIX _d)
 set(PROJECT_SOURCES
+	include/eno/data/Container.hpp
 	include/eno/data/Material.hpp
 	include/eno/data/Object.hpp
 	include/eno/data/Project.hpp
@@ -11,6 +12,7 @@ set(PROJECT_SOURCES
 	include/eno/tools/Merger.hpp
 	include/eno/tools/Utils.hpp
 
+	src/data/Container.cpp
 	src/data/Material.cpp
 	src/data/Object.cpp
 	src/data/Project.cpp

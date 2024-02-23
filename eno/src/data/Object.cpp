@@ -6,7 +6,7 @@
 
 namespace eno {
 Object::Object(Project* project)
-	: QObject(project)
+	: Item(project)
 	, _project(project) {}
 
 Object::~Object() {
@@ -34,6 +34,4 @@ void Object::setMaterial(Material* material) {
 		emit materialUpdated();
 	}
 }
-
-
 } // namespace eno

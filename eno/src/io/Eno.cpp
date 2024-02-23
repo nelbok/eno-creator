@@ -136,7 +136,7 @@ QMap<QUuid, Material*> Eno::loadMaterialsV1(QDataStream& stream) {
 			}
 			auto* material = new Material(_project);
 			stream >> material->_uuid >> material->_name >> material->_diffuse;
-			_project->add(material);
+			_project->add({ material });
 			mapMaterials.insert(material->_uuid, material);
 		}
 	}

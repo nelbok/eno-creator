@@ -5,6 +5,7 @@
 class QLabel;
 
 namespace eno {
+class Commands;
 class Scene;
 class SpinBox;
 class GraphicsView;
@@ -16,7 +17,7 @@ public:
 	InfoWidget(QWidget* parent = 0);
 	virtual ~InfoWidget() = default;
 
-	void init(Scene* scene, GraphicsView* graphicsView);
+	void init(Commands* commands, Scene* scene, GraphicsView* graphicsView);
 
 private slots:
 	void updateData();

@@ -9,14 +9,14 @@
 class QMouseEvent;
 
 namespace eno {
+class Core;
 class Material;
-class Project;
 
 class Graphics : public QObject {
 	Q_OBJECT
 
 public:
-	Graphics(Project* project, QObject* parent = nullptr);
+	Graphics(Core* core, QObject* parent = nullptr);
 	virtual ~Graphics() = default;
 
 	void reset();
@@ -52,12 +52,12 @@ private:
 	int _depth{};
 	int _penWidth{};
 	Preferences::Zoom _zoom{};
-	Project* _project{ nullptr };
+	Core* _core{ nullptr };
 	QVector2D _currentPos{};
 
 private:
-	template<class Func>
-	void changeItem(const QVector3D& pos, Func lambda) {
+	template<class TFunc>
+	void changeItem(const QVector3D& pos, TFunc lambda) {
 		const int min = 0 - _penWidth / 2;
 		const int max = _penWidth - _penWidth / 2;
 		QList<QVector3D> vecs;

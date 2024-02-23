@@ -5,6 +5,7 @@
 
 #include <eno/data/Scene.hpp>
 
+#include "controller/command/SceneCommand.hpp"
 #include "view/GraphicsView.hpp"
 #include "widgets/common/SpinBox.hpp"
 
@@ -13,7 +14,8 @@ namespace eno {
 InfoWidget::InfoWidget(QWidget* parent)
 	: QWidget(parent) {}
 
-void InfoWidget::init(Scene* scene, GraphicsView* graphicsView) {
+void InfoWidget::init(Commands* commands, Scene* scene, GraphicsView* graphicsView) {
+	assert(commands);
 	assert(scene);
 	assert(graphicsView);
 
@@ -48,17 +50,17 @@ void InfoWidget::init(Scene* scene, GraphicsView* graphicsView) {
 	connect(_scene, &Scene::rectUpdated, this, &InfoWidget::updateData);
 	connect(_graphicsView, &GraphicsView::pointerPositionUpdated, this, &InfoWidget::updateData);
 
-	connect(_minXSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), this, [this]() {
-		_scene->setMin({ _minXSpinBox->value(), _scene->min().y() });
+	connect(_minXSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), this, [this, commands]() {
+		SceneCommand::resize(commands, _scene, { _minXSpinBox->value(), _scene->min().y() }, _scene->max());
 	});
-	connect(_minYSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), this, [this]() {
-		_scene->setMin({ _scene->min().x(), _minYSpinBox->value() });
+	connect(_minYSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), this, [this, commands]() {
+		SceneCommand::resize(commands, _scene, { _scene->min().x(), _minYSpinBox->value() }, _scene->max());
 	});
-	connect(_maxXSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), this, [this]() {
-		_scene->setMax({ _maxXSpinBox->value(), _scene->max().y() });
+	connect(_maxXSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), this, [this, commands]() {
+		SceneCommand::resize(commands, _scene, _scene->min(), { _maxXSpinBox->value(), _scene->max().y() });
 	});
-	connect(_maxYSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), this, [this]() {
-		_scene->setMax({ _scene->max().x(), _maxYSpinBox->value() });
+	connect(_maxYSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), this, [this, commands]() {
+		SceneCommand::resize(commands, _scene, _scene->min(), { _scene->max().x(), _maxYSpinBox->value() });
 	});
 }
 

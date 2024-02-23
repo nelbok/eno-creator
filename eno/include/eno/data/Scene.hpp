@@ -5,6 +5,8 @@
 #include <QtCore/QPoint>
 #include <QtGui/QVector3D>
 
+#include <eno/data/Object.hpp>
+
 namespace eno {
 //  Data Graphical Representation
 //
@@ -22,10 +24,11 @@ namespace eno {
 //  +-------+
 // 0 = min (X,Z)
 
-class Object;
 class Project;
 
-class Scene : public QObject {
+class Scene
+	: public QObject
+	, public Container<Object, Project> {
 	friend class Eno;
 
 	Q_OBJECT
@@ -48,21 +51,17 @@ public:
 	const QPoint& max() const { return _max; }
 	void setMin(const QPoint& min);
 	void setMax(const QPoint& max);
+	QPoint fixMin(QPoint min) const;
+	QPoint fixMax(QPoint max) const;
 
-	void add(const QList<Object*>& objects);
-	void remove(const QList<Object*>& objects);
-	QList<Object*> objects() const { return _objects; }
+	inline QList<Object*> objects() const { return Container::datas(); }
 	// clang-format on
 
 private:
-	void updateScene();
-
-	Project* _project{ nullptr };
+	virtual void datasUpdated() override;
 
 	QPoint _min{};
 	QPoint _max{};
-
-	QList<Object*> _objects{};
 
 signals:
 	void rectUpdated();

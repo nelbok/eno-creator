@@ -12,9 +12,9 @@
 #include <eno/data/Project.hpp>
 
 #include "controller/command/MaterialCommand.hpp"
+#include "controller/Commands.hpp"
 #include "controller/Core.hpp"
 #include "controller/Graphics.hpp"
-#include "controller/UndoRedo.hpp"
 #include "widgets/common/ColorButton.hpp"
 
 namespace eno {
@@ -36,9 +36,7 @@ void MaterialsDockWidget::init(Core* core) {
 		_core->graphics()->setMaterial(_core->createMyMaterial());
 	});
 	tb->addAction("Remove material", [this]() {
-		if (_core->project()->canRemove(_current)) {
-			_core->project()->remove(_current);
-		}
+		MaterialCommand::destroy(_core->commands(), _current, _core->project());
 	});
 
 	_list = new QListWidget(w);
@@ -93,11 +91,11 @@ void MaterialsDockWidget::init(Core* core) {
 
 	connect(_name, &QLineEdit::returnPressed, this, [this]() {
 		const auto& name = _name->text();
-		MaterialCommand::setName(_core->undoRedo(), _current, name);
+		MaterialCommand::setName(_core->commands(), _current, name);
 		emit showMessage(QString("Material's name changed to %1").arg(name));
 	});
 	connect(_diffuse, &ColorButton::currentColorChanged, this, [this](const QColor& color) {
-		MaterialCommand::setDiffuse(_core->undoRedo(), _current, color);
+		MaterialCommand::setDiffuse(_core->commands(), _current, color);
 		emit showMessage(QString("Material's diffuse color changed to %1").arg(color.name()));
 	});
 }
@@ -136,9 +134,16 @@ void MaterialsDockWidget::resetList() {
 }
 
 void MaterialsDockWidget::updateForm() {
-	_name->setText(_current->name());
-	_diffuse->setColor(_current->diffuse());
-	_refCount->setText(QString("Numbers of time used by a cube: %1").arg(_current->refCount()));
+	assert(_current);
+	if (_current) {
+		_name->setText(_current->name());
+		_diffuse->setColor(_current->diffuse());
+		_refCount->setText(QString("Numbers of time used by a cube: %1").arg(_current->refCount()));
+	} else {
+		_name->setText("-");
+		_diffuse->setColor({ 0, 0, 0 });
+		_refCount->setText(QString("Numbers of time used by a cube: %1").arg(-1));
+	}
 }
 
 } // namespace eno

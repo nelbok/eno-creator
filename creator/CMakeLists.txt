@@ -1,8 +1,18 @@
 set(PROJECT_SOURCES
 	src/controller/command/BaseCommand.cpp
 	src/controller/command/BaseCommand.hpp
+	src/controller/command/CreateCommand.hpp
+	src/controller/command/DestroyCommand.hpp
 	src/controller/command/MaterialCommand.cpp
 	src/controller/command/MaterialCommand.hpp
+	src/controller/command/ObjectCommand.cpp
+	src/controller/command/ObjectCommand.hpp
+	src/controller/command/SceneCommand.cpp
+	src/controller/command/SceneCommand.hpp
+	src/controller/command/ValueCommand.hpp
+
+	src/controller/Commands.cpp
+	src/controller/Commands.hpp
 	src/controller/Core.cpp
 	src/controller/Core.hpp
 	src/controller/Graphics.cpp
@@ -11,8 +21,6 @@ set(PROJECT_SOURCES
 	src/controller/Preferences.hpp
 	src/controller/Shortcuts.cpp
 	src/controller/Shortcuts.hpp
-	src/controller/UndoRedo.cpp
-	src/controller/UndoRedo.hpp
 
 	src/engine/CuboidGeometry.cpp
 	src/engine/CuboidGeometry.hpp

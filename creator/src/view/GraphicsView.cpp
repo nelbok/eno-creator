@@ -9,9 +9,9 @@
 #include <eno/data/Project.hpp>
 #include <eno/data/Scene.hpp>
 
+#include "controller/Commands.hpp"
 #include "controller/Core.hpp"
 #include "controller/Graphics.hpp"
-#include "controller/UndoRedo.hpp"
 #include "GraphicsShape.hpp"
 
 namespace eno {
@@ -49,7 +49,7 @@ void GraphicsView::init() {
 	// FIXME: We have now undo redo maybe we don't need this two connections
 	connect(_core->project()->scene(), &Scene::objectsUpdated, this, &GraphicsView::updateShapes);
 	connect(_core->project()->scene(), &Scene::rectUpdated, this, &GraphicsView::updateRect);
-	connect(_core->undoRedo(), &UndoRedo::updated, this, &GraphicsView::updateShapes);
+	connect(_core->commands(), &Commands::updated, this, &GraphicsView::updateShapes);
 	connect(_graphics, &Graphics::depthUpdated, this, &GraphicsView::updateShapes);
 	connect(_graphics, &Graphics::zoomUpdated, this, &GraphicsView::updateZoom);
 }

@@ -4,26 +4,27 @@
 #include <eno/data/Project.hpp>
 
 #include "command/MaterialCommand.hpp"
+#include "Commands.hpp"
 #include "Graphics.hpp"
 #include "Preferences.hpp"
-#include "UndoRedo.hpp"
 
 namespace eno {
 
 Core::Core(Project* project, QObject* parent)
 	: QObject(parent)
-	, _graphics(new Graphics(project))
-	, _project(project)
-	, _undoRedo(new UndoRedo(this)) {}
-
+	, _commands(new Commands(this))
+	, _graphics(new Graphics(this))
+	, _project(project) {}
 
 void Core::reset() {
-	// First the project
+	// Clean commands and project
+	_commands->reset();
 	_project->reset();
 
 	// Scene
 	_project->scene()->setMin(Preferences::sceneMin());
 	_project->scene()->setMax(Preferences::sceneMax());
+	emit _project->scene()->rectUpdated();
 
 	// Create material
 	createMyMaterial();
@@ -31,11 +32,11 @@ void Core::reset() {
 
 	// Other controllers
 	_graphics->reset();
-	_undoRedo->reset();
+	_commands->reset();
 }
 
 Material* Core::createMyMaterial() {
-	auto* material = MaterialCommand::create(_undoRedo, _project);
+	auto* material = MaterialCommand::create(_commands, _project);
 	material->setName(Preferences::materialName());
 	material->setDiffuse(Preferences::materialDiffuse());
 	return material;
@@ -51,9 +52,9 @@ Project* Core::project() const {
 	return _project;
 }
 
-UndoRedo* Core::undoRedo() const {
-	assert(_undoRedo);
-	return _undoRedo;
+Commands* Core::commands() const {
+	assert(_commands);
+	return _commands;
 }
 
 } // namespace eno

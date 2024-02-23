@@ -88,7 +88,7 @@ void MainWindow::initUi() {
 	setCentralWidget(_graphicsView);
 
 	auto* infoWidget = new InfoWidget(this);
-	infoWidget->init(_project->scene(), _graphicsView);
+	infoWidget->init(_core->commands(), _project->scene(), _graphicsView);
 	statusBar()->addPermanentWidget(infoWidget);
 
 	setMinimumSize(1280, 780);

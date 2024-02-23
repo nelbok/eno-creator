@@ -58,9 +58,11 @@ public:
 	static void setProjectLocation(const QString& location);
 	static void setGenerateLocation(const QString& location);
 
-	// Optimization
+	// Others
 	static bool generationOptimized();
 	static void setGenerationOptimized(bool enabled);
+	static int maximumCommands();
+	static void setMaximumCommands(int maximum);
 
 	// Key binding
 	static Qt::Key keyRemove();

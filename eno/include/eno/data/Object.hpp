@@ -3,11 +3,13 @@
 #include <QtCore/QObject>
 #include <QtGui/QVector3D>
 
+#include <eno/data/Container.hpp>
+
 namespace eno {
 class Material;
 class Project;
 
-class Object : public QObject {
+class Object : public Item {
 
 	Q_OBJECT
 	Q_PROPERTY(QVector3D position READ position WRITE setPosition NOTIFY positionUpdated)

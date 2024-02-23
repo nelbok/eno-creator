@@ -13,10 +13,10 @@
 #include "engine/Engine.hpp"
 #include "io/WavefrontOBJ.hpp"
 #include "view/PreferencesWindow.hpp"
+#include "Commands.hpp"
 #include "Core.hpp"
 #include "Graphics.hpp"
 #include "Preferences.hpp"
-#include "UndoRedo.hpp"
 
 namespace eno {
 
@@ -123,21 +123,21 @@ void Shortcuts::initFile() {
 void Shortcuts::initEdit() {
 	_undoAction = new QAction("Undo", this);
 	_undoAction->setShortcut({ Qt::CTRL | Qt::Key_Z });
-	connect(_core->undoRedo(), &UndoRedo::updated, this, [this]() {
-		_undoAction->setEnabled(_core->undoRedo()->canUndo());
+	connect(_core->commands(), &Commands::updated, this, [this]() {
+		_undoAction->setEnabled(_core->commands()->canUndo());
 	});
 	connect(_undoAction, &QAction::triggered, this, [this]() {
-		_core->undoRedo()->undo();
+		_core->commands()->undo();
 		emit showMessage("Action undone");
 	});
 
 	_redoAction = new QAction("Redo", this);
 	_redoAction->setShortcut({ Qt::CTRL | Qt::Key_Y });
-	connect(_core->undoRedo(), &UndoRedo::updated, this, [this]() {
-		_redoAction->setEnabled(_core->undoRedo()->canRedo());
+	connect(_core->commands(), &Commands::updated, this, [this]() {
+		_redoAction->setEnabled(_core->commands()->canRedo());
 	});
 	connect(_redoAction, &QAction::triggered, this, [this]() {
-		_core->undoRedo()->redo();
+		_core->commands()->redo();
 		emit showMessage("Action redone");
 	});
 }

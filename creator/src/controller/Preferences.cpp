@@ -107,6 +107,14 @@ void Preferences::setGenerationOptimized(bool enabled) {
 	QSettings().setValue("optimization/wavefront", enabled);
 }
 
+int Preferences::maximumCommands() {
+	return QSettings().value("optimization/commands", 20).toInt();
+}
+
+void Preferences::setMaximumCommands(int maximum) {
+	QSettings().setValue("optimization/commands", maximum);
+}
+
 // Key binding
 Qt::Key Preferences::keyRemove() {
 	return QSettings().value("keybinding/remove", Qt::Key_1).value<Qt::Key>();

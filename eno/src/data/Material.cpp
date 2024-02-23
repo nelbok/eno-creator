@@ -4,11 +4,9 @@
 
 namespace eno {
 Material::Material(Project* project)
-	: QObject(project)
-	, _project{ project } {}
-
-Material::~Material() {
-	assert(_refCount == 0);
+	: Item(project)
+	, _project{ project } {
+	connect(this, &Material::isAliveUpdated, project, &Project::materialsUpdated);
 }
 
 void Material::setName(const QString& name) {
@@ -26,23 +24,4 @@ void Material::setDiffuse(const QColor& color) {
 		emit diffuseUpdated();
 	}
 }
-
-void Material::increaseRefCount() {
-	++_refCount;
-	emit refCountUpdated();
-}
-
-void Material::decreaseRefCount() {
-	assert(_refCount > 0);
-	--_refCount;
-	emit refCountUpdated();
-}
-
-void Material::setIsAlive(bool isAlive) {
-	if (_isAlive != isAlive) {
-		_isAlive = isAlive;
-		emit _project->materialsUpdated();
-	}
-}
-
 } // namespace eno

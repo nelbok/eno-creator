@@ -4,13 +4,14 @@
 
 namespace eno {
 class BaseCommand;
+class ListCommand;
 
-class UndoRedo : public QObject {
+class Commands : public QObject {
 	Q_OBJECT
 
 public:
-	UndoRedo(QObject* parent = nullptr);
-	virtual ~UndoRedo() = default;
+	Commands(QObject* parent = nullptr);
+	virtual ~Commands() = default;
 
 	void add(BaseCommand* command);
 
@@ -21,13 +22,18 @@ public:
 	void redo();
 	// clang-format on
 
+	void beginList();
+	void endList();
+
 	void reset();
 
 private:
+	void internalAdd(BaseCommand* command);
 	void clear(QList<BaseCommand*>& commands);
 
 	QList<BaseCommand*> _undoCommands{};
 	QList<BaseCommand*> _redoCommands{};
+	QList<ListCommand*> _list{};
 
 signals:
 	void updated();

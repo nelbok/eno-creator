@@ -2,12 +2,12 @@
 
 #include <QtCore/QFileInfo>
 
-#include <eno/data/Material.hpp>
 #include <eno/data/Scene.hpp>
 
 namespace eno {
 Project::Project(QObject* parent)
-	: QObject(parent) {}
+	: QObject(parent)
+	, Container(this) {}
 
 Project::~Project() {
 	delete _scene;
@@ -24,10 +24,7 @@ void Project::reset() {
 	_scene->reset();
 
 	// Reset materials
-	for (auto* material : _materials) {
-		material->deleteLater();
-	}
-	_materials.clear();
+	Container::clear();
 
 	// Finalize
 	setFilePath("");
@@ -58,38 +55,8 @@ void Project::setIsModified(bool value) {
 	}
 }
 
-void Project::add(Material* material) {
-	assert(material);
-	assert(!_materials.contains(material));
-	_materials.append(material);
-	setIsModified(true);
+void Project::datasUpdated() {
 	emit materialsUpdated();
 }
 
-bool Project::canRemove(Material* material) {
-	assert(material);
-	assert(_materials.contains(material));
-	return material->refCount() == 0 && _materials.count() != 1;
-}
-
-void Project::remove(Material* material) {
-	assert(material);
-	assert(_materials.contains(material));
-	if (canRemove(material)) {
-		_materials.removeAll(material);
-		material->deleteLater();
-		setIsModified(true);
-		emit materialsUpdated();
-	}
-}
-
-QList<Material*> Project::materials() const {
-	QList<Material*> materials;
-	for (auto* material : _materials) {
-		if (material->isAlive()) {
-			materials.push_back(material);
-		}
-	}
-	return materials;
-}
 } // namespace eno

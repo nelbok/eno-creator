@@ -3,10 +3,10 @@
 #include <QtCore/QObject>
 
 namespace eno {
+class Commands;
 class Graphics;
 class Material;
 class Project;
-class UndoRedo;
 
 class Core : public QObject {
 	Q_OBJECT
@@ -19,13 +19,13 @@ public:
 
 	Material* createMyMaterial();
 
+	Commands* commands() const;
 	Graphics* graphics() const;
 	Project* project() const;
-	UndoRedo* undoRedo() const;
 
 private:
+	Commands* _commands{ nullptr };
 	Graphics* _graphics{ nullptr };
 	Project* _project{ nullptr };
-	UndoRedo* _undoRedo{};
 };
 } // namespace eno
