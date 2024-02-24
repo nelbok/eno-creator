@@ -25,11 +25,23 @@ The project started in 2011, it was primarily a presentation software.
 Even if now it could be used to make old school video games.
 So the interface could look old.
 
+## Units
+Meter: Eno files, Wavefront files, Qt3D
+Centimeter: QtQuick3D
+
 ## Requirements
 
 - CMake 3.27+
 - C++ 17
 - Qt 6.6
+
+## Supported platforms
+Eno: All
+Creator: Windows, Linux, macOS(maybe)
+Viewer: Windows, Linux, macOS(maybe), Android
+
+Note about iOS:
+Without device, we can't update code
 
 ## Compilation
 

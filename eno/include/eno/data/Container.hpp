@@ -1,7 +1,7 @@
 #pragma once
 
-#include <QObject>
-#include <QList>
+#include <QtCore/QList>
+#include <QtCore/QObject>
 
 namespace eno {
 class Item : public QObject {

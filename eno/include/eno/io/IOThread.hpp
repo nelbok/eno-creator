@@ -9,13 +9,18 @@ class IOThread : public QThread {
 	Q_OBJECT
 
 public:
-	enum class Type { Save, Load, Unknwon };
-	enum class Result { Success, Canceled, Error, Unknwon };
+	enum class Type { Save, Load, NoType };
+	enum class Result { Success, Canceled, Error, NoResult };
 
-	IOThread(Project* project, const QString& path, Type type);
+	Q_ENUM(Type)
+	Q_ENUM(Result)
+
+	IOThread(QObject* parent = nullptr);
 	virtual ~IOThread() = default;
 
-	Result result() const;
+	Q_INVOKABLE void init(Project* project, Type type, const QUrl& url);
+	Q_INVOKABLE void init(Project* project, Type type, const QString& filePath);
+	Q_INVOKABLE Result result() const;
 
 protected:
 	virtual void run() override;
@@ -24,8 +29,8 @@ protected:
 
 protected:
 	Project* _project{ nullptr };
-	const QString _path{};
-	const Type _type{ Type ::Unknwon };
-	Result _result{ Result::Unknwon };
+	QString _filePath{};
+	Type _type{ Type::NoType };
+	Result _result{ Result::NoResult };
 };
 } // namespace eno

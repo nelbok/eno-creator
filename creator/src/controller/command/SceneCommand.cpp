@@ -1,6 +1,6 @@
 #include "SceneCommand.hpp"
 
-#include <QPoint>
+#include <QtCore/QPoint>
 
 #include <eno/data/Object.hpp>
 #include <eno/data/Project.hpp>

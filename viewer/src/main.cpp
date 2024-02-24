@@ -6,6 +6,7 @@
 #include <eno/io/Eno.hpp>
 
 #include "Config.hpp"
+#include "Intro.hpp"
 
 int main(int argc, char* argv[]) {
 	QGuiApplication a(argc, argv);
@@ -15,16 +16,16 @@ int main(int argc, char* argv[]) {
 	a.setWindowIcon(QIcon(":/logo/logo.png"));
 
 	QScopedPointer<eno::Project> project(new eno::Project);
-	project->init();
+	QScopedPointer<eno::Intro> intro(new eno::Intro);
 
-	//auto* loader = new eno::Eno(project.get(), "path_to_file", eno::IOThread::Type::Load);
-	//loader->start();
-	//loader->wait();
-	//loader->deleteLater();
+	project->init();
+	intro->initIntro();
 
 	QQmlApplicationEngine engine;
 
+	qmlRegisterSingletonInstance("Eno", 1, 0, "MyIntro", intro.get());
 	qmlRegisterSingletonInstance("Eno", 1, 0, "MyProject", project.get());
+	qmlRegisterType<eno::Eno>("Eno", 1, 0, "MyLoader");
 
 	const QUrl url(u"qrc:/Viewer/qml/Main.qml"_qs);
 	QObject::connect(

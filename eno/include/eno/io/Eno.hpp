@@ -11,6 +11,7 @@ class QDataStream;
 namespace eno {
 class Material;
 
+// Eno Unit: meter
 class Eno : public IOThread {
 public:
 	static constexpr auto fileType = "ENO file (*.eno)";

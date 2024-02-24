@@ -21,14 +21,14 @@ public:
 	Project(QObject* parent = nullptr);
 	virtual ~Project();
 
-	void init();
-	void reset();
+	Q_INVOKABLE void init();
+	Q_INVOKABLE void reset();
 
 	QString projectName() const;
 
 	// clang-format off
 	const QString& filePath() const { return _filePath; }
-	void setFilePath(const QString& path);
+	void setFilePath(const QString& filePath);
 
 	bool isModified() const { return _isModified; }
 	void setIsModified(bool isModifed);

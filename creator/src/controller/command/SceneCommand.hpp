@@ -1,7 +1,7 @@
 #pragma once
 
-#include <QList>
-#include <QVector3D>
+#include <QtCore/QList>
+#include <QtGui/QVector3D>
 
 class QPoint;
 

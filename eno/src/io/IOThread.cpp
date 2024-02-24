@@ -1,14 +1,26 @@
 #include <eno/io/IOThread.hpp>
 
 #include <QtCore/QCoreApplication>
+#include <QtCore/QUrl>
 
 #include <eno/data/Project.hpp>
 
 namespace eno {
-IOThread::IOThread(Project* project, const QString& path, Type type)
-	: _project(project)
-	, _path{ path }
-	, _type{ type } {
+IOThread::IOThread(QObject* parent)
+	: QThread(parent) {}
+
+void IOThread::init(Project* project, Type type, const QUrl& url) {
+	assert(url.isValid());
+	if (url.isLocalFile())
+		init(project, type, url.toLocalFile());
+	else
+		init(project, type, url.toString());
+}
+
+void IOThread::init(Project* project, Type type, const QString& filePath) {
+	_project = project;
+	_type = type;
+	_filePath = filePath;
 	// Not thread safe!!!
 	if (type == Type::Load) {
 		auto* parent = _project->parent();
@@ -16,6 +28,11 @@ IOThread::IOThread(Project* project, const QString& path, Type type)
 		_project->moveToThread(this);
 		connect(this, &IOThread::finished, QCoreApplication::instance(), [this, parent]() {
 			_project->setParent(parent);
+			emit _project->materialsUpdated();
+			emit _project->scene()->rectUpdated();
+			emit _project->scene()->objectsUpdated();
+			_project = nullptr;
+			disconnect(this, &IOThread::finished, QCoreApplication::instance(), nullptr);
 		});
 	}
 }
@@ -25,6 +42,8 @@ IOThread::Result IOThread::result() const {
 }
 
 void IOThread::run() {
+	assert(_project);
+	assert(_filePath != "");
 	switch (_type) {
 		case Type::Load:
 			load();
@@ -33,6 +52,7 @@ void IOThread::run() {
 			break;
 		case Type::Save:
 			save();
+			_project = nullptr;
 			break;
 		default:
 			assert(false);

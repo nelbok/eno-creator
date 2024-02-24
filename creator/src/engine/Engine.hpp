@@ -15,6 +15,8 @@ namespace eno {
 class Project;
 class Material;
 
+// Source not verified
+// Qt 3D Unit: meter
 class Engine : public QWidget {
 	Q_OBJECT
 

@@ -17,7 +17,7 @@ enum class EnoVersion : unsigned int {
 void Eno::save() {
 	assert(_project);
 
-	QSaveFile file(_path);
+	QSaveFile file(_filePath);
 	if (!file.open(QIODevice::WriteOnly)) {
 		_result = Result::Error;
 		return;
@@ -64,7 +64,7 @@ void Eno::save() {
 	}
 
 	if (file.commit()) {
-		_project->setFilePath(_path);
+		_project->setFilePath(_filePath);
 		_project->setIsModified(false);
 
 		_result = Result::Success;
@@ -76,7 +76,7 @@ void Eno::save() {
 void Eno::load() {
 	assert(_project);
 
-	QFile file(_path);
+	QFile file(_filePath);
 	if (!file.open(QIODevice::ReadOnly)) {
 		_result = Result::Error;
 		return;
@@ -85,7 +85,7 @@ void Eno::load() {
 	// Reset and begin transaction
 	_project->blockSignals(true);
 	_project->reset();
-	_project->setFilePath(_path);
+	_project->setFilePath(_filePath);
 
 	QDataStream stream(&file);
 	stream.setVersion(QDataStream::Qt_5_15);
@@ -98,21 +98,22 @@ void Eno::load() {
 		switch (static_cast<EnoVersion>(version)) {
 			case EnoVersion::v1:
 				loadV1(stream);
+				_result = Result::Success;
 				break;
 			default:
 				assert(false);
+				_result = Result::Error;
+				_project->reset();
 		}
 	} catch (...) {
+		_result = Result::Error;
 		_project->reset();
 	}
 	file.close();
 
-	_result = Result::Success;
-
 	if (isInterruptionRequested()) {
 		_project->reset();
 		_result = Result::Canceled;
-		return;
 	}
 
 	_project->blockSignals(false);
@@ -169,5 +170,4 @@ void Eno::loadSceneV1(QDataStream& stream, const QMap<QUuid, Material*>& mapMate
 		}
 	}
 }
-
 } // namespace eno

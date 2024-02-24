@@ -41,9 +41,9 @@ QString Project::projectName() const {
 	return "New Project";
 }
 
-void Project::setFilePath(const QString& path) {
-	if (_filePath != path) {
-		_filePath = path;
+void Project::setFilePath(const QString& filePath) {
+	if (_filePath != filePath) {
+		_filePath = filePath;
 		emit filePathUpdated();
 	}
 }

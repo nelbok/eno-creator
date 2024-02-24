@@ -70,22 +70,22 @@ void Shortcuts::initFile() {
 		if (path.isEmpty())
 			return;
 
-		auto* thread = new Eno(_core->project(), path, IOThread::Type::Load);
+		_core->reset();
+		auto* thread = new Eno(this);
+		thread->init(_core->project(), IOThread::Type::Load, path);
 		emit showProgressDialog(true, thread);
 		connect(thread, &Eno::finished, this, [this, thread, path]() {
 			emit showProgressDialog(false);
-			// Project has been loaded or it failed!
-			emit _core->project()->materialsUpdated();
-			emit _core->project()->scene()->rectUpdated();
-			emit _core->project()->scene()->objectsUpdated();
 			switch (thread->result()) {
 				case IOThread::Result::Success:
 					emit showMessage(QString("Project [%1] loaded").arg(_core->project()->projectName()));
 					break;
 				case IOThread::Result::Canceled:
+					_core->reset();
 					emit showMessage(QString("Loading project [%1] canceled").arg(_core->project()->projectName()));
 					break;
 				default:
+					_core->reset();
 					emit showMessage(QString("Failed to load %1").arg(path));
 					break;
 			}
@@ -182,7 +182,8 @@ void Shortcuts::initGenerate() {
 		if (path.isEmpty())
 			return;
 
-		auto* thread = new WavefrontOBJ(_core->project(), path, IOThread::Type::Save);
+		auto* thread = new WavefrontOBJ(this);
+		thread->init(_core->project(), IOThread::Type::Save, path);
 		emit showProgressDialog(true, thread);
 		connect(thread, &WavefrontOBJ::finished, this, [this, thread]() {
 			emit showProgressDialog(false);
@@ -255,7 +256,8 @@ void Shortcuts::save(bool newPathRequested) {
 	if (path.isEmpty())
 		return;
 
-	auto* thread = new Eno(_core->project(), path, IOThread::Type::Save);
+	auto* thread = new Eno(this);
+	thread->init(_core->project(), IOThread::Type::Save, path);
 	emit showProgressDialog(true, thread);
 	connect(thread, &Eno::finished, this, [this, thread, path]() {
 		emit showProgressDialog(false);

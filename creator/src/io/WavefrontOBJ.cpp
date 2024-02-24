@@ -98,7 +98,7 @@ void WavefrontOBJ::writeCredentials(QTextStream& stream) {
 }
 
 void WavefrontOBJ::writeObjFile() {
-	_objFile.setFileName(_path);
+	_objFile.setFileName(_filePath);
 	if (!_objFile.open(QIODevice::WriteOnly)) {
 		_result = Result::Error;
 		return;
@@ -109,7 +109,7 @@ void WavefrontOBJ::writeObjFile() {
 	stream << "o " << _project->projectName() << Qt::endl;
 
 	// Material file name
-	QFileInfo fileInfo(_path);
+	QFileInfo fileInfo(_filePath);
 	stream << "mtllib " << fileInfo.baseName() << ".mtl" << Qt::endl;
 
 	stream << "# vertices" << Qt::endl;
@@ -139,7 +139,7 @@ void WavefrontOBJ::writeObjFile() {
 }
 
 void WavefrontOBJ::writeMtlFile() {
-	QFileInfo fileInfo(_path);
+	QFileInfo fileInfo(_filePath);
 	QString pathMtl = fileInfo.path() + "/" + fileInfo.baseName() + ".mtl";
 
 	_mtlFile.setFileName(pathMtl);

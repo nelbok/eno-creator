@@ -1,4 +1,6 @@
 set(PROJECT_SOURCES
+	src/Intro.cpp
+	src/Intro.hpp
 	src/main.cpp
 
 	resources/resource.h
