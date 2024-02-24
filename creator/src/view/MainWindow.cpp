@@ -18,6 +18,7 @@
 #include "widgets/tools/SpinBoxTool.hpp"
 #include "widgets/InfoWidget.hpp"
 #include "widgets/MaterialsDockWidget.hpp"
+#include "widgets/ProjectDockWidget.hpp"
 #include "GraphicsView.hpp"
 
 namespace eno {
@@ -36,7 +37,7 @@ void MainWindow::updateWindowTitle() {
 	QString title = qApp->applicationName();
 
 	title.append(" - ");
-	title.append(_project->projectName());
+	title.append(_project->name());
 	if (_project->isModified()) {
 		title.append("*");
 	}
@@ -213,11 +214,21 @@ void MainWindow::initGenerate() {
 void MainWindow::initDocks() {
 	auto* menuDocks = menuBar()->addMenu("Views");
 
-	auto* dock = new MaterialsDockWidget(this);
-	dock->init(_core);
-	connect(dock, &MaterialsDockWidget::showMessage, this, &MainWindow::showMessage);
-	addDockWidget(Qt::LeftDockWidgetArea, dock);
-	menuDocks->addAction(dock->toggleViewAction());
+	{
+		auto* dock = new ProjectDockWidget(this);
+		dock->init(_core);
+		connect(dock, &ProjectDockWidget::showMessage, this, &MainWindow::showMessage);
+		addDockWidget(Qt::LeftDockWidgetArea, dock);
+		menuDocks->addAction(dock->toggleViewAction());
+	}
+
+	{
+		auto* dock = new MaterialsDockWidget(this);
+		dock->init(_core);
+		connect(dock, &MaterialsDockWidget::showMessage, this, &MainWindow::showMessage);
+		addDockWidget(Qt::LeftDockWidgetArea, dock);
+		menuDocks->addAction(dock->toggleViewAction());
+	}
 }
 
 } // namespace eno

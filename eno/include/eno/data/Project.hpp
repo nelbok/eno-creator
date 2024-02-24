@@ -13,6 +13,7 @@ class Project
 	: public QObject
 	, public Container<Material, Project> {
 	Q_OBJECT
+	Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameUpdated)
 	Q_PROPERTY(QString filePath READ filePath WRITE setFilePath NOTIFY filePathUpdated)
 	Q_PROPERTY(bool isModified READ isModified WRITE setIsModified NOTIFY isModifiedUpdated)
 	Q_PROPERTY(Scene* scene READ scene CONSTANT)
@@ -24,9 +25,10 @@ public:
 	Q_INVOKABLE void init();
 	Q_INVOKABLE void reset();
 
-	QString projectName() const;
-
 	// clang-format off
+	const QString& name() const { return _name; }
+	void setName(const QString& name);
+
 	const QString& filePath() const { return _filePath; }
 	void setFilePath(const QString& filePath);
 
@@ -42,11 +44,13 @@ public:
 private:
 	virtual void datasUpdated() override;
 
+	QString _name{};
 	QString _filePath{};
 	bool _isModified{ false };
 	Scene* _scene{ nullptr };
 
 signals:
+	void nameUpdated();
 	void filePathUpdated();
 	void isModifiedUpdated();
 	void materialsUpdated();

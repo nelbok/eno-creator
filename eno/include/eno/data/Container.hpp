@@ -2,18 +2,25 @@
 
 #include <QtCore/QList>
 #include <QtCore/QObject>
+#include <QtCore/QUuid>
 
 namespace eno {
+class Project;
+
 class Item : public QObject {
 	Q_OBJECT
+	Q_PROPERTY(QUuid uuid READ uuid NOTIFY uuidUpdated)
 	Q_PROPERTY(int refCount READ refCount NOTIFY refCountUpdated)
 	Q_PROPERTY(bool isAlive READ isAlive NOTIFY isAliveUpdated)
 
 public:
-	Item(QObject* parent = nullptr);
+	Item(Project* project);
+	Item(const QUuid& uuid, Project* project);
 	virtual ~Item();
 
 	// clang-format off
+	const QUuid& uuid() const { return _uuid; }
+
 	int refCount() const { return _refCount; }
 	void increaseRefCount();
 	void decreaseRefCount();
@@ -22,11 +29,16 @@ public:
 	void setIsAlive(bool isAlive);
 	// clang-format on
 
+protected:
+	Project* _project{ nullptr };
+
 private:
+	QUuid _uuid{};
 	int _refCount{ 0 };
 	bool _isAlive{ true };
 
 signals:
+	void uuidUpdated();
 	void refCountUpdated();
 	void isAliveUpdated();
 };

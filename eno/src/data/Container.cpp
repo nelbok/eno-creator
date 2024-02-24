@@ -1,9 +1,17 @@
 #include <eno/data/Container.hpp>
+#include <eno/data/Project.hpp>
 
 namespace eno {
 
-Item::Item(QObject* parent)
-	: QObject(parent) {}
+Item::Item(Project* project)
+	: QObject(project)
+	, _project{ project }
+	, _uuid{ QUuid::createUuid() } {}
+
+Item::Item(const QUuid& uuid, Project* project)
+	: QObject(project)
+	, _project{ project }
+	, _uuid{ uuid } {}
 
 Item::~Item() {
 	assert(_refCount == 0);

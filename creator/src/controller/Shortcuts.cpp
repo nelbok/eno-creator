@@ -53,6 +53,7 @@ void Shortcuts::resetActions() {
 
 void Shortcuts::initFile() {
 	_newAction = new QAction("New file", this);
+	_newAction->setShortcut({ Qt::CTRL | Qt::Key_N });
 	connect(_newAction, &QAction::triggered, this, [this]() {
 		if (!needToSave())
 			return;
@@ -63,6 +64,7 @@ void Shortcuts::initFile() {
 	});
 
 	_openAction = new QAction("Open", this);
+	_openAction->setShortcut({ Qt::CTRL | Qt::Key_O });
 	connect(_openAction, &QAction::triggered, this, [this]() {
 		if (!needToSave())
 			return;
@@ -78,11 +80,11 @@ void Shortcuts::initFile() {
 			emit showProgressDialog(false);
 			switch (thread->result()) {
 				case IOThread::Result::Success:
-					emit showMessage(QString("Project [%1] loaded").arg(_core->project()->projectName()));
+					emit showMessage(QString("Project [%1] loaded").arg(_core->project()->name()));
 					break;
 				case IOThread::Result::Canceled:
 					_core->reset();
-					emit showMessage(QString("Loading project [%1] canceled").arg(_core->project()->projectName()));
+					emit showMessage(QString("Loading project canceled"));
 					break;
 				default:
 					_core->reset();
@@ -95,6 +97,7 @@ void Shortcuts::initFile() {
 	});
 
 	_saveAction = new QAction("Save", this);
+	_saveAction->setShortcut({ Qt::CTRL | Qt::Key_S });
 	connect(_saveAction, &QAction::triggered, this, [this]() {
 		save(false);
 	});
@@ -112,6 +115,7 @@ void Shortcuts::initFile() {
 	});
 
 	_quitAction = new QAction("Quit", this);
+	_quitAction->setShortcut({ Qt::CTRL | Qt::Key_Q });
 	connect(_quitAction, &QAction::triggered, this, [this]() {
 		if (!needToSave())
 			return;
@@ -177,8 +181,8 @@ void Shortcuts::initGenerate() {
 	_generateOBJAction = new QAction(QIcon(":export/generate.png"), "Generate OBJ file", this);
 	_generateOBJAction->setToolTip("Generate the OBJ file corresponding to the project");
 	connect(_generateOBJAction, &QAction::triggered, this, [this]() {
-		const auto& path = QFileDialog::getSaveFileName(
-			qApp->activeWindow(), qApp->applicationName() + " - Export as", Preferences::generateLocation() + "/" + _core->project()->projectName(), WavefrontOBJ::fileType);
+		const auto& path =
+			QFileDialog::getSaveFileName(qApp->activeWindow(), qApp->applicationName() + " - Export as", Preferences::generateLocation() + "/" + _core->project()->name(), WavefrontOBJ::fileType);
 		if (path.isEmpty())
 			return;
 
@@ -187,13 +191,13 @@ void Shortcuts::initGenerate() {
 		emit showProgressDialog(true, thread);
 		connect(thread, &WavefrontOBJ::finished, this, [this, thread]() {
 			emit showProgressDialog(false);
-			const auto& name = _core->project()->projectName();
+			const auto& name = _core->project()->name();
 			switch (thread->result()) {
 				case IOThread::Result::Success:
-					emit showMessage(QString("Export %1 successed").arg(name));
+					emit showMessage(QString("Export [%1] successed").arg(name));
 					break;
 				case IOThread::Result::Canceled:
-					emit showMessage(QString("Export %1 canceled").arg(name));
+					emit showMessage(QString("Exporting [%1] canceled").arg(name));
 					break;
 				default:
 					emit showMessage(QString("Failed to export %1").arg(name));
@@ -249,7 +253,7 @@ void Shortcuts::save(bool newPathRequested) {
 	if (newPathRequested || !isFile || !isWritable) {
 		QString currentPath = _core->project()->filePath();
 		if (currentPath.isEmpty()) {
-			currentPath = Preferences::projectLocation();
+			currentPath = Preferences::projectLocation() + "/" + _core->project()->name();
 		}
 		path = QFileDialog::getSaveFileName(qApp->activeWindow(), qApp->applicationName() + " - Save as", currentPath, Eno::fileType);
 	}
@@ -261,18 +265,13 @@ void Shortcuts::save(bool newPathRequested) {
 	emit showProgressDialog(true, thread);
 	connect(thread, &Eno::finished, this, [this, thread, path]() {
 		emit showProgressDialog(false);
-		const auto& name = _core->project()->projectName();
-		if (thread->result() == IOThread::Result::Success) {
-			emit showMessage(QString("Project [%1] saved").arg(name));
-		} else {
-			emit showMessage(QString("Failed to save %1").arg(name));
-		}
+		const auto& name = _core->project()->name();
 		switch (thread->result()) {
 			case IOThread::Result::Success:
 				emit showMessage(QString("Project [%1] saved").arg(name));
 				break;
 			case IOThread::Result::Canceled:
-				emit showMessage(QString("Savind project [%1] canceled").arg(name));
+				emit showMessage(QString("Saving project [%1] canceled").arg(name));
 				break;
 			default:
 				emit showMessage(QString("Failed to save %1").arg(name));

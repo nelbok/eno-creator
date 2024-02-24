@@ -28,6 +28,7 @@ void IOThread::init(Project* project, Type type, const QString& filePath) {
 		_project->moveToThread(this);
 		connect(this, &IOThread::finished, QCoreApplication::instance(), [this, parent]() {
 			_project->setParent(parent);
+			emit _project->nameUpdated();
 			emit _project->materialsUpdated();
 			emit _project->scene()->rectUpdated();
 			emit _project->scene()->objectsUpdated();

@@ -93,7 +93,7 @@ void WavefrontOBJ::insertTriangle(Material* material, const Triangle& triangle) 
 }
 
 void WavefrontOBJ::writeCredentials(QTextStream& stream) {
-	stream << "# " << qApp->applicationName() << " " << qApp->applicationVersion() << ": " << _project->projectName() << Qt::endl;
+	stream << "# " << qApp->applicationName() << " " << qApp->applicationVersion() << ": " << _project->name() << Qt::endl;
 	stream << "# Created on " << QDateTime::currentDateTime().toString() << Qt::endl;
 }
 
@@ -106,7 +106,7 @@ void WavefrontOBJ::writeObjFile() {
 
 	QTextStream stream(&_objFile);
 	writeCredentials(stream);
-	stream << "o " << _project->projectName() << Qt::endl;
+	stream << "o " << _project->name() << Qt::endl;
 
 	// Material file name
 	QFileInfo fileInfo(_filePath);

@@ -20,6 +20,7 @@ void Core::reset() {
 	// Clean commands and project
 	_commands->reset();
 	_project->reset();
+	_project->setName("New project");
 
 	// Scene
 	_project->scene()->setMin(Preferences::sceneMin());

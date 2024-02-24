@@ -29,8 +29,6 @@ class Project;
 class Scene
 	: public QObject
 	, public Container<Object, Project> {
-	friend class Eno;
-
 	Q_OBJECT
 	Q_PROPERTY(QPoint min READ min WRITE setMin NOTIFY rectUpdated)
 	Q_PROPERTY(QPoint max READ max WRITE setMax NOTIFY rectUpdated)

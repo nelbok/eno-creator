@@ -4,8 +4,12 @@
 
 namespace eno {
 Material::Material(Project* project)
-	: Item(project)
-	, _project{ project } {
+	: Item(project) {
+	connect(this, &Material::isAliveUpdated, project, &Project::materialsUpdated);
+}
+
+Material::Material(const QUuid& uuid, Project* project)
+	: Item(uuid, project) {
 	connect(this, &Material::isAliveUpdated, project, &Project::materialsUpdated);
 }
 

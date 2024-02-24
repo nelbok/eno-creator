@@ -27,18 +27,17 @@ void Project::reset() {
 	Container::clear();
 
 	// Finalize
+	setName("");
 	setFilePath("");
 	setIsModified(false);
 }
 
-QString Project::projectName() const {
-	if (!_filePath.isEmpty()) {
-		const auto& fileInfo = QFileInfo(_filePath);
-		if (fileInfo.exists()) {
-			return fileInfo.baseName();
-		}
+void Project::setName(const QString& name) {
+	if (_name != name) {
+		_name = name;
+		setIsModified(true);
+		emit nameUpdated();
 	}
-	return "New Project";
 }
 
 void Project::setFilePath(const QString& filePath) {

@@ -2,12 +2,13 @@
 
 #include <eno/data/Material.hpp>
 #include <eno/data/Project.hpp>
-#include <eno/data/Scene.hpp>
 
 namespace eno {
 Object::Object(Project* project)
-	: Item(project)
-	, _project(project) {}
+	: Item(project) {}
+
+Object::Object(const QUuid& uuid, Project* project)
+	: Item(uuid, project) {}
 
 Object::~Object() {
 	setMaterial(nullptr);

@@ -1,6 +1,5 @@
 #pragma once
 
-#include <QtCore/QObject>
 #include <QtGui/QVector3D>
 
 #include <eno/data/Container.hpp>
@@ -17,6 +16,7 @@ class Object : public Item {
 
 public:
 	Object(Project* project);
+	Object(const QUuid& uuid, Project* project);
 	virtual ~Object();
 
 	// clang-format off
@@ -28,8 +28,6 @@ public:
 	// clang-format on
 
 private:
-	Project* _project{ nullptr };
-
 	QVector3D _position{};
 	Material* _material{};
 

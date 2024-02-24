@@ -7,6 +7,8 @@ set(PROJECT_SOURCES
 	src/controller/command/MaterialCommand.hpp
 	src/controller/command/ObjectCommand.cpp
 	src/controller/command/ObjectCommand.hpp
+	src/controller/command/ProjectCommand.cpp
+	src/controller/command/ProjectCommand.hpp
 	src/controller/command/SceneCommand.cpp
 	src/controller/command/SceneCommand.hpp
 	src/controller/command/ValueCommand.hpp
@@ -57,6 +59,8 @@ set(PROJECT_SOURCES
 	src/widgets/LocationWidget.hpp
 	src/widgets/MaterialsDockWidget.cpp
 	src/widgets/MaterialsDockWidget.hpp
+	src/widgets/ProjectDockWidget.cpp
+	src/widgets/ProjectDockWidget.hpp
 
 	src/main.cpp
 
