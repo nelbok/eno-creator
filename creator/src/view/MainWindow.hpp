@@ -34,6 +34,7 @@ private:
 	void initTools();
 	void initLayers();
 	void initGenerate();
+	void initHelp();
 	void initDocks();
 
 	Project* _project{ nullptr };

@@ -7,4 +7,7 @@ constexpr auto viewer = "@ENO_VIEWER@";
 constexpr auto version = "@ENO_VERSION@";
 constexpr auto year = "@ENO_YEAR@";
 constexpr auto copyright = "@ENO_COPYRIGHT@";
+constexpr auto github = "@ENO_GITHUB@";
+constexpr auto discord = "@ENO_DISCORD@";
+constexpr auto twitter = "@ENO_TWITTER@";
 } // namespace eno::Config

@@ -41,7 +41,11 @@ public:
 	QAction* generateOBJAction() const { return _generateOBJAction; }
 	QAction* generate3DAction() const { return _generate3DAction; }
 
-	// Others
+	// Help
+	QAction* githubAction() const { return _githubAction; }
+	QAction* twitterAction() const { return _twitterAction; }
+	QAction* discordAction() const { return _discordAction; }
+	QAction* aboutAction() const { return _aboutAction; }
 	QAction* aboutQtAction() const { return _aboutQtAction; }
 	// clang-format on
 
@@ -50,7 +54,7 @@ private:
 	void initEdit();
 	void initTools();
 	void initGenerate();
-	void initOthers();
+	void initHelp();
 
 	bool needToSave();
 	void save(bool newPathRequested);
@@ -80,6 +84,10 @@ private:
 	QAction* _generate3DAction{ nullptr };
 
 	// Others action
+	QAction* _githubAction{ nullptr };
+	QAction* _twitterAction{ nullptr };
+	QAction* _discordAction{ nullptr };
+	QAction* _aboutAction{ nullptr };
 	QAction* _aboutQtAction{ nullptr };
 
 signals:

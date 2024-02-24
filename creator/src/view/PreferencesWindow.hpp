@@ -1,12 +1,13 @@
 #pragma once
 
-#include <QtWidgets/QMainWindow>
+#include <QtWidgets/QWidget>
 
 class QCheckBox;
 class QComboBox;
 class QFormLayout;
 class QLineEdit;
 class QSpinBox;
+class QTabWidget;
 
 namespace eno {
 class ColorButton;
@@ -14,7 +15,7 @@ class KeyButton;
 class LocationWidget;
 class SpinBox;
 
-class PreferencesWindow : public QMainWindow {
+class PreferencesWindow : public QWidget {
 	Q_OBJECT
 
 public:

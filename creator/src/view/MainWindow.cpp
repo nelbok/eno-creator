@@ -100,8 +100,7 @@ void MainWindow::initUi() {
 	initLayers();
 	initGenerate();
 	initDocks();
-
-	menuBar()->addAction(_shortcuts->aboutQtAction());
+	initHelp();
 
 	_core->reset();
 	_shortcuts->resetActions();
@@ -209,6 +208,17 @@ void MainWindow::initGenerate() {
 	auto* toolBar = addToolBar("Generate");
 	toolBar->addAction(action1);
 	toolBar->addAction(action2);
+}
+
+void MainWindow::initHelp() {
+	auto* menu = menuBar()->addMenu("Help");
+	menu->addAction(_shortcuts->githubAction());
+	menu->addAction(_shortcuts->twitterAction());
+	menu->addAction(_shortcuts->discordAction());
+	menu->addSeparator();
+	menu->addAction(_shortcuts->aboutAction());
+	menu->addSeparator();
+	menu->addAction(_shortcuts->aboutQtAction());
 }
 
 void MainWindow::initDocks() {

@@ -19,18 +19,19 @@
 namespace eno {
 
 PreferencesWindow::PreferencesWindow(QWidget* parent)
-	: QMainWindow(parent) {
+	: QWidget(parent) {
 	setWindowTitle(qApp->applicationName() + " - Preferences");
 	setAttribute(Qt::WA_DeleteOnClose);
 }
 
 void PreferencesWindow::initUi() {
-	setMinimumSize(640, 390);
+	setFixedSize(640, 390);
 	setWindowModality(Qt::ApplicationModal);
 
 	// Tab widget
-	_tabWidget = new QTabWidget;
-	setCentralWidget(_tabWidget);
+	_tabWidget = new QTabWidget(this);
+	auto* l = new QHBoxLayout(this);
+	l->addWidget(_tabWidget);
 
 	initGeneral();
 	initProject();
@@ -81,7 +82,7 @@ void PreferencesWindow::closeEvent(QCloseEvent* e) {
 		Preferences::setKey3DView(_3DView->key());
 	}
 
-	QMainWindow::closeEvent(e);
+	QWidget::closeEvent(e);
 }
 
 void PreferencesWindow::initGeneral() {

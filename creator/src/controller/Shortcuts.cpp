@@ -2,6 +2,7 @@
 
 #include <QtGui/QAction>
 #include <QtGui/QActionGroup>
+#include <QtGui/QDesktopServices>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QFileDialog>
 #include <QtWidgets/QMessageBox>
@@ -18,19 +19,20 @@
 #include "Graphics.hpp"
 #include "Preferences.hpp"
 
+#include "Config.hpp"
+
 namespace eno {
 
 Shortcuts::Shortcuts(Core* core, QObject* parent)
 	: QObject(parent)
 	, _core(core) {}
 
-
 void Shortcuts::initActions() {
 	initFile();
 	initEdit();
 	initTools();
 	initGenerate();
-	initOthers();
+	initHelp();
 }
 
 void Shortcuts::resetActions() {
@@ -219,7 +221,36 @@ void Shortcuts::initGenerate() {
 	});
 }
 
-void Shortcuts::initOthers() {
+void Shortcuts::initHelp() {
+	_githubAction = new QAction("Github", this);
+	connect(_githubAction, &QAction::triggered, []() {
+		QDesktopServices::openUrl({ Config::github });
+	});
+
+	_twitterAction = new QAction("Twitter", this);
+	connect(_twitterAction, &QAction::triggered, []() {
+		QDesktopServices::openUrl({ Config::twitter });
+	});
+
+	_discordAction = new QAction("Discord", this);
+	connect(_discordAction, &QAction::triggered, []() {
+		QDesktopServices::openUrl({ Config::discord });
+	});
+
+	_aboutAction = new QAction("About " + QString(Config::creator), this);
+	connect(_aboutAction, &QAction::triggered, []() {
+		QString text = "<strong>About " + QString(Config::creator) + "</strong><br/>";
+		text += "<br/>";
+		text += "3D map editor.<br/>";
+		text += "<br/>";
+		text += QString(Config::creator) + " is an easy application to allow you to create complex 3D scenes. You can export your project into Wavefront OBJ file.<br/>";
+		text += "<br/>";
+		text += QString(Config::creator) + " is licensed under GNU General Public License v3.0.<br/>";
+		text += "<br/>";
+		text += QString(Config::copyright);
+		QMessageBox::about(qApp->activeWindow(), qApp->applicationName(), text);
+	});
+
 	_aboutQtAction = new QAction("About Qt", this);
 	connect(_aboutQtAction, &QAction::triggered, []() {
 		QMessageBox::aboutQt(qApp->activeWindow(), qApp->applicationName());
