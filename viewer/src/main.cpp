@@ -5,8 +5,10 @@
 #include <eno/data/Project.hpp>
 #include <eno/io/Eno.hpp>
 
-#include "Config.hpp"
+#include "About.hpp"
 #include "Intro.hpp"
+
+#include "Config.hpp"
 
 int main(int argc, char* argv[]) {
 	QGuiApplication a(argc, argv);
@@ -15,6 +17,7 @@ int main(int argc, char* argv[]) {
 	a.setApplicationVersion(eno::Config::version);
 	a.setWindowIcon(QIcon(":/logo/logo.png"));
 
+	QScopedPointer<eno::About> about(new eno::About);
 	QScopedPointer<eno::Project> project(new eno::Project);
 	QScopedPointer<eno::Intro> intro(new eno::Intro);
 
@@ -23,6 +26,7 @@ int main(int argc, char* argv[]) {
 
 	QQmlApplicationEngine engine;
 
+	qmlRegisterSingletonInstance("Eno", 1, 0, "MyAbout", about.get());
 	qmlRegisterSingletonInstance("Eno", 1, 0, "MyIntro", intro.get());
 	qmlRegisterSingletonInstance("Eno", 1, 0, "MyProject", project.get());
 	qmlRegisterType<eno::Eno>("Eno", 1, 0, "MyLoader");

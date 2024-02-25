@@ -1,4 +1,6 @@
 set(PROJECT_SOURCES
+	src/About.cpp
+	src/About.hpp
 	src/Intro.cpp
 	src/Intro.hpp
 	src/main.cpp
@@ -9,7 +11,10 @@ set(PROJECT_SOURCES
 	resources/resources.qrc
 )
 set(QML_SOURCES
+	qml/About.qml
+	qml/Loader.qml
 	qml/Main.qml
+	qml/Viewer.qml
 )
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" PREFIX "" FILES ${PROJECT_SOURCES} ${QML_SOURCES})
 include_directories(.)

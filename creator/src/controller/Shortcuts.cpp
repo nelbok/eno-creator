@@ -243,7 +243,7 @@ void Shortcuts::initHelp() {
 
 	_aboutAction = new QAction("About " + QString(Config::creator), this);
 	connect(_aboutAction, &QAction::triggered, []() {
-		QString text = "<strong>About " + QString(Config::creator) + "</strong><br/>";
+		QString text = "<strong>About " + QString(Config::creator) + " - " + QString(Config::version) + "</strong><br/>";
 		text += "<br/>";
 		text += "3D map editor.<br/>";
 		text += "<br/>";
