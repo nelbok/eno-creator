@@ -58,7 +58,7 @@ public:
 	static void setProjectLocation(const QString& location);
 	static void setGenerateLocation(const QString& location);
 
-	// Others
+	// Optimization
 	static bool generationOptimized();
 	static void setGenerationOptimized(bool enabled);
 	static int maximumCommands();
@@ -67,18 +67,18 @@ public:
 	// Key binding
 	static Qt::Key keyRemove();
 	static void setKeyRemove(Qt::Key key);
-
 	static Qt::Key keyAdd();
 	static void setKeyAdd(Qt::Key key);
-
 	static Qt::Key keyPicker();
 	static void setKeyPicker(Qt::Key key);
-
 	static Qt::Key keyResize();
 	static void setKeyResize(Qt::Key key);
-
 	static Qt::Key key3DView();
 	static void setKey3DView(Qt::Key key);
+
+	// Recent files
+	static QList<QString> recentFiles();
+	static void setRecentFiles(const QList<QString>& recentFiles);
 
 private:
 	Preferences() = default;

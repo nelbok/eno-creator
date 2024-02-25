@@ -5,7 +5,9 @@
 #include <QtGui/QDesktopServices>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QFileDialog>
+#include <QtWidgets/QMenu>
 #include <QtWidgets/QMessageBox>
+#include <QtWidgets/QStyle>
 
 #include <eno/data/Project.hpp>
 #include <eno/data/Scene.hpp>
@@ -18,6 +20,7 @@
 #include "Core.hpp"
 #include "Graphics.hpp"
 #include "Preferences.hpp"
+#include "RecentFiles.hpp"
 
 #include "Config.hpp"
 
@@ -54,7 +57,10 @@ void Shortcuts::resetActions() {
 }
 
 void Shortcuts::initFile() {
+	auto* style = qApp->style();
+
 	_newAction = new QAction("New file", this);
+	_newAction->setIcon(style->standardIcon(QStyle::SP_FileIcon));
 	_newAction->setShortcut({ Qt::CTRL | Qt::Key_N });
 	connect(_newAction, &QAction::triggered, this, [this]() {
 		if (!needToSave())
@@ -66,6 +72,7 @@ void Shortcuts::initFile() {
 	});
 
 	_openAction = new QAction("Open", this);
+	_openAction->setIcon(style->standardIcon(QStyle::SP_DirOpenIcon));
 	_openAction->setShortcut({ Qt::CTRL | Qt::Key_O });
 	connect(_openAction, &QAction::triggered, this, [this]() {
 		if (!needToSave())
@@ -74,31 +81,11 @@ void Shortcuts::initFile() {
 		if (path.isEmpty())
 			return;
 
-		_core->reset();
-		auto* thread = new Eno(this);
-		thread->init(_core->project(), IOThread::Type::Load, path);
-		emit showProgressDialog(true, thread);
-		connect(thread, &Eno::finished, this, [this, thread, path]() {
-			emit showProgressDialog(false);
-			switch (thread->result()) {
-				case IOThread::Result::Success:
-					emit showMessage(QString("Project [%1] loaded").arg(_core->project()->name()));
-					break;
-				case IOThread::Result::Canceled:
-					_core->reset();
-					emit showMessage(QString("Loading project canceled"));
-					break;
-				default:
-					_core->reset();
-					emit showMessage(QString("Failed to load %1").arg(path));
-					break;
-			}
-			thread->deleteLater();
-		});
-		thread->start();
+		open(path);
 	});
 
 	_saveAction = new QAction("Save", this);
+	_saveAction->setIcon(style->standardIcon(QStyle::SP_DialogSaveButton));
 	_saveAction->setShortcut({ Qt::CTRL | Qt::Key_S });
 	connect(_saveAction, &QAction::triggered, this, [this]() {
 		save(false);
@@ -108,6 +95,23 @@ void Shortcuts::initFile() {
 	connect(_saveAsAction, &QAction::triggered, this, [this]() {
 		save(true);
 	});
+
+	_recentFilesMenu = new QMenu("Recent files");
+	auto rfLambda = [this]() {
+		_recentFilesMenu->clear();
+		for (const auto& data : _core->recentFiles()->datas()) {
+			auto* action = new QAction(data, _recentFilesMenu);
+			connect(action, &QAction::triggered, this, [this, data]() {
+				if (!needToSave())
+					return;
+
+				open(data);
+			});
+			_recentFilesMenu->addAction(action);
+		}
+	};
+	connect(_core->recentFiles(), &RecentFiles::datasUpdated, this, rfLambda);
+	rfLambda();
 
 	_preferenceAction = new QAction("Preferences", this);
 	connect(_preferenceAction, &QAction::triggered, this, []() {
@@ -274,6 +278,33 @@ bool Shortcuts::needToSave() {
 	return true;
 }
 
+void Shortcuts::open(const QString& path) {
+	_core->reset();
+	auto* thread = new Eno(this);
+	thread->init(_core->project(), IOThread::Type::Load, path);
+	emit showProgressDialog(true, thread);
+	connect(thread, &Eno::finished, this, [this, thread, path]() {
+		emit showProgressDialog(false);
+		switch (thread->result()) {
+			case IOThread::Result::Success:
+				_core->recentFiles()->add(path);
+				emit showMessage(QString("Project [%1] loaded").arg(_core->project()->name()));
+				break;
+			case IOThread::Result::Canceled:
+				_core->reset();
+				emit showMessage(QString("Loading project canceled"));
+				break;
+			default:
+				_core->recentFiles()->remove(path);
+				_core->reset();
+				emit showMessage(QString("Failed to load %1").arg(path));
+				break;
+		}
+		thread->deleteLater();
+	});
+	thread->start();
+}
+
 void Shortcuts::save(bool newPathRequested) {
 	QString path = _core->project()->filePath();
 
@@ -299,6 +330,7 @@ void Shortcuts::save(bool newPathRequested) {
 		const auto& name = _core->project()->name();
 		switch (thread->result()) {
 			case IOThread::Result::Success:
+				_core->recentFiles()->add(path);
 				emit showMessage(QString("Project [%1] saved").arg(name));
 				break;
 			case IOThread::Result::Canceled:

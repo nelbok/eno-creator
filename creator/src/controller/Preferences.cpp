@@ -156,4 +156,27 @@ void Preferences::setKey3DView(Qt::Key key) {
 	QSettings().setValue("keybinding/3dview", key);
 }
 
+QList<QString> Preferences::recentFiles() {
+	QSettings settings;
+	QList<QString> datas;
+	int size = settings.beginReadArray("recentfiles");
+	for (int i = 0; i < size; ++i) {
+		settings.setArrayIndex(i);
+		QString data;
+		data = settings.value("path").toString();
+		datas.append(data);
+	}
+	settings.endArray();
+	return datas;
+}
+
+void Preferences::setRecentFiles(const QList<QString>& recentFiles) {
+	QSettings settings;
+	settings.beginWriteArray("recentfiles");
+	for (qsizetype i = 0; i < recentFiles.size(); ++i) {
+		settings.setArrayIndex(i);
+		settings.setValue("path", recentFiles.at(i));
+	}
+	settings.endArray();
+}
 } // namespace eno

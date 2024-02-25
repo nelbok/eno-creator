@@ -21,6 +21,8 @@ set(PROJECT_SOURCES
 	src/controller/Graphics.hpp
 	src/controller/Preferences.cpp
 	src/controller/Preferences.hpp
+	src/controller/RecentFiles.cpp
+	src/controller/RecentFiles.hpp
 	src/controller/Shortcuts.cpp
 	src/controller/Shortcuts.hpp
 

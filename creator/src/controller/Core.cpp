@@ -7,6 +7,7 @@
 #include "Commands.hpp"
 #include "Graphics.hpp"
 #include "Preferences.hpp"
+#include "RecentFiles.hpp"
 
 namespace eno {
 
@@ -14,7 +15,8 @@ Core::Core(Project* project, QObject* parent)
 	: QObject(parent)
 	, _commands(new Commands(this))
 	, _graphics(new Graphics(this))
-	, _project(project) {}
+	, _project(project)
+	, _recentFiles(new RecentFiles(this)) {}
 
 void Core::reset() {
 	// Clean commands and project
@@ -34,6 +36,7 @@ void Core::reset() {
 	// Other controllers
 	_graphics->reset();
 	_commands->reset();
+	_recentFiles->reset();
 }
 
 Material* Core::createMyMaterial() {
@@ -56,6 +59,11 @@ Project* Core::project() const {
 Commands* Core::commands() const {
 	assert(_commands);
 	return _commands;
+}
+
+RecentFiles* Core::recentFiles() const {
+	assert(_recentFiles);
+	return _recentFiles;
 }
 
 } // namespace eno

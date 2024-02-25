@@ -29,7 +29,7 @@ private slots:
 	void showProgressDialog(bool visible, QThread* thread = nullptr);
 
 private:
-	void initMainMenu();
+	void initFile();
 	void initEdit();
 	void initTools();
 	void initLayers();

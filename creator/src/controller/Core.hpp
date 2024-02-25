@@ -7,6 +7,7 @@ class Commands;
 class Graphics;
 class Material;
 class Project;
+class RecentFiles;
 
 class Core : public QObject {
 	Q_OBJECT
@@ -22,10 +23,12 @@ public:
 	Commands* commands() const;
 	Graphics* graphics() const;
 	Project* project() const;
+	RecentFiles* recentFiles() const;
 
 private:
 	Commands* _commands{ nullptr };
 	Graphics* _graphics{ nullptr };
 	Project* _project{ nullptr };
+	RecentFiles* _recentFiles{ nullptr };
 };
 } // namespace eno

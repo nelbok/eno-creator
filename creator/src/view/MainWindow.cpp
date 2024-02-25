@@ -94,7 +94,7 @@ void MainWindow::initUi() {
 
 	setMinimumSize(1280, 780);
 
-	initMainMenu();
+	initFile();
 	initEdit();
 	initTools();
 	initLayers();
@@ -108,18 +108,20 @@ void MainWindow::initUi() {
 	showMessage("Ready!");
 }
 
-void MainWindow::initMainMenu() {
-	auto* menuFile = menuBar()->addMenu("File");
+void MainWindow::initFile() {
+	auto* menu = menuBar()->addMenu("File");
 
-	menuFile->addAction(_shortcuts->newAction());
-	menuFile->addAction(_shortcuts->openAction());
-	menuFile->addSeparator();
-	menuFile->addAction(_shortcuts->saveAction());
-	menuFile->addAction(_shortcuts->saveAsAction());
-	menuFile->addSeparator();
-	menuFile->addAction(_shortcuts->preferenceAction());
-	menuFile->addSeparator();
-	menuFile->addAction(_shortcuts->quitAction());
+	menu->addAction(_shortcuts->newAction());
+	menu->addAction(_shortcuts->openAction());
+	menu->addSeparator();
+	menu->addMenu(_shortcuts->recentFilesMenu());
+	menu->addSeparator();
+	menu->addAction(_shortcuts->saveAction());
+	menu->addAction(_shortcuts->saveAsAction());
+	menu->addSeparator();
+	menu->addAction(_shortcuts->preferenceAction());
+	menu->addSeparator();
+	menu->addAction(_shortcuts->quitAction());
 }
 
 void MainWindow::initEdit() {

@@ -3,6 +3,7 @@
 #include <QtCore/QObject>
 
 class QAction;
+class QMenu;
 class QThread;
 
 namespace eno {
@@ -24,6 +25,7 @@ public:
 	QAction* openAction() const { return _openAction; }
 	QAction* saveAction() const { return _saveAction; }
 	QAction* saveAsAction() const { return _saveAsAction; }
+	QMenu* recentFilesMenu() const { return _recentFilesMenu; }
 	QAction* preferenceAction() const { return _preferenceAction; }
 	QAction* quitAction() const { return _quitAction; }
 
@@ -57,6 +59,7 @@ private:
 	void initHelp();
 
 	bool needToSave();
+	void open(const QString& path);
 	void save(bool newPathRequested);
 
 	Core* _core{ nullptr };
@@ -66,6 +69,7 @@ private:
 	QAction* _openAction{ nullptr };
 	QAction* _saveAction{ nullptr };
 	QAction* _saveAsAction{ nullptr };
+	QMenu* _recentFilesMenu{ nullptr };
 	QAction* _preferenceAction{ nullptr };
 	QAction* _quitAction{ nullptr };
 
