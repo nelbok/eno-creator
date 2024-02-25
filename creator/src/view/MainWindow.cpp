@@ -1,7 +1,6 @@
 #include "MainWindow.hpp"
 
 #include <QtCore/QCoreApplication>
-#include <QtCore/QThread>
 #include <QtGui/QCloseEvent>
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QProgressDialog>
@@ -9,6 +8,7 @@
 #include <QtWidgets/QToolBar>
 
 #include <eno/data/Project.hpp>
+#include <eno/io/IOThread.hpp>
 
 #include "controller/Core.hpp"
 #include "controller/Graphics.hpp"
@@ -49,7 +49,7 @@ void MainWindow::showMessage(const QString& message) {
 	statusBar()->showMessage(message, 2000);
 }
 
-void MainWindow::showProgressDialog(bool visible, QThread* thread) {
+void MainWindow::showProgressDialog(bool visible, IOThread* thread) {
 	if (visible) {
 		assert(!_progressDialog);
 		assert(thread);

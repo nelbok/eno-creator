@@ -3,12 +3,12 @@
 #include <QtWidgets/QMainWindow>
 
 class QProgressDialog;
-class QThread;
 
 namespace eno {
-class Project;
-class GraphicsView;
 class Core;
+class GraphicsView;
+class IOThread;
+class Project;
 class Shortcuts;
 
 class MainWindow : public QMainWindow {
@@ -26,7 +26,7 @@ protected:
 private slots:
 	void updateWindowTitle();
 	void showMessage(const QString& message);
-	void showProgressDialog(bool visible, QThread* thread = nullptr);
+	void showProgressDialog(bool visible, IOThread* thread = nullptr);
 
 private:
 	void initFile();

@@ -4,10 +4,10 @@
 
 class QAction;
 class QMenu;
-class QThread;
 
 namespace eno {
 class Core;
+class IOThread;
 class Shortcuts : public QObject {
 	Q_OBJECT
 
@@ -97,6 +97,6 @@ private:
 signals:
 	void updated();
 	void showMessage(const QString& message);
-	void showProgressDialog(bool visible, QThread* thread = nullptr);
+	void showProgressDialog(bool visible, IOThread* thread = nullptr);
 };
 } // namespace eno
