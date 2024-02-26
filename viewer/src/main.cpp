@@ -6,6 +6,7 @@
 #include <eno/io/Eno.hpp>
 
 #include "About.hpp"
+#include "CuboidGeometry.hpp"
 #include "Intro.hpp"
 
 #include "Config.hpp"
@@ -29,6 +30,7 @@ int main(int argc, char* argv[]) {
 	qmlRegisterSingletonInstance("Eno", 1, 0, "MyAbout", about.get());
 	qmlRegisterSingletonInstance("Eno", 1, 0, "MyIntro", intro.get());
 	qmlRegisterSingletonInstance("Eno", 1, 0, "MyProject", project.get());
+	qmlRegisterType<eno::CuboidGeometry>("Eno", 1, 0, "MyCuboidGeometry");
 	qmlRegisterType<eno::Eno>("Eno", 1, 0, "MyLoader");
 
 	const QUrl url(u"qrc:/Viewer/qml/Main.qml"_qs);

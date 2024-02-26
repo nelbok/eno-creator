@@ -36,7 +36,7 @@ private:
 	void writeObjFile();
 	void writeMtlFile();
 
-	QList<Cuboid> _data{};
+	QList<Merger::Cuboid> _data{};
 	QList<QVector3D> _vertices{};
 	QMap<Material*, QList<Triangle>> _triangles;
 	QSaveFile _objFile;

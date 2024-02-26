@@ -1,11 +1,13 @@
 import QtQuick3D
 import QtQuick3D.Helpers
 
+import Eno
+
 // https://doc.qt.io/qt-6/qtquick3dphysics-units.html
 // Qt Quick 3D Unit: cm
 View3D {
-    id: view
-    property alias model: scene3D.model
+    id: root
+    property var model: null
 
     environment: SceneEnvironment {
         clearColor: "skyblue"
@@ -16,7 +18,6 @@ View3D {
     DirectionalLight {
         eulerRotation.x: -30
         eulerRotation.y: -70
-        castsShadow: true
     }
 
     // Camera with its controller to make it easy to move around the scene
@@ -30,14 +31,17 @@ View3D {
     }
 
     Repeater3D {
-        id: scene3D
+        model: root.model.materials
         delegate: Model {
-            source: "#Cube"
+            geometry: MyCuboidGeometry {
+                scene: root.model.scene
+                material: model.modelData
+            }
             // Eno is in meter, we need to convert into cm
-            position: Qt.vector3d(model.modelData.position.x * 100, model.modelData.position.y * 100, model.modelData.position.z * 100)
+            scale: Qt.vector3d(100,100,100)
 
             materials: [ DefaultMaterial {
-                    diffuseColor: model.modelData.material.diffuse
+                    diffuseColor: model.modelData.diffuse
                 }
             ]
         }

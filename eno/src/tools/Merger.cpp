@@ -3,7 +3,7 @@
 #include <eno/data/Object.hpp>
 #include <eno/data/Scene.hpp>
 
-namespace eno {
+namespace eno::Merger {
 QList<Cuboid> fillData(Scene* scene) {
 	QList<Cuboid> data;
 

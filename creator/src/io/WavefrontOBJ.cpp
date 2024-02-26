@@ -18,7 +18,7 @@ bool operator==(const WavefrontOBJ::Triangle& p1, const WavefrontOBJ::Triangle& 
 void WavefrontOBJ::save() {
 	assert(_project);
 	_result = Result::Success;
-	_data = fillData(_project->scene());
+	_data = Merger::fillData(_project->scene());
 	if (Preferences::generationOptimized()) {
 		_data = mergeData(_data);
 	}

@@ -9,6 +9,7 @@ set(PROJECT_SOURCES
 	include/eno/io/Eno.hpp
 	include/eno/io/IOThread.hpp
 
+	include/eno/tools/Geometry.hpp
 	include/eno/tools/Merger.hpp
 	include/eno/tools/Utils.hpp
 
@@ -21,6 +22,7 @@ set(PROJECT_SOURCES
 	src/io/Eno.cpp
 	src/io/IOThread.cpp
 
+	src/tools/Geometry.cpp
 	src/tools/Merger.cpp
 	src/tools/Utils.cpp
 )

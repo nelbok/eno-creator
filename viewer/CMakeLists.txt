@@ -1,6 +1,8 @@
 set(PROJECT_SOURCES
 	src/About.cpp
 	src/About.hpp
+	src/CuboidGeometry.cpp
+	src/CuboidGeometry.hpp
 	src/Intro.cpp
 	src/Intro.hpp
 	src/main.cpp

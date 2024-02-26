@@ -7,7 +7,7 @@ import Eno
 Item {
     id: root
     property bool running: false
-    property var model: MyIntro.scene.objects
+    property var model: MyIntro
 
     function open() {
         root.running = true;
@@ -19,14 +19,14 @@ Item {
 
         function openProject(filePath) {
             progressBar.visible = true
-            root.model = MyIntro.scene.objects;
+            root.model = MyIntro;
             init(MyProject, MyLoader.Type.Load, filePath);
             start();
         }
 
         onFinished: {
             if (result() === MyLoader.Result.Success)
-                root.model = MyProject.scene.objects;
+                root.model = MyProject;
             progressBar.visible = false
             root.running = false;
         }

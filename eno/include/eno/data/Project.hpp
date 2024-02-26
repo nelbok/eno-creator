@@ -16,6 +16,7 @@ class Project
 	Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameUpdated)
 	Q_PROPERTY(QString filePath READ filePath WRITE setFilePath NOTIFY filePathUpdated)
 	Q_PROPERTY(bool isModified READ isModified WRITE setIsModified NOTIFY isModifiedUpdated)
+	Q_PROPERTY(QList<Material*> materials READ materials NOTIFY materialsUpdated)
 	Q_PROPERTY(Scene* scene READ scene CONSTANT)
 
 public:
