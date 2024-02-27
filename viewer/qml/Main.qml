@@ -15,7 +15,6 @@ Window {
     Viewer {
         id: view
         enabled: !loader.running && !about.visible
-        model: loader.model
         anchors.fill: parent
     }
 
@@ -43,6 +42,7 @@ Window {
     Loader {
         id: loader
         anchors.fill: parent
+        onModelChanged: { view.setModel(model); }
     }
 
     About {

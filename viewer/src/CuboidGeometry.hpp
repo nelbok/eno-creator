@@ -3,26 +3,22 @@
 #include <QtQuick3D/QQuick3DGeometry>
 
 // For Q_PROPERTY
-#include <eno/data/Material.hpp>
-#include <eno/data/Scene.hpp>
+#include <eno/data/Project.hpp>
 
 namespace eno {
 class CuboidGeometry : public QQuick3DGeometry {
 	Q_OBJECT
-	Q_PROPERTY(Material* material MEMBER _material WRITE setMaterial)
-	Q_PROPERTY(Scene* scene MEMBER _scene WRITE setScene)
+	Q_PROPERTY(Project* project MEMBER _project WRITE setProject)
 
 public:
 	CuboidGeometry(QQuick3DObject* parent = nullptr);
 	virtual ~CuboidGeometry() = default;
 
-	void setMaterial(Material* material);
-	void setScene(Scene* scene);
+	void setProject(Project* project);
 
 private:
 	void updateData();
 
-	Material* _material{ nullptr };
-	Scene* _scene{ nullptr };
+	Project* _project{ nullptr };
 };
 } // namespace eno

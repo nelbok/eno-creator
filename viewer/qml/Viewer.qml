@@ -1,3 +1,4 @@
+import QtQuick
 import QtQuick3D
 import QtQuick3D.Helpers
 
@@ -7,7 +8,6 @@ import Eno
 // Qt Quick 3D Unit: cm
 View3D {
     id: root
-    property var model: null
 
     environment: SceneEnvironment {
         clearColor: "skyblue"
@@ -32,21 +32,34 @@ View3D {
         controlledObject: camera
     }
 
-    Repeater3D {
-        model: root.model.materials
-        delegate: Model {
-            geometry: MyCuboidGeometry {
-                scene: root.model.scene
-                material: model.modelData
-            }
-            // Eno is in meter, we need to convert into cm
-            scale: Qt.vector3d(100,100,100)
+    function setModel(model) {
+        geometry.project = model;
 
-            materials: [ DefaultMaterial {
-                    diffuseColor: model.modelData.diffuse
-                }
-            ]
+        var mats = model.materials;
+        myModel.matList = [];
+        for (var i in mats) {
+            myModel.matList.push(
+                        Qt.createQmlObject(
+                            'import QtQuick3D;' +
+                            'DefaultMaterial {' +
+                            ' diffuseColor: "' + mats[i].diffuse + '";' +
+                            '}'
+                            , root)
+                        );
         }
+    }
+
+    Model {
+        id: myModel
+        property list<DefaultMaterial> matList
+
+        materials: matList
+        geometry: MyCuboidGeometry {
+            id: geometry
+        }
+
+        // Eno is in meter, we need to convert into cm
+        scale: Qt.vector3d(100,100,100)
     }
 }
 
