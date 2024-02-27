@@ -18,6 +18,8 @@ View3D {
     DirectionalLight {
         eulerRotation.x: -30
         eulerRotation.y: -70
+        castsShadow: true
+        shadowMapQuality: Light.ShadowMapQualityVeryHigh
     }
 
     // Camera with its controller to make it easy to move around the scene

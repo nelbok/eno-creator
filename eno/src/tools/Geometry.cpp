@@ -169,21 +169,12 @@ void createPlaneVertexData(PlaneNormal normal, const QVector3D& position, float*
 
 void createPlaneIndexData(quint32* indices, quint32& baseIndex) {
 	// Populate indices taking care to get correct CCW winding on all faces
-	// Iterate over v direction (rows)
-	for (int j = 0; j < 1; ++j) {
-		const auto rowStartIndex = j * 2 + baseIndex;
-		const auto nextRowStartIndex = (j + 1) * 2 + baseIndex;
-		// Iterate over u direction (columns)
-		for (int i = 0; i < 1; ++i) {
-			// Split quad into two triangles
-			*indices++ = rowStartIndex + i;
-			*indices++ = rowStartIndex + i + 1;
-			*indices++ = nextRowStartIndex + i;
-			*indices++ = nextRowStartIndex + i;
-			*indices++ = rowStartIndex + i + 1;
-			*indices++ = nextRowStartIndex + i + 1;
-		}
-	}
+	*indices++ = baseIndex;
+	*indices++ = baseIndex + 1;
+	*indices++ = baseIndex + 2;
+	*indices++ = baseIndex + 2;
+	*indices++ = baseIndex + 1;
+	*indices++ = baseIndex + 3;
 	baseIndex += 4;
 }
 } // namespace detail

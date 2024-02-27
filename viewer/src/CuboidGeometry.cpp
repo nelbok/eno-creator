@@ -31,9 +31,25 @@ void CuboidGeometry::updateData() {
 	auto verticesCount = 0u;
 	QByteArray arrayVertices;
 	QByteArray arrayIndexes;
+	QVector3D min{};
+	QVector3D max{};
 	for (Object* object : _scene->objects()) {
 		if (object->material() != _material)
 			continue;
+
+		const auto& pos = object->position();
+		if (verticesCount) {
+			min.setX(std::min(min.x(), pos.x()));
+			min.setY(std::min(min.y(), pos.y()));
+			min.setZ(std::min(min.z(), pos.z()));
+			max.setX(std::max(max.x(), pos.x() + 1));
+			max.setY(std::max(max.y(), pos.y() + 1));
+			max.setZ(std::max(max.z(), pos.z() + 1));
+		} else {
+			min = pos;
+			max = pos;
+		}
+
 		arrayVertices += Geometry::createCuboidVertexData(object->position());
 		arrayIndexes += Geometry::createCuboidIndexData(verticesCount);
 	}
@@ -41,7 +57,7 @@ void CuboidGeometry::updateData() {
 	setVertexData(arrayVertices);
 	setIndexData(arrayIndexes);
 	setStride(Geometry::stride());
-	setBounds(QVector3D(-1.0f, -1.0f, 0.0f), QVector3D(+1.0f, +1.0f, 0.0f));
+	setBounds(min, max);
 
 	setPrimitiveType(QQuick3DGeometry::PrimitiveType::Triangles);
 

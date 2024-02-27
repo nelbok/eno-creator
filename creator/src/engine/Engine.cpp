@@ -9,7 +9,7 @@
 #include <Qt3DExtras/QForwardRenderer>
 #include <Qt3DExtras/Qt3DWindow>
 #include <Qt3DRender/QCamera>
-#include <Qt3DRender/QPointLight>
+#include <Qt3DRender/QDirectionalLight>
 
 #include <eno/data/Material.hpp>
 #include <eno/data/Project.hpp>
@@ -67,14 +67,11 @@ void Engine::initLight() {
 	assert(_view);
 	assert(_root);
 	auto* entity = new Qt3DCore::QEntity(_root);
-	auto* light = new Qt3DRender::QPointLight(entity);
+	auto* light = new Qt3DRender::QDirectionalLight(entity);
 	light->setColor("white");
 	light->setIntensity(1);
+	light->setWorldDirection({ 1.0f, -0.7f, -1.0f });
 	entity->addComponent(light);
-
-	auto* transform = new Qt3DCore::QTransform(entity);
-	transform->setTranslation(_view->camera()->position());
-	entity->addComponent(transform);
 }
 
 Qt3DCore::QComponent* Engine::createMaterialComponent(Material* mat) {
