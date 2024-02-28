@@ -31,6 +31,22 @@ View3D {
     WasdController {
         controlledObject: camera
     }
+    PinchHandler {
+        target: null
+        onScaleChanged: (delta) => {
+                            var p = camera.position;
+                            var f = camera.forward;
+                            var factor = 0;
+                            if (delta > 1) {
+                                factor = 10;
+                            } else {
+                                factor = -10;
+                            }
+                            p.x = p.x + f.x * factor;
+                            p.y = p.y + f.y * factor;
+                            p.z = p.z + f.z * factor;
+                        }
+    }
 
     function setModel(model) {
         geometry.project = model;
@@ -62,4 +78,3 @@ View3D {
         scale: Qt.vector3d(100,100,100)
     }
 }
-

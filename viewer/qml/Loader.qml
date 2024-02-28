@@ -38,6 +38,9 @@ Item {
         onAccepted: {
             myLoader.openProject(selectedFile)
         }
+        onRejected: {
+            root.running = false;
+        }
     }
 
     Rectangle {
