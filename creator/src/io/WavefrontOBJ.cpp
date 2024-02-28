@@ -6,7 +6,6 @@
 #include <eno/data/Material.hpp>
 #include <eno/data/Project.hpp>
 #include <eno/data/Scene.hpp>
-#include <eno/tools/Utils.hpp>
 
 #include "controller/Preferences.hpp"
 

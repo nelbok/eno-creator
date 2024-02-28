@@ -13,7 +13,6 @@
 
 #include <eno/data/Material.hpp>
 #include <eno/data/Project.hpp>
-#include <eno/tools/Utils.hpp>
 
 #include "CuboidMesh.hpp"
 

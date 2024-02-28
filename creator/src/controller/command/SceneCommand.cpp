@@ -5,6 +5,7 @@
 #include <eno/data/Object.hpp>
 #include <eno/data/Project.hpp>
 #include <eno/data/Scene.hpp>
+#include <eno/tools/Utils.hpp>
 
 #include "controller/Commands.hpp"
 #include "CreateCommand.hpp"
@@ -14,35 +15,13 @@
 
 namespace eno {
 bool SceneCommand::add(Commands* c, Project* p, const QList<QVector3D>& v, Material* m) {
-	// BoundingBox: Boost insertion
-	bool first = true;
-	QVector3D min{};
-	QVector3D max{};
-	for (const auto& vec : v) {
-		if (first) {
-			min.setX(vec.x());
-			min.setY(vec.y());
-			min.setZ(vec.z());
-			max.setX(vec.x() + 1);
-			max.setY(vec.y() + 1);
-			max.setZ(vec.z() + 1);
-			first = false;
-		} else {
-			min.setX(std::min(min.x(), vec.x()));
-			min.setY(std::min(min.y(), vec.y()));
-			min.setZ(std::min(min.z(), vec.z()));
-			max.setX(std::max(max.x(), vec.x() + 1));
-			max.setY(std::max(max.y(), vec.y() + 1));
-			max.setZ(std::max(max.z(), vec.z() + 1));
-		}
-	}
-
 	// Search:
 	// - vec is a new object
 	// - vec has already an object but new material
 	// - vec has already an object but same material
 	auto* s = p->scene();
 	const auto& objects = s->objects();
+	auto [min, max] = Utils::boundingBox(v);
 	QList<QVector3D> oToCreate = v;
 	QList<Object*> oToSwap;
 	for (auto* object : objects) {

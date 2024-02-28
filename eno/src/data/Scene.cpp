@@ -1,7 +1,6 @@
 #include <eno/data/Scene.hpp>
 
 #include <eno/data/Project.hpp>
-#include <eno/tools/Utils.hpp>
 
 namespace eno {
 Scene::Scene(Project* project)
