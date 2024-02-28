@@ -50,9 +50,10 @@ void Eno::save() {
 		stream << scene->min() << scene->max();
 
 		// Write scene
-		int nbItems = scene->objects().count();
-		stream << nbItems;
-		for (auto* object : scene->objects()) {
+		const auto& objects = scene->objects();
+		int nbObjects = objects.count();
+		stream << nbObjects;
+		for (auto* object : objects) {
 			if (isInterruptionRequested()) {
 				break;
 			}

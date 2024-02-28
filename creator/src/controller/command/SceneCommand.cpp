@@ -14,26 +14,55 @@
 
 namespace eno {
 bool SceneCommand::add(Commands* c, Project* p, const QList<QVector3D>& v, Material* m) {
+	// BoundingBox: Boost insertion
+	bool first = true;
+	QVector3D min{};
+	QVector3D max{};
+	for (const auto& vec : v) {
+		if (first) {
+			min.setX(vec.x());
+			min.setY(vec.y());
+			min.setZ(vec.z());
+			max.setX(vec.x() + 1);
+			max.setY(vec.y() + 1);
+			max.setZ(vec.z() + 1);
+			first = false;
+		} else {
+			min.setX(std::min(min.x(), vec.x()));
+			min.setY(std::min(min.y(), vec.y()));
+			min.setZ(std::min(min.z(), vec.z()));
+			max.setX(std::max(max.x(), vec.x() + 1));
+			max.setY(std::max(max.y(), vec.y() + 1));
+			max.setZ(std::max(max.z(), vec.z() + 1));
+		}
+	}
+
 	// Search:
 	// - vec is a new object
 	// - vec has already an object but new material
 	// - vec has already an object but same material
 	auto* s = p->scene();
-	QList<QVector3D> oToCreate;
+	const auto& objects = s->objects();
+	QList<QVector3D> oToCreate = v;
 	QList<Object*> oToSwap;
-	for (const auto& vec : v) {
-		bool found = false;
-		for (auto* object : s->objects()) {
-			if (object->position() == vec) {
+	for (auto* object : objects) {
+		const auto& v2 = object->position();
+		// Bounding Box: Boost insertion
+		if (min.x() > v2.x() || min.y() > v2.y() || min.z() > v2.z()) {
+			continue;
+		}
+		if (max.x() < v2.x() || max.y() < v2.y() || max.z() < v2.z()) {
+			continue;
+		}
+
+		// If the object already exists, the list is reduced
+		for (const auto& v1 : oToCreate) {
+			if (v1 == v2) {
+				oToCreate.removeAll(v1);
 				if (object->material() != m) {
 					oToSwap.append(object);
 				}
-				found = true;
-				break;
 			}
-		}
-		if (!found) {
-			oToCreate.append(vec);
 		}
 	}
 

@@ -31,14 +31,16 @@ void CuboidGeometry::updateData() {
 	QByteArray arrayIndexes;
 	QVector3D min{};
 	QVector3D max{};
-	for (auto* material : _project->materials()) {
+	const auto& materials = _project->materials();
+	const auto& objects = _project->scene()->objects();
+	for (auto* material : materials) {
 		QVector3D minMat{};
 		QVector3D maxMat{};
 
 		indexOffset += indexCount;
 		indexCount = 0u;
 
-		for (Object* object : _project->scene()->objects()) {
+		for (Object* object : objects) {
 			if (object->material() != material)
 				continue;
 
