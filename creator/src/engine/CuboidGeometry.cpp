@@ -20,6 +20,17 @@ namespace eno {
 CuboidGeometry::CuboidGeometry(Qt3DCore::QNode* parent)
 	: QGeometry(parent) {}
 
+CuboidGeometry::~CuboidGeometry() {
+	_positionAttribute->deleteLater();
+	_normalAttribute->deleteLater();
+	_texCoordAttribute->deleteLater();
+	_tangentAttribute->deleteLater();
+	_indexAttribute->deleteLater();
+
+	_bufferVertices->deleteLater();
+	_bufferIndexes->deleteLater();
+}
+
 void CuboidGeometry::init(const Scene* scene, const Material* material) {
 	assert(scene);
 
@@ -32,8 +43,8 @@ void CuboidGeometry::init(const Scene* scene, const Material* material) {
 	auto verticesCount = 0u;
 	auto indexesCount = 0u;
 
-	auto* bufferVertices = new QBuffer(this);
-	auto* bufferIndexes = new QBuffer(this);
+	_bufferVertices = new QBuffer(this);
+	_bufferIndexes = new QBuffer(this);
 	QByteArray arrayVertices;
 	QByteArray arrayIndexes;
 	for (Object* object : scene->objects()) {
@@ -42,8 +53,8 @@ void CuboidGeometry::init(const Scene* scene, const Material* material) {
 		arrayVertices += Geometry::createCuboidVertexData(object->position());
 		arrayIndexes += Geometry::createCuboidIndexData(verticesCount);
 	}
-	bufferVertices->setData(arrayVertices);
-	bufferIndexes->setData(arrayIndexes);
+	_bufferVertices->setData(arrayVertices);
+	_bufferIndexes->setData(arrayIndexes);
 
 	indexesCount = verticesCount * 3 / 2;
 
@@ -51,7 +62,7 @@ void CuboidGeometry::init(const Scene* scene, const Material* material) {
 	_positionAttribute->setVertexBaseType(QAttribute::Float);
 	_positionAttribute->setVertexSize(3);
 	_positionAttribute->setAttributeType(QAttribute::VertexAttribute);
-	_positionAttribute->setBuffer(bufferVertices);
+	_positionAttribute->setBuffer(_bufferVertices);
 	_positionAttribute->setByteStride(Geometry::stride());
 	_positionAttribute->setCount(verticesCount);
 
@@ -59,7 +70,7 @@ void CuboidGeometry::init(const Scene* scene, const Material* material) {
 	_texCoordAttribute->setVertexBaseType(QAttribute::Float);
 	_texCoordAttribute->setVertexSize(2);
 	_texCoordAttribute->setAttributeType(QAttribute::VertexAttribute);
-	_texCoordAttribute->setBuffer(bufferVertices);
+	_texCoordAttribute->setBuffer(_bufferVertices);
 	_texCoordAttribute->setByteStride(Geometry::stride());
 	_texCoordAttribute->setByteOffset(3 * sizeof(float));
 	_texCoordAttribute->setCount(verticesCount);
@@ -68,7 +79,7 @@ void CuboidGeometry::init(const Scene* scene, const Material* material) {
 	_normalAttribute->setVertexBaseType(QAttribute::Float);
 	_normalAttribute->setVertexSize(3);
 	_normalAttribute->setAttributeType(QAttribute::VertexAttribute);
-	_normalAttribute->setBuffer(bufferVertices);
+	_normalAttribute->setBuffer(_bufferVertices);
 	_normalAttribute->setByteStride(Geometry::stride());
 	_normalAttribute->setByteOffset(5 * sizeof(float));
 	_normalAttribute->setCount(verticesCount);
@@ -77,14 +88,14 @@ void CuboidGeometry::init(const Scene* scene, const Material* material) {
 	_tangentAttribute->setVertexBaseType(QAttribute::Float);
 	_tangentAttribute->setVertexSize(4);
 	_tangentAttribute->setAttributeType(QAttribute::VertexAttribute);
-	_tangentAttribute->setBuffer(bufferVertices);
+	_tangentAttribute->setBuffer(_bufferVertices);
 	_tangentAttribute->setByteStride(Geometry::stride());
 	_tangentAttribute->setByteOffset(8 * sizeof(float));
 	_tangentAttribute->setCount(verticesCount);
 
 	_indexAttribute->setAttributeType(QAttribute::IndexAttribute);
 	_indexAttribute->setVertexBaseType(QAttribute::UnsignedInt);
-	_indexAttribute->setBuffer(bufferIndexes);
+	_indexAttribute->setBuffer(_bufferIndexes);
 	_indexAttribute->setCount(indexesCount);
 
 	addAttribute(_positionAttribute);

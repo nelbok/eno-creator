@@ -13,6 +13,10 @@ namespace eno {
 CuboidGeometry::CuboidGeometry(QQuick3DObject* parent)
 	: QQuick3DGeometry(parent) {}
 
+CuboidGeometry::~CuboidGeometry() {
+	clear();
+}
+
 void CuboidGeometry::setProject(Project* project) {
 	_project = project;
 	updateData();

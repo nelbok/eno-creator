@@ -22,7 +22,7 @@ class Engine : public QWidget {
 
 public:
 	Engine(QWidget* parent = 0);
-	virtual ~Engine() = default;
+	virtual ~Engine();
 
 	void init(const Project* scene);
 

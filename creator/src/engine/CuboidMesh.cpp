@@ -7,10 +7,15 @@ namespace eno {
 CuboidMesh::CuboidMesh(QNode* parent)
 	: QGeometryRenderer(parent) {}
 
+CuboidMesh::~CuboidMesh() {
+	_geometry->deleteLater();
+}
+
+
 void CuboidMesh::init(const Scene* scene, const Material* material) {
-	auto* geometry = new CuboidGeometry(this);
-	geometry->init(scene, material);
-	QGeometryRenderer::setGeometry(geometry);
+	_geometry = new CuboidGeometry(this);
+	_geometry->init(scene, material);
+	QGeometryRenderer::setGeometry(_geometry);
 }
 
 } // namespace eno

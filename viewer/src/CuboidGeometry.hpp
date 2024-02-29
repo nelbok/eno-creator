@@ -12,7 +12,7 @@ class CuboidGeometry : public QQuick3DGeometry {
 
 public:
 	CuboidGeometry(QQuick3DObject* parent = nullptr);
-	virtual ~CuboidGeometry() = default;
+	virtual ~CuboidGeometry();
 
 	void setProject(Project* project);
 

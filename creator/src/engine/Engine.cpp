@@ -20,6 +20,11 @@ namespace eno {
 Engine::Engine(QWidget* parent)
 	: QWidget(parent) {}
 
+Engine::~Engine() {
+	_view->deleteLater();
+	_root->deleteLater();
+}
+
 void Engine::init(const Project* project) {
 	setMinimumSize(1280, 780);
 	setWindowModality(Qt::WindowModality::ApplicationModal);

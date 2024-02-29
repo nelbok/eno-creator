@@ -6,7 +6,8 @@
 
 namespace Qt3DCore {
 class QAttribute;
-}
+class QBuffer;
+} // namespace Qt3DCore
 namespace eno {
 class Material;
 class Scene;
@@ -16,7 +17,7 @@ class CuboidGeometry : public Qt3DCore::QGeometry {
 
 public:
 	CuboidGeometry(Qt3DCore::QNode* parent = nullptr);
-	virtual ~CuboidGeometry() = default;
+	virtual ~CuboidGeometry();
 
 	void init(const Scene* scene, const Material* material);
 
@@ -26,5 +27,8 @@ private:
 	Qt3DCore::QAttribute* _texCoordAttribute{ nullptr };
 	Qt3DCore::QAttribute* _tangentAttribute{ nullptr };
 	Qt3DCore::QAttribute* _indexAttribute{ nullptr };
+
+	Qt3DCore::QBuffer* _bufferVertices{ nullptr };
+	Qt3DCore::QBuffer* _bufferIndexes{ nullptr };
 };
 } // namespace eno
