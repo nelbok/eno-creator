@@ -95,7 +95,6 @@ private:
 	QAction* _aboutQtAction{ nullptr };
 
 signals:
-	void updated();
 	void showMessage(const QString& message);
 	void showProgressDialog(bool visible, IOThread* thread = nullptr);
 };

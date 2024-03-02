@@ -63,7 +63,7 @@ signals:
 	void nameUpdated();
 	void filePathUpdated();
 	void isModifiedUpdated();
-	void tagsUpdated();
-	void materialsUpdated();
+	void tagsUpdated(const QStringList& tags);
+	void materialsUpdated(const QList<Material*>& materials);
 };
 } // namespace eno

@@ -42,7 +42,8 @@ void GraphicsShape::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QW
 	painter->setPen(pen);
 
 	auto depth = _core->graphics()->depth();
-	for (auto* object : _core->project()->scene()->objects()) {
+	const auto& objects = _core->project()->scene()->objects();
+	for (auto* object : objects) {
 		const auto& pos = object->position();
 		if ((pos.y() == depth && _mode == Mode::Normal) || (pos.y() == depth - 1 && _mode == Mode::Below)) {
 			brush.setColor(object->material()->diffuse());

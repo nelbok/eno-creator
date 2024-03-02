@@ -47,7 +47,8 @@ void CuboidGeometry::init(const Scene* scene, const Material* material) {
 	_bufferIndexes = new QBuffer(this);
 	QByteArray arrayVertices;
 	QByteArray arrayIndexes;
-	for (Object* object : scene->objects()) {
+	const auto& objects = scene->objects();
+	for (Object* object : objects) {
 		if (object->material() != material)
 			continue;
 		arrayVertices += Geometry::createCuboidVertexData(object->position());

@@ -139,7 +139,8 @@ void Graphics::addItem(const QVector3D& pos) {
 }
 
 void Graphics::pickColor(const QVector3D& pos) {
-	for (auto* object : _core->project()->scene()->objects()) {
+	const auto& objects = _core->project()->scene()->objects();
+	for (auto* object : objects) {
 		if (object->position() == pos) {
 			_material = object->material();
 			emit materialUpdated();

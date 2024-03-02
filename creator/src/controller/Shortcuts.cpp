@@ -68,7 +68,6 @@ void Shortcuts::initFile() {
 		_core->reset();
 		resetActions();
 		emit showMessage("New map created");
-		emit updated();
 	});
 
 	_openAction = new QAction("Open", this);
@@ -280,6 +279,7 @@ bool Shortcuts::needToSave() {
 
 void Shortcuts::open(const QString& path) {
 	_core->reset();
+	resetActions();
 	auto* thread = new Eno(this);
 	thread->init(_core->project(), IOThread::Type::Load, path);
 	emit showProgressDialog(true, thread);

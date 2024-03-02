@@ -88,17 +88,17 @@ void ProjectDockWidget::initStats() {
 	auto* objects = new QLabel(w);
 	auto* materials = new QLabel(w);
 
-	auto lambdaObjects = [this, objects]() {
-		objects->setText(QString("Total cube(s) in the project: %1").arg(_core->project()->scene()->objects().count()));
+	auto lambdaObjects = [this, objects](const auto& items) {
+		objects->setText(QString("Total cube(s) in the project: %1").arg(items.count()));
 	};
 	connect(_core->project()->scene(), &Scene::objectsUpdated, this, lambdaObjects);
-	lambdaObjects();
+	lambdaObjects(_core->project()->scene()->objects());
 
-	auto lambdaMaterials = [this, materials]() {
-		materials->setText(QString("Total material(s) in the project: %1").arg(_core->project()->materials().count()));
+	auto lambdaMaterials = [this, materials](const auto& items) {
+		materials->setText(QString("Total material(s) in the project: %1").arg(items.count()));
 	};
 	connect(_core->project(), &Project::materialsUpdated, this, lambdaMaterials);
-	lambdaMaterials();
+	lambdaMaterials(_core->project()->materials());
 
 	_layout->addWidget(objects);
 	_layout->addWidget(materials);

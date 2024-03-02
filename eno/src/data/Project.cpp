@@ -23,7 +23,7 @@ void Project::reset() {
 
 	// Reset tags
 	_tags.clear();
-	emit tagsUpdated();
+	emit tagsUpdated(_tags);
 
 	// Reset materials
 	Container<Material, Project>::clear();
@@ -61,7 +61,7 @@ void Project::add(const QStringList& tags) {
 		_tags.append(tag);
 	}
 	setIsModified(true);
-	emit tagsUpdated();
+	emit tagsUpdated(_tags);
 }
 
 void Project::remove(const QStringList& tags) {
@@ -69,11 +69,11 @@ void Project::remove(const QStringList& tags) {
 		assert(_tags.contains(tag));
 		_tags.removeOne(tag);
 	}
-	emit tagsUpdated();
+	emit tagsUpdated(_tags);
 }
 
-void Project::datasUpdated(const QList<Material*>&) {
-	emit materialsUpdated();
+void Project::datasUpdated(const QList<Material*>& datas) {
+	emit materialsUpdated(datas);
 }
 
 } // namespace eno

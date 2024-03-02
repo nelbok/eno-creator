@@ -46,7 +46,6 @@ void GraphicsView::init() {
 	_scene->addItem(_yAxis);
 	setScene(_scene);
 
-	// FIXME: We have now undo redo maybe we don't need this two connections
 	connect(_core->project()->scene(), &Scene::objectsUpdated, this, &GraphicsView::updateShapes);
 	connect(_core->project()->scene(), &Scene::rectUpdated, this, &GraphicsView::updateRect);
 	connect(_core->commands(), &Commands::updated, this, &GraphicsView::updateShapes);

@@ -55,10 +55,13 @@ public:
 		for (auto* data : datas) {
 			assert(data);
 			assert(!_datas.contains(data));
-			_datas.append(data);
+			QObject::connect(data, &Item::isAliveUpdated, _project, [this]() {
+				datasUpdated(this->datas());
+			});
 		}
+		_datas.append(datas);
 		_project->setIsModified(true);
-		datasUpdated(_datas);
+		datasUpdated(this->datas());
 	}
 
 	bool canRemove(const QList<TChild*> datas) {
@@ -78,9 +81,10 @@ public:
 				assert(data);
 				assert(_datas.contains(data));
 				_datas.removeAll(data);
+				QObject::disconnect(data, &Item::isAliveUpdated, _project, nullptr);
 			}
 			_project->setIsModified(true);
-			datasUpdated(_datas);
+			datasUpdated(this->datas());
 		}
 	}
 
@@ -90,7 +94,7 @@ protected:
 			data->deleteLater();
 		}
 		_datas.clear();
-		datasUpdated(_datas);
+		datasUpdated(this->datas());
 	}
 
 	QList<TChild*> datas() const {

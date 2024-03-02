@@ -64,7 +64,7 @@ QPoint Scene::fixMax(QPoint max) const {
 	return max;
 }
 
-void Scene::datasUpdated(const QList<Object*>&) {
-	emit objectsUpdated();
+void Scene::datasUpdated(const QList<Object*>& datas) {
+	emit objectsUpdated(datas);
 }
 } // namespace eno

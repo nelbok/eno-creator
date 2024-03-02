@@ -66,6 +66,6 @@ private:
 
 signals:
 	void rectUpdated();
-	void objectsUpdated();
+	void objectsUpdated(const QList<Object*>& objects);
 };
 } // namespace eno

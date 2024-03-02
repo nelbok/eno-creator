@@ -25,10 +25,10 @@ public:
 			if (_p->_type == Type::Load) {
 				_p->_project->setParent(parent);
 				emit _p->_project->nameUpdated();
-				emit _p->_project->tagsUpdated();
-				emit _p->_project->materialsUpdated();
+				emit _p->_project->tagsUpdated(_p->_project->tags());
+				emit _p->_project->materialsUpdated(_p->_project->materials());
 				emit _p->_project->scene()->rectUpdated();
-				emit _p->_project->scene()->objectsUpdated();
+				emit _p->_project->scene()->objectsUpdated(_p->_project->scene()->objects());
 				_p->_project = nullptr;
 			}
 			disconnect(this, &QThread::finished, QCoreApplication::instance(), nullptr);

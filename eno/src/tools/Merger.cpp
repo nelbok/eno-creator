@@ -7,7 +7,8 @@ namespace eno::Merger {
 QList<Cuboid> fillData(Scene* scene) {
 	QList<Cuboid> data;
 
-	for (auto* object : scene->objects()) {
+	const auto& objects = scene->objects();
+	for (auto* object : objects) {
 		Cuboid c;
 		c.position = object->position();
 		c.material = object->material();

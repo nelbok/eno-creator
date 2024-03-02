@@ -75,16 +75,17 @@ bool SceneCommand::add(Commands* c, Project* p, const QList<QVector3D>& v, Mater
 
 
 bool SceneCommand::remove(Commands* c, Scene* s, const QList<QVector3D>& v) {
-	QList<Object*> objects;
+	QList<Object*> objectsToRemove;
+	const auto& objects = s->objects();
 	for (const auto& vec : v) {
-		for (auto* object : s->objects()) {
+		for (auto* object : objects) {
 			if (object->position() == vec) {
-				objects.append(object);
+				objectsToRemove.append(object);
 				break;
 			}
 		}
 	}
-	return remove(c, s, objects);
+	return remove(c, s, objectsToRemove);
 }
 
 bool SceneCommand::remove(Commands* c, Scene* s, const QList<Object*>& objects) {
@@ -124,15 +125,16 @@ bool SceneCommand::resize(Commands* c, Scene* s, const QPoint& newMin, const QPo
 		c->add(new ValueCommand(s, &Scene::setMax, oldMax, maxFixed));
 
 	// Search object to delete
-	QList<Object*> o{};
-	for (auto* object : s->objects()) {
+	QList<Object*> objectsToRemove{};
+	const auto& objects = s->objects();
+	for (auto* object : objects) {
 		const auto& pos = object->position();
 		// We use Y-up
 		if (pos.x() < minFixed.x() || pos.x() >= maxFixed.x() || pos.z() < minFixed.y() || pos.z() >= maxFixed.y()) {
-			o.append(object);
+			objectsToRemove.append(object);
 		}
 	}
-	remove(c, s, o);
+	remove(c, s, objectsToRemove);
 
 	c->endList();
 

@@ -149,6 +149,8 @@ void Eno::load() {
 		{
 			int nb = 0;
 			stream >> nb;
+			QList<Material*> materials;
+			materials.reserve(nb);
 			for (int i = 0; i < nb; ++i) {
 				if (isInterruptionRequested()) {
 					break;
@@ -162,9 +164,10 @@ void Eno::load() {
 				auto* material = new Material(uuid, _project);
 				material->setName(name);
 				material->setDiffuse(diffuse);
-				_project->add({ material });
+				materials.append(material);
 				links.insert(uuid, material);
 			}
+			_project->add(materials);
 		}
 
 		// Read scene
@@ -179,6 +182,8 @@ void Eno::load() {
 			// Write scene
 			int nb = 0;
 			stream >> nb;
+			QList<Object*> objects;
+			objects.reserve(nb);
 			for (int i = 0; i < nb; ++i) {
 				if (isInterruptionRequested()) {
 					break;
@@ -202,8 +207,9 @@ void Eno::load() {
 				}
 				object->setPosition(pos);
 				object->setMaterial(links.value(mUuid));
-				scene->add({ object });
+				objects.append(object);
 			}
+			scene->add(objects);
 		}
 		_result = Result::Success;
 	} catch (...) {

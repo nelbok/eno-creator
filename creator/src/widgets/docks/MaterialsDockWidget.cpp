@@ -79,7 +79,8 @@ void MaterialsDockWidget::currentListDataEdited() {
 
 QList<QPair<QString, QVariant>> MaterialsDockWidget::datas() const {
 	QList<QPair<QString, QVariant>> datas;
-	for (const auto& material : _core->project()->materials()) {
+	const auto& materials = _core->project()->materials();
+	for (const auto& material : materials) {
 		disconnect(material, &Material::nameUpdated, this, &BaseDockWidget::updateListDatas);
 		datas.append({ material->name(), QVariant::fromValue(material) });
 		connect(material, &Material::nameUpdated, this, &BaseDockWidget::updateListDatas);

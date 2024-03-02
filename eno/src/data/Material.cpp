@@ -4,14 +4,10 @@
 
 namespace eno {
 Material::Material(Project* project)
-	: Item(project) {
-	connect(this, &Material::isAliveUpdated, project, &Project::materialsUpdated);
-}
+	: Item(project) {}
 
 Material::Material(const QUuid& uuid, Project* project)
-	: Item(uuid, project) {
-	connect(this, &Material::isAliveUpdated, project, &Project::materialsUpdated);
-}
+	: Item(uuid, project) {}
 
 void Material::setName(const QString& name) {
 	if (_name != name) {

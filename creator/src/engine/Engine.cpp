@@ -43,7 +43,8 @@ void Engine::init(const Project* project) {
 	initCamera();
 	initLight();
 
-	for (auto* material : project->materials()) {
+	const auto& materials = project->materials();
+	for (auto* material : materials) {
 		auto* mesh = new CuboidMesh();
 		mesh->init(project->scene(), material);
 
