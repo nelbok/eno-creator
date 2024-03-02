@@ -15,7 +15,7 @@ class Material;
 class Eno : public IOThread {
 public:
 	static constexpr auto fileType = "ENO file (*.eno)";
-	static constexpr auto fileVersion = 2u;
+	static constexpr auto fileVersion = 3u;
 
 	using IOThread::IOThread;
 

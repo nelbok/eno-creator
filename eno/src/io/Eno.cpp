@@ -29,6 +29,19 @@ void Eno::save() {
 	// Write project
 	{ stream << _project->name(); }
 
+	// Write tags
+	{
+		const auto& tags = _project->tags();
+		int nbTags = tags.count();
+		stream << nbTags;
+		for (const auto& tag : tags) {
+			if (isInterruptionRequested()) {
+				break;
+			}
+			stream << tag;
+		}
+	}
+
 	// Write materials
 	{
 		const auto& materials = _project->materials();
@@ -87,6 +100,8 @@ void Eno::load() {
 
 	// Reset and begin transaction
 	_project->blockSignals(true);
+	auto* scene = _project->scene();
+	scene->blockSignals(true);
 	_project->reset();
 	_project->setFilePath(_filePath);
 
@@ -115,6 +130,20 @@ void Eno::load() {
 			_project->setName("Unknown");
 		}
 
+		// Read tags
+		if (version > 2) {
+			int nb = 0;
+			stream >> nb;
+			for (int i = 0; i < nb; ++i) {
+				if (isInterruptionRequested()) {
+					break;
+				}
+				QString tag;
+				stream >> tag;
+				_project->add({ tag });
+			}
+		}
+
 		// Read materials
 		QMap<QUuid, Material*> links;
 		{
@@ -140,7 +169,6 @@ void Eno::load() {
 
 		// Read scene
 		{
-			auto* scene = _project->scene();
 			// Write min/max
 			QPoint min;
 			QPoint max;
@@ -189,6 +217,7 @@ void Eno::load() {
 		_result = Result::Canceled;
 	}
 
+	scene->blockSignals(false);
 	_project->blockSignals(false);
 	_project->setIsModified(false);
 }

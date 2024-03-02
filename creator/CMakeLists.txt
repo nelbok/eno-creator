@@ -1,6 +1,7 @@
 set(PROJECT_SOURCES
 	src/controller/command/BaseCommand.cpp
 	src/controller/command/BaseCommand.hpp
+	src/controller/command/ContainerCommand.hpp
 	src/controller/command/CreateCommand.hpp
 	src/controller/command/DestroyCommand.hpp
 	src/controller/command/MaterialCommand.cpp
@@ -51,6 +52,12 @@ set(PROJECT_SOURCES
 	src/widgets/common/KeyButton.hpp
 	src/widgets/common/SpinBox.cpp
 	src/widgets/common/SpinBox.hpp
+	src/widgets/docks/BaseDockWidget.cpp
+	src/widgets/docks/BaseDockWidget.hpp
+	src/widgets/docks/MaterialsDockWidget.cpp
+	src/widgets/docks/MaterialsDockWidget.hpp
+	src/widgets/docks/ProjectDockWidget.cpp
+	src/widgets/docks/ProjectDockWidget.hpp
 	src/widgets/tools/ComboBoxTool.cpp
 	src/widgets/tools/ComboBoxTool.hpp
 	src/widgets/tools/SpinBoxTool.cpp
@@ -59,10 +66,6 @@ set(PROJECT_SOURCES
 	src/widgets/InfoWidget.hpp
 	src/widgets/LocationWidget.cpp
 	src/widgets/LocationWidget.hpp
-	src/widgets/MaterialsDockWidget.cpp
-	src/widgets/MaterialsDockWidget.hpp
-	src/widgets/ProjectDockWidget.cpp
-	src/widgets/ProjectDockWidget.hpp
 
 	src/main.cpp
 

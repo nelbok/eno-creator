@@ -5,7 +5,7 @@
 namespace eno {
 Scene::Scene(Project* project)
 	: QObject(project)
-	, Container(project) {}
+	, Container<Object, Project>(project) {}
 
 Scene::~Scene() {
 	clear();
@@ -21,7 +21,7 @@ void Scene::clear() {
 	for (auto* object : _datas) {
 		object->setMaterial(nullptr);
 	}
-	Container::clear();
+	Container<Object, Project>::clear();
 }
 
 void Scene::setMin(const QPoint& min) {
@@ -64,7 +64,7 @@ QPoint Scene::fixMax(QPoint max) const {
 	return max;
 }
 
-void Scene::datasUpdated() {
+void Scene::datasUpdated(const QList<Object*>&) {
 	emit objectsUpdated();
 }
 } // namespace eno

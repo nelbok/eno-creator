@@ -58,7 +58,7 @@ public:
 			_datas.append(data);
 		}
 		_project->setIsModified(true);
-		datasUpdated();
+		datasUpdated(_datas);
 	}
 
 	bool canRemove(const QList<TChild*> datas) {
@@ -80,7 +80,7 @@ public:
 				_datas.removeAll(data);
 			}
 			_project->setIsModified(true);
-			datasUpdated();
+			datasUpdated(_datas);
 		}
 	}
 
@@ -90,6 +90,7 @@ protected:
 			data->deleteLater();
 		}
 		_datas.clear();
+		datasUpdated(_datas);
 	}
 
 	QList<TChild*> datas() const {
@@ -102,7 +103,7 @@ protected:
 		return datas;
 	}
 
-	virtual void datasUpdated() = 0;
+	virtual void datasUpdated(const QList<TChild*>& data) = 0;
 
 	TProject* _project{ nullptr };
 	QList<TChild*> _datas{};

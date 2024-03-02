@@ -14,11 +14,11 @@
 #include "controller/Graphics.hpp"
 #include "controller/Preferences.hpp"
 #include "controller/Shortcuts.hpp"
+#include "widgets/docks/MaterialsDockWidget.hpp"
+#include "widgets/docks/ProjectDockWidget.hpp"
 #include "widgets/tools/ComboBoxTool.hpp"
 #include "widgets/tools/SpinBoxTool.hpp"
 #include "widgets/InfoWidget.hpp"
-#include "widgets/MaterialsDockWidget.hpp"
-#include "widgets/ProjectDockWidget.hpp"
 #include "GraphicsView.hpp"
 
 namespace eno {
@@ -225,22 +225,21 @@ void MainWindow::initHelp() {
 
 void MainWindow::initDocks() {
 	auto* menuDocks = menuBar()->addMenu("Views");
+	setTabPosition(Qt::AllDockWidgetAreas, QTabWidget::North);
 
-	{
-		auto* dock = new ProjectDockWidget(this);
+	auto lambda = [this, menuDocks](BaseDockWidget* dock) {
 		dock->init(_core);
-		connect(dock, &ProjectDockWidget::showMessage, this, &MainWindow::showMessage);
+		connect(dock, &BaseDockWidget::showMessage, this, &MainWindow::showMessage);
 		addDockWidget(Qt::LeftDockWidgetArea, dock);
 		menuDocks->addAction(dock->toggleViewAction());
-	}
+		return dock;
+	};
 
-	{
-		auto* dock = new MaterialsDockWidget(this);
-		dock->init(_core);
-		connect(dock, &MaterialsDockWidget::showMessage, this, &MainWindow::showMessage);
-		addDockWidget(Qt::LeftDockWidgetArea, dock);
-		menuDocks->addAction(dock->toggleViewAction());
-	}
+	auto* dProject = lambda(new ProjectDockWidget(this));
+	auto* dMaterials = lambda(new MaterialsDockWidget(this));
+
+	tabifyDockWidget(dProject, dMaterials);
+	dProject->raise();
 }
 
 } // namespace eno

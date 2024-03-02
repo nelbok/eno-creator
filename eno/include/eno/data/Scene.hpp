@@ -52,11 +52,14 @@ public:
 	QPoint fixMin(QPoint min) const;
 	QPoint fixMax(QPoint max) const;
 
+	using Container<Object, Project>::add;
+	using Container<Object, Project>::canRemove;
+	using Container<Object, Project>::remove;
 	inline QList<Object*> objects() const { return Container::datas(); }
 	// clang-format on
 
 private:
-	virtual void datasUpdated() override;
+	virtual void datasUpdated(const QList<Object*>& datas) override;
 
 	QPoint _min{};
 	QPoint _max{};

@@ -10,7 +10,7 @@ class ValueCommand : public BaseCommand {
 public:
 	ValueCommand(TClass* instance, TFunc setter, TType oldValue, TType newValue)
 		: _instance{ instance }
-		, _setter(setter)
+		, _setter{ setter }
 		, _oldValue{ oldValue }
 		, _newValue{ newValue } {
 		assert(oldValue != newValue);

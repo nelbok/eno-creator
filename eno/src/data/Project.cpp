@@ -1,13 +1,11 @@
 #include <eno/data/Project.hpp>
 
-#include <QtCore/QFileInfo>
-
 #include <eno/data/Scene.hpp>
 
 namespace eno {
 Project::Project(QObject* parent)
 	: QObject(parent)
-	, Container(this) {}
+	, Container<Material, Project>(this) {}
 
 Project::~Project() {
 	delete _scene;
@@ -23,8 +21,12 @@ void Project::reset() {
 	assert(_scene);
 	_scene->reset();
 
+	// Reset tags
+	_tags.clear();
+	emit tagsUpdated();
+
 	// Reset materials
-	Container::clear();
+	Container<Material, Project>::clear();
 
 	// Finalize
 	setName("");
@@ -54,7 +56,23 @@ void Project::setIsModified(bool value) {
 	}
 }
 
-void Project::datasUpdated() {
+void Project::add(const QStringList& tags) {
+	for (const auto& tag : tags) {
+		_tags.append(tag);
+	}
+	setIsModified(true);
+	emit tagsUpdated();
+}
+
+void Project::remove(const QStringList& tags) {
+	for (const auto& tag : tags) {
+		assert(_tags.contains(tag));
+		_tags.removeOne(tag);
+	}
+	emit tagsUpdated();
+}
+
+void Project::datasUpdated(const QList<Material*>&) {
 	emit materialsUpdated();
 }
 
