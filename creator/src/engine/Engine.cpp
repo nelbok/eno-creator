@@ -7,14 +7,17 @@
 #include <Qt3DExtras/QDiffuseSpecularMaterial>
 #include <Qt3DExtras/QFirstPersonCameraController>
 #include <Qt3DExtras/QForwardRenderer>
+#include <Qt3DExtras/QTextureMaterial>
 #include <Qt3DExtras/Qt3DWindow>
 #include <Qt3DRender/QCamera>
 #include <Qt3DRender/QDirectionalLight>
+#include <Qt3DRender/QTexture>
 
 #include <eno/data/Material.hpp>
 #include <eno/data/Project.hpp>
 
 #include "CuboidMesh.hpp"
+#include "CuboidTexture.hpp"
 
 namespace eno {
 Engine::Engine(QWidget* parent)
@@ -82,6 +85,20 @@ void Engine::initLight() {
 Qt3DCore::QComponent* Engine::createMaterialComponent(Material* mat) {
 	assert(mat);
 
+	// Fallback to a normal and ugly texture material...
+	if (mat->texture()) {
+		auto* textureImage = new CuboidTexture(_root);
+		auto* texture = new Qt3DRender::QTexture2D(_root);
+		textureImage->init(mat->texture());
+		texture->addTextureImage(textureImage);
+
+		auto* material = new Qt3DExtras::QTextureMaterial(_root);
+		material->setTexture(texture);
+		return material;
+	}
+
+	// Seems like it isn't possible anymore to give a QAbstractTexture to the material through the diffuse canal
+	// Shame. Result: The material will be black.
 	auto* material = new Qt3DExtras::QDiffuseSpecularMaterial(_root);
 	material->setDiffuse(mat->diffuse());
 	return material;

@@ -16,6 +16,7 @@
 #include "controller/Shortcuts.hpp"
 #include "widgets/docks/MaterialsDockWidget.hpp"
 #include "widgets/docks/ProjectDockWidget.hpp"
+#include "widgets/docks/TexturesDockWidget.hpp"
 #include "widgets/tools/ComboBoxTool.hpp"
 #include "widgets/tools/SpinBoxTool.hpp"
 #include "widgets/InfoWidget.hpp"
@@ -237,8 +238,10 @@ void MainWindow::initDocks() {
 
 	auto* dProject = lambda(new ProjectDockWidget(this));
 	auto* dMaterials = lambda(new MaterialsDockWidget(this));
+	auto* dTextures = lambda(new TexturesDockWidget(this));
 
 	tabifyDockWidget(dProject, dMaterials);
+	tabifyDockWidget(dProject, dTextures);
 	dProject->raise();
 }
 

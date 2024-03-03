@@ -30,4 +30,8 @@ void MaterialCommand::setName(Commands* c, Material* m, const QString& newValue)
 void MaterialCommand::setDiffuse(Commands* c, Material* m, const QColor& newValue) {
 	addValueCommand(c, m, &Material::setDiffuse, &Material::diffuse, newValue);
 }
+
+void MaterialCommand::setTexture(Commands* c, Material* m, Texture* newValue) {
+	addValueCommand(c, m, &Material::setTexture, &Material::texture, newValue);
+}
 } // namespace eno

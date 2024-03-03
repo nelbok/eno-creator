@@ -1,12 +1,14 @@
 #include "MaterialsDockWidget.hpp"
 
 #include <QtWidgets/QBoxLayout>
+#include <QtWidgets/QComboBox>
 #include <QtWidgets/QFormLayout>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QLineEdit>
 
 #include <eno/data/Material.hpp>
 #include <eno/data/Project.hpp>
+#include <eno/data/Texture.hpp>
 
 #include "controller/command/MaterialCommand.hpp"
 #include "controller/Core.hpp"
@@ -88,28 +90,73 @@ QList<QPair<QString, QVariant>> MaterialsDockWidget::datas() const {
 	return datas;
 }
 
+void MaterialsDockWidget::updateTextures(const QList<Texture*>& textures) {
+	_texture->blockSignals(true);
+	_texture->clear();
+
+	// Default value
+	_texture->addItem("None");
+	_texture->setCurrentIndex(0);
+
+	for (auto* texture : textures) {
+		disconnect(texture, &Texture::nameUpdated, this, &MaterialsDockWidget::updateTextureName);
+		_texture->addItem(texture->name(), QVariant::fromValue(texture));
+		connect(texture, &Texture::nameUpdated, this, &MaterialsDockWidget::updateTextureName);
+	}
+	if (_current)
+		_texture->setCurrentIndex(_texture->findData(QVariant::fromValue(_current->texture())));
+	_texture->blockSignals(false);
+}
+
+void MaterialsDockWidget::updateTextureName() {
+	assert(sender());
+	auto* texture = qobject_cast<Texture*>(sender());
+	assert(texture);
+	int index = _texture->findData(QVariant::fromValue(texture));
+	assert(index != -1);
+	_texture->setItemText(index, texture->name());
+}
+
 void MaterialsDockWidget::initForm() {
 	auto* w = _layout->parentWidget();
 
 	_name = new QLineEdit(w);
 	_diffuse = new ColorButton(w);
+	_texture = new QComboBox(w);
 	_refCount = new QLabel(w);
 
 	auto* form = new QFormLayout;
 	form->addRow("Name:", _name);
 	form->addRow("Diffuse:", _diffuse);
+	form->addRow("Texture:", _texture);
 	form->addRow(_refCount);
 	_layout->addLayout(form);
 
 	connect(_name, &QLineEdit::returnPressed, this, [this]() {
-		const auto& name = _name->text();
-		MaterialCommand::setName(_core->commands(), _current, name);
-		emit showMessage(QString("Material's name changed to %1").arg(name));
+		if (_current) {
+			const auto& name = _name->text();
+			MaterialCommand::setName(_core->commands(), _current, name);
+			emit showMessage(QString("Material's name changed to %1").arg(name));
+		}
 	});
 	connect(_diffuse, &ColorButton::currentColorChanged, this, [this](const QColor& color) {
-		MaterialCommand::setDiffuse(_core->commands(), _current, color);
-		emit showMessage(QString("Material's diffuse color changed to %1").arg(color.name()));
+		if (_current) {
+			MaterialCommand::setDiffuse(_core->commands(), _current, color);
+			emit showMessage(QString("Material's diffuse color changed to %1").arg(color.name()));
+		}
 	});
+	connect(_texture, &QComboBox::currentIndexChanged, [this](int index) {
+		if (_current && index != -1) {
+			auto* texture = _texture->itemData(index).value<Texture*>();
+			MaterialCommand::setTexture(_core->commands(), _current, texture);
+			if (texture)
+				emit showMessage(QString("Material's texture changed to %1").arg(texture->name()));
+			else
+				emit showMessage(QString("Material's texture changed to none"));
+		}
+	});
+	connect(_core->project(), &Project::texturesUpdated, this, &MaterialsDockWidget::updateTextures);
+	updateTextures(_core->project()->textures());
 }
 
 void MaterialsDockWidget::updateForm() {
@@ -117,11 +164,15 @@ void MaterialsDockWidget::updateForm() {
 	if (_current) {
 		_name->setText(_current->name());
 		_diffuse->setColor(_current->diffuse());
-		_refCount->setText(QString("Numbers of time used by a cube: %1").arg(_current->refCount()));
+		if (_current->texture())
+			_texture->setCurrentIndex(_texture->findData(QVariant::fromValue(_current->texture())));
+		else
+			_texture->setCurrentIndex(0);
+		_refCount->setText(QString("Used by %1 object(s)").arg(_current->refCount()));
 	} else {
 		_name->setText("-");
 		_diffuse->setColor({ 0, 0, 0 });
-		_refCount->setText(QString("Numbers of time used by a cube: %1").arg(-1));
+		_refCount->setText(QString("Used by %1 object(s)").arg(-1));
 	}
 }
 } // namespace eno

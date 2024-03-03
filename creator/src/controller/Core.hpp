@@ -8,6 +8,7 @@ class Graphics;
 class Material;
 class Project;
 class RecentFiles;
+class Texture;
 
 class Core : public QObject {
 	Q_OBJECT
@@ -19,6 +20,7 @@ public:
 	void reset();
 
 	Material* createMyMaterial();
+	Texture* createMyTexture();
 
 	Commands* commands() const;
 	Graphics* graphics() const;

@@ -4,8 +4,10 @@
 
 #include <eno/data/Container.hpp>
 
+// For Q_PROPERTY
+#include <eno/data/Material.hpp>
+
 namespace eno {
-class Material;
 class Project;
 
 class Object : public Item {

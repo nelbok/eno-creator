@@ -4,6 +4,7 @@
 #include <eno/data/Project.hpp>
 
 #include "command/MaterialCommand.hpp"
+#include "command/TextureCommand.hpp"
 #include "Commands.hpp"
 #include "Graphics.hpp"
 #include "Preferences.hpp"
@@ -44,6 +45,12 @@ Material* Core::createMyMaterial() {
 	material->setName(Preferences::materialName());
 	material->setDiffuse(Preferences::materialDiffuse());
 	return material;
+}
+
+Texture* Core::createMyTexture() {
+	auto* texture = TextureCommand::create(_commands, _project);
+	texture->setName("My Texture");
+	return texture;
 }
 
 Graphics* Core::graphics() const {

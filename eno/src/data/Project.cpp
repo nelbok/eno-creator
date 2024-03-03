@@ -5,7 +5,8 @@
 namespace eno {
 Project::Project(QObject* parent)
 	: QObject(parent)
-	, Container<Material, Project>(this) {}
+	, Container<Material, Project>(this)
+	, Container<Texture, Project>(this) {}
 
 Project::~Project() {
 	delete _scene;
@@ -27,6 +28,9 @@ void Project::reset() {
 
 	// Reset materials
 	Container<Material, Project>::clear();
+
+	// Reset textures
+	Container<Texture, Project>::clear();
 
 	// Finalize
 	setName("");
@@ -74,6 +78,10 @@ void Project::remove(const QStringList& tags) {
 
 void Project::datasUpdated(const QList<Material*>& datas) {
 	emit materialsUpdated(datas);
+}
+
+void Project::datasUpdated(const QList<Texture*>& datas) {
+	emit texturesUpdated(datas);
 }
 
 } // namespace eno

@@ -12,6 +12,8 @@ set(PROJECT_SOURCES
 	src/controller/command/ProjectCommand.hpp
 	src/controller/command/SceneCommand.cpp
 	src/controller/command/SceneCommand.hpp
+	src/controller/command/TextureCommand.cpp
+	src/controller/command/TextureCommand.hpp
 	src/controller/command/ValueCommand.hpp
 
 	src/controller/Commands.cpp
@@ -31,6 +33,8 @@ set(PROJECT_SOURCES
 	src/engine/CuboidGeometry.hpp
 	src/engine/CuboidMesh.cpp
 	src/engine/CuboidMesh.hpp
+	src/engine/CuboidTexture.cpp
+	src/engine/CuboidTexture.hpp
 	src/engine/Engine.cpp
 	src/engine/Engine.hpp
 
@@ -58,6 +62,8 @@ set(PROJECT_SOURCES
 	src/widgets/docks/MaterialsDockWidget.hpp
 	src/widgets/docks/ProjectDockWidget.cpp
 	src/widgets/docks/ProjectDockWidget.hpp
+	src/widgets/docks/TexturesDockWidget.cpp
+	src/widgets/docks/TexturesDockWidget.hpp
 	src/widgets/tools/ComboBoxTool.cpp
 	src/widgets/tools/ComboBoxTool.hpp
 	src/widgets/tools/SpinBoxTool.cpp

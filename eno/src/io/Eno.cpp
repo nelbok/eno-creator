@@ -42,6 +42,19 @@ void Eno::save() {
 		}
 	}
 
+	// Write textures
+	{
+		const auto& textures = _project->textures();
+		int nbTextures = textures.count();
+		stream << nbTextures;
+		for (auto* texture : textures) {
+			if (isInterruptionRequested()) {
+				break;
+			}
+			stream << texture->uuid() << texture->name();
+		}
+	}
+
 	// Write materials
 	{
 		const auto& materials = _project->materials();
@@ -51,7 +64,7 @@ void Eno::save() {
 			if (isInterruptionRequested()) {
 				break;
 			}
-			stream << material->uuid() << material->name() << material->diffuse();
+			stream << material->uuid() << material->name() << material->diffuse() << material->texture()->uuid();
 		}
 	}
 
@@ -144,8 +157,32 @@ void Eno::load() {
 			}
 		}
 
+		// Read textures
+		QMap<QUuid, Texture*> textureLinks;
+		if (version > 3) {
+			int nb = 0;
+			stream >> nb;
+			QList<Texture*> textures;
+			textures.reserve(nb);
+			for (int i = 0; i < nb; ++i) {
+				if (isInterruptionRequested()) {
+					break;
+				}
+				QUuid uuid;
+				QString name;
+				stream >> uuid >> name;
+
+				// Create texture
+				auto* texture = new Texture(uuid, _project);
+				texture->setName(name);
+				textures.append(texture);
+				textureLinks.insert(uuid, texture);
+			}
+			_project->add(textures);
+		}
+
 		// Read materials
-		QMap<QUuid, Material*> links;
+		QMap<QUuid, Material*> materialLinks;
 		{
 			int nb = 0;
 			stream >> nb;
@@ -158,14 +195,21 @@ void Eno::load() {
 				QUuid uuid;
 				QString name;
 				QColor diffuse;
-				stream >> uuid >> name >> diffuse;
+				QUuid tUuid;
+				if (version > 3)
+					stream >> uuid >> name >> diffuse >> tUuid;
+				else
+					stream >> uuid >> name >> diffuse;
 
 				// Create material
 				auto* material = new Material(uuid, _project);
 				material->setName(name);
 				material->setDiffuse(diffuse);
+				if (version > 3 && !tUuid.isNull()) {
+					material->setTexture(textureLinks.value(tUuid));
+				}
 				materials.append(material);
-				links.insert(uuid, material);
+				materialLinks.insert(uuid, material);
 			}
 			_project->add(materials);
 		}
@@ -206,7 +250,7 @@ void Eno::load() {
 					object = new Object(_project);
 				}
 				object->setPosition(pos);
-				object->setMaterial(links.value(mUuid));
+				object->setMaterial(materialLinks.value(mUuid));
 				objects.append(object);
 			}
 			scene->add(objects);

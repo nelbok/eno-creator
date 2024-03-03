@@ -5,6 +5,7 @@ set(PROJECT_SOURCES
 	include/eno/data/Object.hpp
 	include/eno/data/Project.hpp
 	include/eno/data/Scene.hpp
+	include/eno/data/Texture.hpp
 
 	include/eno/io/Eno.hpp
 	include/eno/io/IOThread.hpp
@@ -18,6 +19,7 @@ set(PROJECT_SOURCES
 	src/data/Object.cpp
 	src/data/Project.cpp
 	src/data/Scene.cpp
+	src/data/Texture.cpp
 
 	src/io/Eno.cpp
 	src/io/IOThread.cpp
