@@ -54,6 +54,8 @@ set(PROJECT_SOURCES
 	src/widgets/common/ColorButton.hpp
 	src/widgets/common/KeyButton.cpp
 	src/widgets/common/KeyButton.hpp
+	src/widgets/common/PixmapButton.cpp
+	src/widgets/common/PixmapButton.hpp
 	src/widgets/common/SpinBox.cpp
 	src/widgets/common/SpinBox.hpp
 	src/widgets/docks/BaseDockWidget.cpp

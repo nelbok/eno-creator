@@ -10,6 +10,7 @@
 
 #include "controller/command/TextureCommand.hpp"
 #include "controller/Core.hpp"
+#include "widgets/common/PixmapButton.hpp"
 
 namespace eno {
 TexturesDockWidget::TexturesDockWidget(QWidget* parent)
@@ -87,10 +88,12 @@ void TexturesDockWidget::initForm() {
 	auto* w = _layout->parentWidget();
 
 	_name = new QLineEdit(w);
+	_data = new PixmapButton(w);
 	_refCount = new QLabel(w);
 
 	auto* form = new QFormLayout;
 	form->addRow("Name:", _name);
+	form->addRow("Data:", _data);
 	form->addRow(_refCount);
 	_layout->addLayout(form);
 
@@ -101,15 +104,16 @@ void TexturesDockWidget::initForm() {
 			emit showMessage(QString("Texture's name changed to %1").arg(name));
 		}
 	});
+	updateForm();
 }
 
 void TexturesDockWidget::updateForm() {
-	assert(_current);
 	if (_current) {
 		_name->setText(_current->name());
 		_refCount->setText(QString("Used by %1 material(s)").arg(_current->refCount()));
 	} else {
 		_name->setText("-");
+		_data->setPixmap(QPixmap(":/logo/logo.png"));
 		_refCount->setText(QString("Used by %1 material(s)").arg(-1));
 	}
 }

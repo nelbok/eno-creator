@@ -103,7 +103,7 @@ void MaterialsDockWidget::updateTextures(const QList<Texture*>& textures) {
 		_texture->addItem(texture->name(), QVariant::fromValue(texture));
 		connect(texture, &Texture::nameUpdated, this, &MaterialsDockWidget::updateTextureName);
 	}
-	if (_current)
+	if (_current && _current->texture())
 		_texture->setCurrentIndex(_texture->findData(QVariant::fromValue(_current->texture())));
 	_texture->blockSignals(false);
 }
@@ -157,10 +157,10 @@ void MaterialsDockWidget::initForm() {
 	});
 	connect(_core->project(), &Project::texturesUpdated, this, &MaterialsDockWidget::updateTextures);
 	updateTextures(_core->project()->textures());
+	updateForm();
 }
 
 void MaterialsDockWidget::updateForm() {
-	assert(_current);
 	if (_current) {
 		_name->setText(_current->name());
 		_diffuse->setColor(_current->diffuse());

@@ -6,6 +6,7 @@ class QLabel;
 class QLineEdit;
 
 namespace eno {
+class PixmapButton;
 class Texture;
 
 class TexturesDockWidget : public BaseDockWidget {
@@ -31,6 +32,7 @@ private:
 
 	Texture* _current{ nullptr };
 	QLineEdit* _name{ nullptr };
+	PixmapButton* _data{ nullptr };
 	QLabel* _refCount{ nullptr };
 };
 } // namespace eno
