@@ -63,6 +63,8 @@ private:
 	virtual void datasUpdated(const QList<Material*>& datas) override;
 	virtual void datasUpdated(const QList<Texture*>& datas) override;
 
+	void clear();
+
 	QString _name{};
 	QString _filePath{};
 	bool _isModified{ false };

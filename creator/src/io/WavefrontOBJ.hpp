@@ -16,9 +16,17 @@ class WavefrontOBJ : public IOThread {
 
 public:
 	struct Triangle {
-		int one{};
-		int two{};
-		int three{};
+		int v1{ -1 };
+		int v2{ -1 };
+		int v3{ -1 };
+
+		int vt1{ -1 };
+		int vt2{ -1 };
+		int vt3{ -1 };
+
+		int vn1{ -1 };
+		int vn2{ -1 };
+		int vn3{ -1 };
 	};
 
 	static constexpr auto fileType = "Wavefront OBJ (*.obj)";
@@ -30,14 +38,19 @@ protected:
 
 private:
 	void compute();
-	int getIndexBy(const QVector3D& vertex);
+	int getIndexForVertex(const QVector3D& vertex);
+	int getIndexForUV(const QVector2D& uv);
+	int getIndexForNormal(const QVector3D& normal);
 	void insertTriangle(Material* material, const Triangle& triangle);
 	void writeCredentials(QTextStream& stream);
 	void writeObjFile();
 	void writeMtlFile();
+	void writeTextures();
 
 	QList<Merger::Cuboid> _data{};
 	QList<QVector3D> _vertices{};
+	QList<QVector2D> _uvs{};
+	QList<QVector3D> _normals{};
 	QMap<Material*, QList<Triangle>> _triangles;
 	QSaveFile _objFile;
 	QSaveFile _mtlFile;

@@ -37,6 +37,7 @@ private:
 	void updateForm();
 
 	Material* _current{ nullptr };
+	QWidget* _form{ nullptr };
 	QLineEdit* _name{ nullptr };
 	ColorButton* _diffuse{ nullptr };
 	QComboBox* _texture{ nullptr };

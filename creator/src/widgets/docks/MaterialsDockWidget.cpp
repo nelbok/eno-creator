@@ -50,9 +50,9 @@ void MaterialsDockWidget::currentListDataChanged() {
 		disconnect(_current, &Material::nameUpdated, this, &MaterialsDockWidget::updateForm);
 		disconnect(_current, &Material::diffuseUpdated, this, &MaterialsDockWidget::updateForm);
 		disconnect(_current, &Material::refCountUpdated, this, &MaterialsDockWidget::updateForm);
-		_current = nullptr;
 	}
 
+	_current = nullptr;
 	const auto& current = currentListData();
 	if (current.isValid()) {
 		_current = current.value<Material*>();
@@ -62,10 +62,11 @@ void MaterialsDockWidget::currentListDataChanged() {
 			connect(_current, &Material::nameUpdated, this, &MaterialsDockWidget::updateForm);
 			connect(_current, &Material::diffuseUpdated, this, &MaterialsDockWidget::updateForm);
 			connect(_current, &Material::refCountUpdated, this, &MaterialsDockWidget::updateForm);
+
+			_core->graphics()->setMaterial(_current);
 		}
 	}
 
-	_core->graphics()->setMaterial(_current);
 	updateForm();
 }
 
@@ -125,12 +126,13 @@ void MaterialsDockWidget::initForm() {
 	_texture = new QComboBox(w);
 	_refCount = new QLabel(w);
 
-	auto* form = new QFormLayout;
+	_form = new QWidget(w);
+	auto* form = new QFormLayout(_form);
 	form->addRow("Name:", _name);
 	form->addRow("Diffuse:", _diffuse);
 	form->addRow("Texture:", _texture);
 	form->addRow(_refCount);
-	_layout->addLayout(form);
+	_layout->addWidget(_form);
 
 	connect(_name, &QLineEdit::returnPressed, this, [this]() {
 		if (_current) {
@@ -161,6 +163,10 @@ void MaterialsDockWidget::initForm() {
 }
 
 void MaterialsDockWidget::updateForm() {
+	if (_form == nullptr)
+		return;
+
+	_form->setEnabled(_current);
 	if (_current) {
 		_name->setText(_current->name());
 		_diffuse->setColor(_current->diffuse());
@@ -172,7 +178,8 @@ void MaterialsDockWidget::updateForm() {
 	} else {
 		_name->setText("-");
 		_diffuse->setColor({ 0, 0, 0 });
-		_refCount->setText(QString("Used by %1 object(s)").arg(-1));
+		_texture->setCurrentIndex(0);
+		_refCount->setText("");
 	}
 }
 } // namespace eno

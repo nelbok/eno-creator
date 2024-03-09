@@ -6,24 +6,27 @@
 #include <eno/data/Material.hpp>
 #include <eno/data/Project.hpp>
 #include <eno/data/Scene.hpp>
+#include <eno/data/Texture.hpp>
+#include <eno/tools/Geometry.hpp>
 
 #include "controller/Preferences.hpp"
 
 namespace eno {
 bool operator==(const WavefrontOBJ::Triangle& p1, const WavefrontOBJ::Triangle& p2) {
-	return (p1.one == p2.one) && (p1.two == p2.two) && (p1.three == p2.three);
+	return (p1.v1 == p2.v1) && (p1.v2 == p2.v2) && (p1.v3 == p2.v3) && (p1.vt1 == p2.vt1) && (p1.vt2 == p2.vt2) && (p1.vt3 == p2.vt3) && (p1.vn1 == p2.vn1) && (p1.vn2 == p2.vn2) && (p1.vn3 == p2.vn3);
 }
 
 void WavefrontOBJ::save() {
 	assert(_project);
 	_result = Result::Success;
 	_data = Merger::fillData(_project->scene());
-	if (Preferences::generationOptimized()) {
-		_data = mergeData(_data);
-	}
+	//if (Preferences::generationOptimized()) {
+	//	_data = mergeData(_data);
+	//}
 	compute();
 	writeObjFile();
 	writeMtlFile();
+	writeTextures();
 
 	if (isInterruptionRequested()) {
 		_result = Result::Canceled;
@@ -43,42 +46,74 @@ void WavefrontOBJ::save() {
 }
 
 void WavefrontOBJ::compute() {
+	quint32 baseIndex = 0;
+	QList<int> vIdx, tIdx, nIdx;
 	for (const auto& cube : _data) {
 		if (isInterruptionRequested()) {
 			return;
 		}
-		const auto& p = cube.position;
-		const auto& s = cube.scale;
-		auto v1 = getIndexBy(p + s * QVector3D(0.f, 0.f, 1.f));
-		auto v2 = getIndexBy(p + s * QVector3D(1.f, 0.f, 1.f));
-		auto v3 = getIndexBy(p + s * QVector3D(0.f, 1.f, 1.f));
-		auto v4 = getIndexBy(p + s * QVector3D(1.f, 1.f, 1.f));
-		auto v5 = getIndexBy(p + s * QVector3D(0.f, 1.f, 0.f));
-		auto v6 = getIndexBy(p + s * QVector3D(1.f, 1.f, 0.f));
-		auto v7 = getIndexBy(p + s * QVector3D(0.f, 0.f, 0.f));
-		auto v8 = getIndexBy(p + s * QVector3D(1.f, 0.f, 0.f));
-
 		auto* m = cube.material;
-		insertTriangle(m, { v1, v2, v3 });
-		insertTriangle(m, { v3, v2, v4 });
-		insertTriangle(m, { v3, v4, v5 });
-		insertTriangle(m, { v5, v4, v6 });
-		insertTriangle(m, { v5, v6, v7 });
-		insertTriangle(m, { v7, v6, v8 });
-		insertTriangle(m, { v7, v8, v1 });
-		insertTriangle(m, { v1, v8, v2 });
-		insertTriangle(m, { v2, v8, v4 });
-		insertTriangle(m, { v4, v8, v6 });
-		insertTriangle(m, { v7, v1, v5 });
-		insertTriangle(m, { v5, v1, v3 });
+
+		{
+			const auto& nbElements = Geometry::stride() / sizeof(float);
+			const auto& vertexData = Geometry::createCuboidVertexData(cube.position);
+			const float* d = reinterpret_cast<const float*>(vertexData.data());
+			const qsizetype iMax = vertexData.length() / sizeof(float);
+			for (qsizetype i = 0; i < iMax;) {
+				vIdx.append(getIndexForVertex({ d[i + 0], d[i + 1], d[i + 2] }));
+				tIdx.append(getIndexForUV({ d[i + 3], d[i + 4] }));
+				nIdx.append(getIndexForNormal({ d[i + 5], d[i + 6], d[i + 7] }));
+
+				i += nbElements;
+			}
+		}
+
+		{
+			const auto& indexData = Geometry::createCuboidIndexData(baseIndex);
+			const quint32* d = reinterpret_cast<const quint32*>(indexData.data());
+			const qsizetype iMax = indexData.length() / sizeof(quint32);
+			for (qsizetype i = 0; i < iMax;) {
+				insertTriangle(m, {
+														vIdx.at(d[i + 0]),
+														vIdx.at(d[i + 1]),
+														vIdx.at(d[i + 2]),
+														tIdx.at(d[i + 0]),
+														tIdx.at(d[i + 1]),
+														tIdx.at(d[i + 2]),
+														nIdx.at(d[i + 0]),
+														nIdx.at(d[i + 1]),
+														nIdx.at(d[i + 2]),
+													});
+
+				i += 3;
+			}
+		}
 	}
 }
 
-int WavefrontOBJ::getIndexBy(const QVector3D& vertex) {
+int WavefrontOBJ::getIndexForVertex(const QVector3D& vertex) {
 	auto index = _vertices.indexOf(vertex);
 	if (index == -1) {
 		index = _vertices.count();
 		_vertices.append(vertex);
+	}
+	return index;
+}
+
+int WavefrontOBJ::getIndexForUV(const QVector2D& uv) {
+	auto index = _uvs.indexOf(uv);
+	if (index == -1) {
+		index = _uvs.count();
+		_uvs.append(uv);
+	}
+	return index;
+}
+
+int WavefrontOBJ::getIndexForNormal(const QVector3D& normal) {
+	auto index = _normals.indexOf(normal);
+	if (index == -1) {
+		index = _normals.count();
+		_normals.append(normal);
 	}
 	return index;
 }
@@ -119,6 +154,28 @@ void WavefrontOBJ::writeObjFile() {
 		stream << "v " << vertex.x() << " " << vertex.y() << " " << vertex.z() << Qt::endl;
 	}
 
+	stream << Qt::endl;
+
+	stream << "# uvs" << Qt::endl;
+	for (const auto& uv : _uvs) {
+		if (isInterruptionRequested()) {
+			return;
+		}
+		stream << "vt " << uv.x() << " " << uv.y() << Qt::endl;
+	}
+
+	stream << Qt::endl;
+
+	stream << "# normals" << Qt::endl;
+	for (const auto& normal : _normals) {
+		if (isInterruptionRequested()) {
+			return;
+		}
+		stream << "vn " << normal.x() << " " << normal.y() << " " << normal.z() << Qt::endl;
+	}
+
+	stream << Qt::endl;
+
 	stream << "# triangles" << Qt::endl;
 	for (auto it = _triangles.constKeyValueBegin(); it != _triangles.constKeyValueEnd(); ++it) {
 		if (isInterruptionRequested()) {
@@ -127,12 +184,16 @@ void WavefrontOBJ::writeObjFile() {
 		Material* material = it->first;
 		stream << "g " << material->name() << Qt::endl;
 		stream << "usemtl " << material->name() << Qt::endl;
-		for (const auto& triangle : it->second) {
+		for (const auto& t : it->second) {
 			if (isInterruptionRequested()) {
 				return;
 			}
 			// The index begin at 1 and not 0 like in the list
-			stream << "f " << triangle.one + 1 << " " << triangle.two + 1 << " " << triangle.three + 1 << Qt::endl;
+			stream << "f";
+			stream << " " << t.v1 + 1 << "/" << t.vt1 + 1 << "/" << t.vn1 + 1;
+			stream << " " << t.v2 + 1 << "/" << t.vt2 + 1 << "/" << t.vn2 + 1;
+			stream << " " << t.v3 + 1 << "/" << t.vt3 + 1 << "/" << t.vn3 + 1;
+			stream << Qt::endl;
 		}
 	}
 }
@@ -156,9 +217,31 @@ void WavefrontOBJ::writeMtlFile() {
 		}
 		Material* material = it->first;
 		const QColor& color = material->diffuse();
+		auto* texture = material->texture();
 		stream << "newmtl " << material->name() << Qt::endl;
 		stream << "Kd " << color.red() / 255.f << " " << color.green() / 255.f << " " << color.blue() / 255.f << Qt::endl;
+		if (texture) {
+			stream << "map_Kd " + texture->name() + ".png" << Qt::endl;
+		}
 		stream << Qt::endl;
 	}
 }
+
+void WavefrontOBJ::writeTextures() {
+	QFileInfo fileInfo(_filePath);
+
+	const auto& textures = _project->textures();
+	for (auto* texture : textures) {
+		if (isInterruptionRequested()) {
+			return;
+		}
+		// Is texture used?
+		if (texture->refCount() == 0) {
+			return;
+		}
+
+		texture->data().save(fileInfo.path() + "/" + texture->name() + ".png");
+	}
+}
+
 } // namespace eno

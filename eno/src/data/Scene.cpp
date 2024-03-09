@@ -17,13 +17,6 @@ void Scene::reset() {
 	_max = Scene::defaultSceneMax;
 }
 
-void Scene::clear() {
-	for (auto* object : _datas) {
-		object->setMaterial(nullptr);
-	}
-	Container<Object, Project>::clear();
-}
-
 void Scene::setMin(const QPoint& min) {
 	const auto& value = fixMin(min);
 	if (_min != value) {
@@ -66,5 +59,12 @@ QPoint Scene::fixMax(QPoint max) const {
 
 void Scene::datasUpdated(const QList<Object*>& datas) {
 	emit objectsUpdated(datas);
+}
+
+void Scene::clear() {
+	for (auto* object : _datas) {
+		object->setMaterial(nullptr);
+	}
+	Container<Object, Project>::clear();
 }
 } // namespace eno

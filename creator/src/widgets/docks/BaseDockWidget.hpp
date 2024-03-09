@@ -23,7 +23,7 @@ public:
 
 public slots:
 	// List
-	void updateListDatas() const;
+	void updateListDatas();
 
 protected slots:
 	// List

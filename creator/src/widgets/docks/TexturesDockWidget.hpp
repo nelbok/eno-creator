@@ -31,6 +31,7 @@ private:
 	void updateForm();
 
 	Texture* _current{ nullptr };
+	QWidget* _form{ nullptr };
 	QLineEdit* _name{ nullptr };
 	PixmapButton* _data{ nullptr };
 	QLabel* _refCount{ nullptr };

@@ -51,7 +51,7 @@ void Eno::save() {
 			if (isInterruptionRequested()) {
 				break;
 			}
-			stream << texture->uuid() << texture->name();
+			stream << texture->uuid() << texture->name() << texture->data();
 		}
 	}
 
@@ -64,7 +64,7 @@ void Eno::save() {
 			if (isInterruptionRequested()) {
 				break;
 			}
-			stream << material->uuid() << material->name() << material->diffuse() << material->texture()->uuid();
+			stream << material->uuid() << material->name() << material->diffuse() << (material->texture() ? material->texture()->uuid() : QUuid());
 		}
 	}
 
@@ -170,11 +170,13 @@ void Eno::load() {
 				}
 				QUuid uuid;
 				QString name;
-				stream >> uuid >> name;
+				QPixmap data;
+				stream >> uuid >> name >> data;
 
 				// Create texture
 				auto* texture = new Texture(uuid, _project);
 				texture->setName(name);
+				texture->setData(data);
 				textures.append(texture);
 				textureLinks.insert(uuid, texture);
 			}

@@ -1,9 +1,11 @@
 #include "TexturesDockWidget.hpp"
 
+#include <QtWidgets/QApplication>
 #include <QtWidgets/QBoxLayout>
 #include <QtWidgets/QFormLayout>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QLineEdit>
+#include <QtWidgets/QMessageBox>
 
 #include <eno/data/Project.hpp>
 #include <eno/data/Texture.hpp>
@@ -45,10 +47,11 @@ void TexturesDockWidget::currentListDataChanged() {
 	// Disconnect Texture's signals
 	if (_current && _core->project()->textures().contains(_current)) {
 		disconnect(_current, &Texture::nameUpdated, this, &TexturesDockWidget::updateForm);
+		disconnect(_current, &Texture::dataUpdated, this, &TexturesDockWidget::updateForm);
 		disconnect(_current, &Texture::refCountUpdated, this, &TexturesDockWidget::updateForm);
-		_current = nullptr;
 	}
 
+	_current = nullptr;
 	const auto& current = currentListData();
 	if (current.isValid()) {
 		_current = current.value<Texture*>();
@@ -56,6 +59,7 @@ void TexturesDockWidget::currentListDataChanged() {
 		// Connect Texture's signals
 		if (_current) {
 			connect(_current, &Texture::nameUpdated, this, &TexturesDockWidget::updateForm);
+			connect(_current, &Texture::dataUpdated, this, &TexturesDockWidget::updateForm);
 			connect(_current, &Texture::refCountUpdated, this, &TexturesDockWidget::updateForm);
 		}
 	}
@@ -91,11 +95,12 @@ void TexturesDockWidget::initForm() {
 	_data = new PixmapButton(w);
 	_refCount = new QLabel(w);
 
-	auto* form = new QFormLayout;
+	_form = new QWidget(w);
+	auto* form = new QFormLayout(_form);
 	form->addRow("Name:", _name);
 	form->addRow("Data:", _data);
 	form->addRow(_refCount);
-	_layout->addLayout(form);
+	_layout->addWidget(_form);
 
 	connect(_name, &QLineEdit::returnPressed, this, [this]() {
 		if (_current) {
@@ -104,17 +109,33 @@ void TexturesDockWidget::initForm() {
 			emit showMessage(QString("Texture's name changed to %1").arg(name));
 		}
 	});
+	connect(_data, &PixmapButton::currentPixmapChanged, this, [this]() {
+		if (_current) {
+			const auto& pixmap = _data->pixmap();
+			if (pixmap.height() > 256 || pixmap.width() > 256) {
+				QMessageBox::warning(qApp->activeWindow(), qApp->applicationName(), "Image needs to be less than or equal 256x256.");
+				return;
+			}
+			TextureCommand::setData(_core->commands(), _current, _data->pixmap());
+			emit showMessage(QString("Texture's data changed"));
+		}
+	});
 	updateForm();
 }
 
 void TexturesDockWidget::updateForm() {
+	if (_form == nullptr)
+		return;
+
+	_form->setEnabled(_current);
 	if (_current) {
 		_name->setText(_current->name());
+		_data->setPixmap(_current->data());
 		_refCount->setText(QString("Used by %1 material(s)").arg(_current->refCount()));
 	} else {
 		_name->setText("-");
 		_data->setPixmap(QPixmap(":/logo/logo.png"));
-		_refCount->setText(QString("Used by %1 material(s)").arg(-1));
+		_refCount->setText("");
 	}
 }
 } // namespace eno

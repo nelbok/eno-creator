@@ -14,7 +14,7 @@ namespace eno::Geometry {
 // Indices (quint32)
 
 // As explained above, stride will be:
-// 3 + 3 + 2 + 4
+// 3 + 2 + 3 + 4
 // vec + tex + nor + tan
 quint32 stride();
 

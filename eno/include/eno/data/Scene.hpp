@@ -42,7 +42,6 @@ public:
 	virtual ~Scene();
 
 	void reset();
-	void clear();
 
 	// clang-format off
 	const QPoint& min() const { return _min; }
@@ -60,6 +59,8 @@ public:
 
 private:
 	virtual void datasUpdated(const QList<Object*>& datas) override;
+
+	void clear();
 
 	QPoint _min{};
 	QPoint _max{};

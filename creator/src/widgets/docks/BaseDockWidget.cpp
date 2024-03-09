@@ -23,7 +23,7 @@ void BaseDockWidget::init(Core* core) {
 	setWidget(w);
 }
 
-void BaseDockWidget::updateListDatas() const {
+void BaseDockWidget::updateListDatas() {
 	assert(_list);
 
 	QVariant current = currentListData();
@@ -48,6 +48,7 @@ void BaseDockWidget::updateListDatas() const {
 	} else if (_list->count()) {
 		_list->setCurrentItem(_list->item(0));
 	}
+	currentListDataChanged();
 }
 
 void BaseDockWidget::initList(const QString& addName, const QString& removeName) {

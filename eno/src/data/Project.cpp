@@ -9,6 +9,7 @@ Project::Project(QObject* parent)
 	, Container<Texture, Project>(this) {}
 
 Project::~Project() {
+	clear();
 	delete _scene;
 }
 
@@ -26,11 +27,8 @@ void Project::reset() {
 	_tags.clear();
 	emit tagsUpdated(_tags);
 
-	// Reset materials
-	Container<Material, Project>::clear();
-
-	// Reset textures
-	Container<Texture, Project>::clear();
+	// Materials and textures
+	clear();
 
 	// Finalize
 	setName("");
@@ -82,6 +80,17 @@ void Project::datasUpdated(const QList<Material*>& datas) {
 
 void Project::datasUpdated(const QList<Texture*>& datas) {
 	emit texturesUpdated(datas);
+}
+
+void Project::clear() {
+	// Materials
+	for (auto* data : Container<Material, Project>::_datas) {
+		data->setTexture(nullptr);
+	}
+	Container<Material, Project>::clear();
+
+	// Textures
+	Container<Texture, Project>::clear();
 }
 
 } // namespace eno

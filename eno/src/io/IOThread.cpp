@@ -26,6 +26,7 @@ public:
 				_p->_project->setParent(parent);
 				emit _p->_project->nameUpdated();
 				emit _p->_project->tagsUpdated(_p->_project->tags());
+				emit _p->_project->texturesUpdated(_p->_project->textures());
 				emit _p->_project->materialsUpdated(_p->_project->materials());
 				emit _p->_project->scene()->rectUpdated();
 				emit _p->_project->scene()->objectsUpdated(_p->_project->scene()->objects());

@@ -26,4 +26,12 @@ bool TextureCommand::destroy(Commands* c, Texture* t, Project* p) {
 void TextureCommand::setName(Commands* c, Texture* t, const QString& newValue) {
 	addValueCommand(c, t, &Texture::setName, &Texture::name, newValue);
 }
+
+void TextureCommand::setData(Commands* c, Texture* t, const QPixmap& n) {
+	// Using LazyValueCommand: QPixmap doesn't have a != operator
+	const auto& o = t->data();
+	if (o.cacheKey() != n.cacheKey()) {
+		c->add(new LazyValueCommand(t, &Texture::setData, o, n));
+	}
+}
 } // namespace eno
