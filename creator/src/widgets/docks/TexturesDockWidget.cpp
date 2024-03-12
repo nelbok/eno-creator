@@ -114,6 +114,11 @@ void TexturesDockWidget::initForm() {
 			const auto& pixmap = _data->pixmap();
 			if (pixmap.height() > 256 || pixmap.width() > 256) {
 				QMessageBox::warning(qApp->activeWindow(), qApp->applicationName(), "Image needs to be less than or equal 256x256.");
+				updateForm();
+				return;
+			} else if (pixmap.height() != pixmap.width()) {
+				QMessageBox::warning(qApp->activeWindow(), qApp->applicationName(), "Image needs to be square.");
+				updateForm();
 				return;
 			}
 			TextureCommand::setData(_core->commands(), _current, _data->pixmap());
@@ -130,7 +135,7 @@ void TexturesDockWidget::updateForm() {
 	_form->setEnabled(_current);
 	if (_current) {
 		_name->setText(_current->name());
-		_data->setPixmap(_current->data());
+		_data->setPixmap(_current->pixmap());
 		_refCount->setText(QString("Used by %1 material(s)").arg(_current->refCount()));
 	} else {
 		_name->setText("-");

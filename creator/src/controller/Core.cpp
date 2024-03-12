@@ -50,7 +50,7 @@ Material* Core::createMyMaterial() {
 Texture* Core::createMyTexture() {
 	auto* texture = TextureCommand::create(_commands, _project);
 	texture->setName("My Texture");
-	texture->setData(QPixmap(":/logo/logo.png"));
+	texture->set(QImage(":/logo/logo.png"));
 	return texture;
 }
 

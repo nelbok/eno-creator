@@ -51,7 +51,7 @@ void Eno::save() {
 			if (isInterruptionRequested()) {
 				break;
 			}
-			stream << texture->uuid() << texture->name() << texture->data();
+			stream << texture->uuid() << texture->name() << texture->size() << texture->data();
 		}
 	}
 
@@ -170,13 +170,14 @@ void Eno::load() {
 				}
 				QUuid uuid;
 				QString name;
-				QPixmap data;
-				stream >> uuid >> name >> data;
+				QSize size;
+				QByteArray data;
+				stream >> uuid >> name >> size >> data;
 
 				// Create texture
 				auto* texture = new Texture(uuid, _project);
 				texture->setName(name);
-				texture->setData(data);
+				texture->set(size, data);
 				textures.append(texture);
 				textureLinks.insert(uuid, texture);
 			}

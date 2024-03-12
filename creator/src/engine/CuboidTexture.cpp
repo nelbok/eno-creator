@@ -19,7 +19,8 @@ void CuboidTexture::init(Texture* texture) {
 }
 
 void CuboidTexture::paint(QPainter* painter) {
-	const auto& pixmap = _texture->data();
-	painter->drawImage(QRectF({ 0, 0 }, size()), pixmap.toImage().mirrored(), pixmap.rect());
+	auto image = _texture->image();
+	image.mirror();
+	painter->drawImage(QRectF({ 0, 0 }, size()), image, image.rect());
 }
 } // namespace eno

@@ -49,19 +49,28 @@ View3D {
     }
 
     function setModel(model) {
+        // Clear old materials
+        myModel.matList = [];
+        var oldMats = myModel.children;
+        for (var i in oldMats) {
+            oldMats[i].destroy();
+        }
+
         geometry.project = model;
 
+        // Set new materials
         var mats = model.materials;
-        myModel.matList = [];
-        for (var i in mats) {
-            myModel.matList.push(
-                        Qt.createQmlObject(
-                            'import QtQuick3D;' +
-                            'DefaultMaterial {' +
-                            ' diffuseColor: "' + mats[i].diffuse + '";' +
-                            '}'
-                            , root)
-                        );
+        var component = Qt.createComponent("Material.qml");
+        if (component.status === Component.Ready) {
+            for (var j in mats) {
+                var mat = mats[j];
+
+                var object = component.createObject(myModel);
+                object.diffuseColor = mat.diffuse;
+                object.diffuseTexture = mat.texture;
+
+                myModel.matList.push(object);
+            }
         }
     }
 

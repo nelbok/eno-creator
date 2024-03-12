@@ -1,7 +1,9 @@
 #pragma once
 
 #include <QtCore/QString>
-#include <QtGui/QColor>
+#include <QtCore/QSize>
+#include <QtCore/QByteArray>
+#include <QtGui/QImage>
 #include <QtGui/QPixmap>
 
 #include <eno/data/Container.hpp>
@@ -13,7 +15,8 @@ class Texture : public Item {
 	Q_OBJECT
 	Q_PROPERTY(QUuid uuid READ uuid NOTIFY uuidUpdated)
 	Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameUpdated)
-	Q_PROPERTY(QPixmap data READ data WRITE setData NOTIFY dataUpdated)
+	Q_PROPERTY(QSize size READ size NOTIFY sizeUpdated)
+	Q_PROPERTY(QByteArray data READ data NOTIFY dataUpdated)
 
 public:
 	Texture(Project* project);
@@ -24,16 +27,26 @@ public:
 	const QString& name() const { return _name; }
 	void setName(const QString& name);
 
-	const QPixmap& data() const { return _data; }
-	void setData(const QPixmap& data);
+	const QSize& size() const { return _size; }
+	const QByteArray& data() const { return _data; }
 	// clang-format on
+
+	QPixmap pixmap() const;
+	QImage image() const;
+
+	// Data should be in Format RGBA8888
+	void set(const QSize& size, const QByteArray& data);
+	void set(const QImage& image);
+	void set(const QPixmap& pixmap);
 
 private:
 	QString _name{};
-	QPixmap _data{};
+	QSize _size{};
+	QByteArray _data{};
 
 signals:
 	void nameUpdated();
+	void sizeUpdated();
 	void dataUpdated();
 };
 } // namespace eno

@@ -29,9 +29,7 @@ void TextureCommand::setName(Commands* c, Texture* t, const QString& newValue) {
 
 void TextureCommand::setData(Commands* c, Texture* t, const QPixmap& n) {
 	// Using LazyValueCommand: QPixmap doesn't have a != operator
-	const auto& o = t->data();
-	if (o.cacheKey() != n.cacheKey()) {
-		c->add(new LazyValueCommand(t, &Texture::setData, o, n));
-	}
+	const auto& o = t->pixmap();
+	c->add(new LazyValueCommand(t, qOverload<const QPixmap&>(&Texture::set), o, n));
 }
 } // namespace eno

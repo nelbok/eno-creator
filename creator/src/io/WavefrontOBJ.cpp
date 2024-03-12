@@ -240,7 +240,7 @@ void WavefrontOBJ::writeTextures() {
 			return;
 		}
 
-		texture->data().save(fileInfo.path() + "/" + texture->name() + ".png");
+		texture->image().save(fileInfo.path() + "/" + texture->name() + ".png");
 	}
 }
 

@@ -3,6 +3,8 @@ set(PROJECT_SOURCES
 	src/About.hpp
 	src/CuboidGeometry.cpp
 	src/CuboidGeometry.hpp
+	src/CuboidTexture.cpp
+	src/CuboidTexture.hpp
 	src/Intro.cpp
 	src/Intro.hpp
 	src/main.cpp
@@ -16,6 +18,7 @@ set(QML_SOURCES
 	qml/About.qml
 	qml/Loader.qml
 	qml/Main.qml
+	qml/Material.qml
 	qml/Viewer.qml
 )
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" PREFIX "" FILES ${PROJECT_SOURCES} ${QML_SOURCES})

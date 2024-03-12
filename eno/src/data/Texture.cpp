@@ -17,11 +17,50 @@ void Texture::setName(const QString& name) {
 	}
 }
 
-void Texture::setData(const QPixmap& data) {
-	// Restrict data
-	// Size
+QPixmap Texture::pixmap() const {
+	return QPixmap::fromImage(image());
+}
+
+QImage Texture::image() const {
+	QImage img(reinterpret_cast<const uchar*>(_data.data()), _size.width(), _size.height(), QImage::Format_RGBA8888);
+	img.mirror();
+	return img;
+}
+
+void Texture::set(const QSize& size, const QByteArray& data) {
+	_size = size;
 	_data = data;
 	_project->setIsModified(true);
+	emit sizeUpdated();
 	emit dataUpdated();
 }
+
+void Texture::set(const QImage& img) {
+	assert(!img.isNull());
+
+	// Image into byte array
+	QByteArray data;
+
+	for (int y = 0; y < img.height(); ++y) {
+		QByteArray line;
+		line.resize(img.width() * 4); // RGBA8
+		for (int x = 0; x < img.width(); ++x) {
+			const auto& c = img.pixelColor(x, img.height() - y - 1);
+			int offset = x * 4;
+			line.data()[offset + 0] = char(c.red());
+			line.data()[offset + 1] = char(c.green());
+			line.data()[offset + 2] = char(c.blue());
+			line.data()[offset + 3] = char(c.alpha());
+		}
+		data += line;
+	}
+
+	set(img.size(), data);
+}
+
+void Texture::set(const QPixmap& pixmap) {
+	assert(!pixmap.isNull());
+	set(pixmap.toImage());
+}
+
 } // namespace eno
