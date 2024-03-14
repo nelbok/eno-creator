@@ -28,6 +28,12 @@ void MaterialsDockWidget::initContent() {
 	initForm();
 
 	connect(_core->project(), &Project::materialsUpdated, this, &BaseDockWidget::updateListDatas);
+	connect(_core->graphics(), &Graphics::materialUpdated, this, [this]() {
+		auto* material = _core->graphics()->material();
+		if (_core->graphics()->material() != _current) {
+			setCurrentListData(QVariant::fromValue(material));
+		}
+	});
 }
 
 void MaterialsDockWidget::addClicked() {

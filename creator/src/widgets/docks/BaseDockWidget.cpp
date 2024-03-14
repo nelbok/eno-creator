@@ -74,6 +74,18 @@ void BaseDockWidget::initList(const QString& addName, const QString& removeName)
 	_layout->addWidget(_list);
 }
 
+void BaseDockWidget::setCurrentListData(QVariant current) {
+	assert(_list);
+	int count = _list->count();
+	for (int i = 0; i < count; ++i) {
+		auto* item = _list->item(i);
+		if (item->data(Qt::UserRole) == current) {
+			_list->setCurrentItem(item);
+			break;
+		}
+	}
+}
+
 QString BaseDockWidget::currentListName() const {
 	assert(_list);
 	if (auto* current = _list->currentItem()) {

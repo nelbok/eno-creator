@@ -41,6 +41,7 @@ protected:
 
 	// List
 	void initList(const QString& addName, const QString& removeName);
+	void setCurrentListData(QVariant current);
 	QString currentListName() const;
 	QVariant currentListData() const;
 
