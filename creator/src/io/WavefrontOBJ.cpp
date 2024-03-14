@@ -20,9 +20,9 @@ void WavefrontOBJ::save() {
 	assert(_project);
 	_result = Result::Success;
 	_data = Merger::fillData(_project->scene());
-	//if (Preferences::generationOptimized()) {
-	//	_data = mergeData(_data);
-	//}
+	if (Preferences::generationOptimized()) {
+		_data = mergeData(_data);
+	}
 	compute();
 	writeObjFile();
 	writeMtlFile();
@@ -56,7 +56,7 @@ void WavefrontOBJ::compute() {
 
 		{
 			const auto& nbElements = Geometry::stride() / sizeof(float);
-			const auto& vertexData = Geometry::createCuboidVertexData(cube.position);
+			const auto& vertexData = Geometry::createCuboidVertexData(cube.position, cube.faces);
 			const float* d = reinterpret_cast<const float*>(vertexData.data());
 			const qsizetype iMax = vertexData.length() / sizeof(float);
 			for (qsizetype i = 0; i < iMax;) {
@@ -69,7 +69,7 @@ void WavefrontOBJ::compute() {
 		}
 
 		{
-			const auto& indexData = Geometry::createCuboidIndexData(baseIndex);
+			const auto& indexData = Geometry::createCuboidIndexData(baseIndex, cube.faces);
 			const quint32* d = reinterpret_cast<const quint32*>(indexData.data());
 			const qsizetype iMax = indexData.length() / sizeof(quint32);
 			for (qsizetype i = 0; i < iMax;) {

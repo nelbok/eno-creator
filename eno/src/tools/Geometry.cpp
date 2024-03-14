@@ -6,14 +6,12 @@
 
 namespace eno::Geometry {
 namespace detail {
-enum PlaneNormal { PositiveX, NegativeX, PositiveY, NegativeY, PositiveZ, NegativeZ };
-
 // vertex + texture + normal + tangent
 constexpr quint32 elementSize = 3 + 2 + 3 + 4;
 
 void createPlaneVertexData(PlaneNormal normal, const QVector3D& position, float* vertices) {
 	switch (normal) {
-		case NegativeX:
+		case PlaneNormal::NegativeX:
 			// Iterate over z
 			for (int j = 1; j >= 0; --j) {
 				// Iterate over y
@@ -37,7 +35,7 @@ void createPlaneVertexData(PlaneNormal normal, const QVector3D& position, float*
 				}
 			}
 			break;
-		case PositiveX: {
+		case PlaneNormal::PositiveX: {
 			// Iterate over z
 			for (int j = 0; j < 2; ++j) {
 				// Iterate over y
@@ -62,7 +60,7 @@ void createPlaneVertexData(PlaneNormal normal, const QVector3D& position, float*
 			}
 			break;
 		}
-		case NegativeY:
+		case PlaneNormal::NegativeY:
 			// Iterate over z
 			for (int j = 0; j < 2; ++j) {
 				// Iterate over x
@@ -88,7 +86,7 @@ void createPlaneVertexData(PlaneNormal normal, const QVector3D& position, float*
 				}
 			}
 			break;
-		case PositiveY: {
+		case PlaneNormal::PositiveY: {
 			// Iterate over z
 			for (int j = 1; j >= 0; --j) {
 				// Iterate over x
@@ -115,7 +113,7 @@ void createPlaneVertexData(PlaneNormal normal, const QVector3D& position, float*
 			}
 			break;
 		}
-		case NegativeZ:
+		case PlaneNormal::NegativeZ:
 			// Iterate over y
 			for (int j = 0; j < 2; ++j) {
 				// Iterate over x
@@ -139,7 +137,7 @@ void createPlaneVertexData(PlaneNormal normal, const QVector3D& position, float*
 				}
 			}
 			break;
-		case PositiveZ: {
+		case PlaneNormal::PositiveZ: {
 			// Iterate over y
 			for (int j = 0; j < 2; ++j) {
 				// Iterate over x
@@ -177,53 +175,92 @@ void createPlaneIndexData(quint32* indices, quint32& baseIndex) {
 	*indices++ = baseIndex + 3;
 	baseIndex += 4;
 }
+
+int nbVisibleFaces(PlaneNormal faces) {
+	int count = 0;
+	if ((*faces & *PlaneNormal::PositiveX) == *PlaneNormal::PositiveX)
+		++count;
+	if ((*faces & *PlaneNormal::NegativeX) == *PlaneNormal::NegativeX)
+		++count;
+	if ((*faces & *PlaneNormal::PositiveY) == *PlaneNormal::PositiveY)
+		++count;
+	if ((*faces & *PlaneNormal::NegativeY) == *PlaneNormal::NegativeY)
+		++count;
+	if ((*faces & *PlaneNormal::PositiveZ) == *PlaneNormal::PositiveZ)
+		++count;
+	if ((*faces & *PlaneNormal::NegativeZ) == *PlaneNormal::NegativeZ)
+		++count;
+	return count;
+}
 } // namespace detail
 
 quint32 stride() {
 	return detail::elementSize * sizeof(float);
 }
 
-QByteArray createCuboidVertexData(const QVector3D& position) {
-	const int yzVerts = 4;
-	const int xzVerts = 4;
-	const int xyVerts = 4;
-	const int nVerts = 2 * (yzVerts + xzVerts + xyVerts);
+QByteArray createCuboidVertexData(const QVector3D& position, PlaneNormal faces) {
+	constexpr int nbVerticesByFace = 4;
+	int verticeCount = detail::nbVisibleFaces(faces) * nbVerticesByFace;
 	QByteArray vertexBytes;
-	vertexBytes.resize(stride() * nVerts);
+	vertexBytes.resize(verticeCount * stride());
 	float* vertices = reinterpret_cast<float*>(vertexBytes.data());
-	detail::createPlaneVertexData(detail::PositiveX, position, vertices);
-	vertices += yzVerts * detail::elementSize;
-	detail::createPlaneVertexData(detail::NegativeX, position, vertices);
-	vertices += yzVerts * detail::elementSize;
-	detail::createPlaneVertexData(detail::PositiveY, position, vertices);
-	vertices += xzVerts * detail::elementSize;
-	detail::createPlaneVertexData(detail::NegativeY, position, vertices);
-	vertices += xzVerts * detail::elementSize;
-	detail::createPlaneVertexData(detail::PositiveZ, position, vertices);
-	vertices += xyVerts * detail::elementSize;
-	detail::createPlaneVertexData(detail::NegativeZ, position, vertices);
+	if ((*faces & *PlaneNormal::PositiveX) == *PlaneNormal::PositiveX) {
+		detail::createPlaneVertexData(PlaneNormal::PositiveX, position, vertices);
+		vertices += nbVerticesByFace * detail::elementSize;
+	}
+	if ((*faces & *PlaneNormal::NegativeX) == *PlaneNormal::NegativeX) {
+		detail::createPlaneVertexData(PlaneNormal::NegativeX, position, vertices);
+		vertices += nbVerticesByFace * detail::elementSize;
+	}
+	if ((*faces & *PlaneNormal::PositiveY) == *PlaneNormal::PositiveY) {
+		detail::createPlaneVertexData(PlaneNormal::PositiveY, position, vertices);
+		vertices += nbVerticesByFace * detail::elementSize;
+	}
+	if ((*faces & *PlaneNormal::NegativeY) == *PlaneNormal::NegativeY) {
+		detail::createPlaneVertexData(PlaneNormal::NegativeY, position, vertices);
+		vertices += nbVerticesByFace * detail::elementSize;
+	}
+	if ((*faces & *PlaneNormal::PositiveZ) == *PlaneNormal::PositiveZ) {
+		detail::createPlaneVertexData(PlaneNormal::PositiveZ, position, vertices);
+		vertices += nbVerticesByFace * detail::elementSize;
+	}
+	if ((*faces & *PlaneNormal::NegativeZ) == *PlaneNormal::NegativeZ) {
+		detail::createPlaneVertexData(PlaneNormal::NegativeZ, position, vertices);
+		vertices += nbVerticesByFace * detail::elementSize;
+	}
 	return vertexBytes;
 }
 
-QByteArray createCuboidIndexData(quint32& baseIndex) {
-	const int yzIndices = 2 * 3;
-	const int xzIndices = 2 * 3;
-	const int xyIndices = 2 * 3;
-	const int indexCount = 2 * (yzIndices + xzIndices + xyIndices);
+QByteArray createCuboidIndexData(quint32& baseIndex, PlaneNormal faces) {
+	constexpr int nbIndicesByFace = 2 * 3;
+	int indiceCount = detail::nbVisibleFaces(faces) * nbIndicesByFace;
 	QByteArray indexData;
-	indexData.resize(indexCount * sizeof(quint32));
+	indexData.resize(indiceCount * sizeof(quint32));
 	quint32* indices = reinterpret_cast<quint32*>(indexData.data());
-	detail::createPlaneIndexData(indices, baseIndex);
-	indices += yzIndices;
-	detail::createPlaneIndexData(indices, baseIndex);
-	indices += yzIndices;
-	detail::createPlaneIndexData(indices, baseIndex);
-	indices += xzIndices;
-	detail::createPlaneIndexData(indices, baseIndex);
-	indices += xzIndices;
-	detail::createPlaneIndexData(indices, baseIndex);
-	indices += xyIndices;
-	detail::createPlaneIndexData(indices, baseIndex);
+	if ((*faces & *PlaneNormal::PositiveX) == *PlaneNormal::PositiveX) {
+		detail::createPlaneIndexData(indices, baseIndex);
+		indices += nbIndicesByFace;
+	}
+	if ((*faces & *PlaneNormal::NegativeX) == *PlaneNormal::NegativeX) {
+		detail::createPlaneIndexData(indices, baseIndex);
+		indices += nbIndicesByFace;
+	}
+	if ((*faces & *PlaneNormal::PositiveY) == *PlaneNormal::PositiveY) {
+		detail::createPlaneIndexData(indices, baseIndex);
+		indices += nbIndicesByFace;
+	}
+	if ((*faces & *PlaneNormal::NegativeY) == *PlaneNormal::NegativeY) {
+		detail::createPlaneIndexData(indices, baseIndex);
+		indices += nbIndicesByFace;
+	}
+	if ((*faces & *PlaneNormal::PositiveZ) == *PlaneNormal::PositiveZ) {
+		detail::createPlaneIndexData(indices, baseIndex);
+		indices += nbIndicesByFace;
+	}
+	if ((*faces & *PlaneNormal::NegativeZ) == *PlaneNormal::NegativeZ) {
+		detail::createPlaneIndexData(indices, baseIndex);
+		indices += nbIndicesByFace;
+	}
 	return indexData;
 }
 

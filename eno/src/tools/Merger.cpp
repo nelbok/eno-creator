@@ -4,7 +4,7 @@
 #include <eno/data/Scene.hpp>
 
 namespace eno::Merger {
-QList<Cuboid> fillData(Scene* scene) {
+QList<Cuboid> fillData(const Scene* scene) {
 	QList<Cuboid> data;
 
 	const auto& objects = scene->objects();
@@ -18,7 +18,7 @@ QList<Cuboid> fillData(Scene* scene) {
 	return data;
 }
 
-QList<Cuboid> mergeData(Scene* scene) {
+QList<Cuboid> mergeData(const Scene* scene) {
 	return mergeData(fillData(scene));
 }
 
@@ -26,62 +26,36 @@ QList<Cuboid> mergeData(QList<Cuboid> data) {
 	if (data.count() < 2)
 		return data;
 
-	// X
-	for (int ia = 0; ia < data.count() - 1; ++ia) {
-		for (int ib = ia + 1; ib < data.count();) {
-			auto& a = data[ia];
-			const auto& b = data.at(ib);
-
-			if (a.position.y() != b.position.y() || a.position.z() != b.position.z() || a.material != b.material) {
-				++ib;
-				continue;
+	for (auto& a : data) {
+		int nbFacesFound = 0;
+		for (auto& b : data) {
+			// X
+			if (a.position.x() + 1 == b.position.x() && a.position.y() == b.position.y() && a.position.z() == b.position.z()) {
+				++nbFacesFound;
+				if (a.material != b.material)
+					continue;
+				a.faces = a.faces ^ Geometry::PlaneNormal::PositiveX;
+				b.faces = b.faces ^ Geometry::PlaneNormal::NegativeX;
 			}
-
-			if (a.position.x() + a.scale.x() == b.position.x() && a.scale.y() == b.scale.y() && a.scale.z() == b.scale.z()) {
-				a.scale.setX(a.scale.x() + 1);
-				data.removeAt(ib);
-			} else {
-				++ib;
+			// Y
+			else if (a.position.x() == b.position.x() && a.position.y() + 1 == b.position.y() && a.position.z() == b.position.z()) {
+				++nbFacesFound;
+				if (a.material != b.material)
+					continue;
+				a.faces = a.faces ^ Geometry::PlaneNormal::PositiveY;
+				b.faces = b.faces ^ Geometry::PlaneNormal::NegativeY;
 			}
-		}
-	}
-
-	// Y
-	for (int ia = 0; ia < data.count() - 1; ++ia) {
-		for (int ib = ia + 1; ib < data.count();) {
-			auto& a = data[ia];
-			const auto& b = data.at(ib);
-
-			if (a.position.x() != b.position.x() || a.position.z() != b.position.z() || a.material != b.material) {
-				++ib;
-				continue;
+			// Z
+			else if (a.position.x() == b.position.x() && a.position.y() == b.position.y() && a.position.z() + 1 == b.position.z()) {
+				++nbFacesFound;
+				if (a.material != b.material)
+					continue;
+				a.faces = a.faces ^ Geometry::PlaneNormal::PositiveZ;
+				b.faces = b.faces ^ Geometry::PlaneNormal::NegativeZ;
 			}
-
-			if (a.scale.x() == b.scale.x() && a.position.y() + a.scale.y() == b.position.y() && a.scale.z() == b.scale.z()) {
-				a.scale.setY(a.scale.y() + 1);
-				data.removeAt(ib);
-			} else {
-				++ib;
-			}
-		}
-	}
-
-	// Z
-	for (int ia = 0; ia < data.count() - 1; ++ia) {
-		for (int ib = ia + 1; ib < data.count();) {
-			auto& a = data[ia];
-			const auto& b = data.at(ib);
-
-			if (a.position.x() != b.position.x() || a.position.y() != b.position.y() || a.material != b.material) {
-				++ib;
-				continue;
-			}
-
-			if (a.scale.x() == b.scale.x() && a.scale.y() == b.scale.y() && a.position.z() + a.scale.z() == b.position.z()) {
-				a.scale.setZ(a.scale.z() + 1);
-				data.removeAt(ib);
-			} else {
-				++ib;
+			if (nbFacesFound >= 3) {
+				assert(nbFacesFound == 3);
+				break;
 			}
 		}
 	}
@@ -89,4 +63,4 @@ QList<Cuboid> mergeData(QList<Cuboid> data) {
 	return data;
 }
 
-} // namespace eno
+} // namespace eno::Merger
