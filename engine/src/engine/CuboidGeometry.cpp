@@ -1,4 +1,4 @@
-#include "CuboidGeometry.hpp"
+#include <eno/engine/CuboidGeometry.hpp>
 
 #include <QtGui/QVector3D>
 

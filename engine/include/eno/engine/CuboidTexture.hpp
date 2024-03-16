@@ -9,7 +9,7 @@ namespace eno {
 class CuboidTexture : public QQuick3DTextureData {
 	Q_OBJECT
 	Q_PROPERTY(Texture* texture MEMBER _texture WRITE setTexture)
-	QML_NAMED_ELEMENT(CuboidTexture)
+
 public:
 	CuboidTexture(QQuick3DObject* parent = nullptr);
 	virtual ~CuboidTexture();

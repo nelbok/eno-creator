@@ -27,6 +27,7 @@ find_package(Qt6 REQUIRED COMPONENTS Widgets Quick Quick3D 3DExtras 3DCore 3DRen
 include(cmake/deployqt.cmake)
 
 add_subdirectory(eno)
+add_subdirectory(engine)
 add_subdirectory(creator)
 add_subdirectory(viewer)
 

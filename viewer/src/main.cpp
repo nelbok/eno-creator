@@ -1,16 +1,19 @@
 #include <QtGui/QGuiApplication>
 #include <QtGui/QIcon>
 #include <QtQml/QQmlApplicationEngine>
+#include <QtQml/QQmlExtensionPlugin>
 
 #include <eno/data/Project.hpp>
+#include <eno/engine/CuboidGeometry.hpp>
+#include <eno/engine/CuboidTexture.hpp>
 #include <eno/io/Eno.hpp>
 
 #include "About.hpp"
-#include "CuboidGeometry.hpp"
-#include "CuboidTexture.hpp"
 #include "Intro.hpp"
 
 #include "Config.hpp"
+
+Q_IMPORT_QML_PLUGIN(enginePlugin)
 
 int main(int argc, char* argv[]) {
 	QGuiApplication a(argc, argv);
@@ -35,7 +38,7 @@ int main(int argc, char* argv[]) {
 	qmlRegisterType<eno::CuboidTexture>("Eno", 1, 0, "MyCuboidTexture");
 	qmlRegisterType<eno::Eno>("Eno", 1, 0, "MyLoader");
 
-	const QUrl url(u"qrc:/Viewer/qml/Main.qml"_qs);
+	const QUrl url("qrc:/viewer/qml/Main.qml");
 	QObject::connect(
 		&engine, &QQmlApplicationEngine::objectCreated, &a,
 		[url](QObject* obj, const QUrl& objUrl) {

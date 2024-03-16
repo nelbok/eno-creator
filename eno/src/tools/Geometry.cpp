@@ -162,6 +162,8 @@ void createPlaneVertexData(PlaneNormal normal, const QVector3D& position, float*
 			}
 			break;
 		}
+		default:
+			assert(false);
 	} // switch (normal)
 }
 

@@ -1,4 +1,4 @@
-#include "CuboidTexture.hpp"
+#include <eno/engine/CuboidTexture.hpp>
 
 namespace eno {
 

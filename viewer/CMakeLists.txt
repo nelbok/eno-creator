@@ -1,10 +1,6 @@
 set(PROJECT_SOURCES
 	src/About.cpp
 	src/About.hpp
-	src/CuboidGeometry.cpp
-	src/CuboidGeometry.hpp
-	src/CuboidTexture.cpp
-	src/CuboidTexture.hpp
 	src/Intro.cpp
 	src/Intro.hpp
 	src/main.cpp
@@ -18,8 +14,6 @@ set(QML_SOURCES
 	qml/About.qml
 	qml/Loader.qml
 	qml/Main.qml
-	qml/Material.qml
-	qml/Viewer.qml
 )
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" PREFIX "" FILES ${PROJECT_SOURCES} ${QML_SOURCES})
 include_directories(.)
@@ -33,12 +27,14 @@ set(OTHER_FILES
 )
 
 qt_add_executable(${CENO_VIEWER} MANUAL_FINALIZATION ${PROJECT_SOURCES} ${OTHER_FILES})
-qt_add_qml_module(${CENO_VIEWER} URI Viewer VERSION 1.0 RESOURCE_PREFIX / QML_FILES ${QML_SOURCES})
+qt_add_qml_module(${CENO_VIEWER} URI viewer VERSION 1.0 RESOURCE_PREFIX / QML_FILES ${QML_SOURCES})
 
 target_link_libraries(${CENO_VIEWER} PRIVATE
 	Qt6::Quick
 	Qt6::Quick3D
 	${CENO_ENO}
+	${CENO_ENGINE}
+	${CENO_ENGINE}plugin
 )
 
 configure_file(android/AndroidManifest.xml.in android/AndroidManifest.xml)

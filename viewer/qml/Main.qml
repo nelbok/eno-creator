@@ -4,8 +4,11 @@ import QtQuick.Dialogs
 import QtQuick3D
 import QtQuick3D.Helpers
 
+import engine
 import Eno
+
 import "."
+import "qrc:/engine/qml"
 
 Window {
     width: 1200
