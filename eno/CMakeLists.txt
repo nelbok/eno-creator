@@ -1,3 +1,11 @@
+cmake_minimum_required(VERSION 3.27)
+
+include(cmake/defines.cmake)
+
+project(${CENO_ENO} VERSION ${ENO_VERSION} LANGUAGES CXX)
+
+include(cmake/config.cmake)
+
 set(CMAKE_DEBUG_POSTFIX _d)
 set(PROJECT_SOURCES
 	include/eno/data/Container.hpp

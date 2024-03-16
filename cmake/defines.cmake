@@ -1,13 +1,7 @@
-set(ENO_ORGANIZATION "Foxxy Soft")
 set(ENO_CREATOR "Eno Creator")
 set(ENO_VIEWER "Eno Viewer")
-set(ENO_VERSION "1.0.5")
-string(TIMESTAMP ENO_YEAR %Y)
-set(ENO_COPYRIGHT "Copyright (C) 2011-${ENO_YEAR} ${ENO_ORGANIZATION}")
 
-set(CENO_ORGANIZATION "FoxxySoft")
 set(CENO_SUITE "EnoSuite")
-set(CENO_ENO "Eno")
 set(CENO_ENGINE "EnoEngine")
 set(CENO_CREATOR "EnoCreator")
 set(CENO_VIEWER "EnoViewer")

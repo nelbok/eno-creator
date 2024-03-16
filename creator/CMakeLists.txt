@@ -107,9 +107,8 @@ set_target_properties(${CENO_CREATOR} PROPERTIES
 	MACOSX_BUNDLE TRUE
 	WIN32_EXECUTABLE TRUE
 )
-
 qt_finalize_executable(${CENO_CREATOR})
 
 if(WIN32)
-	windeployqt(${CENO_CREATOR})
+	windeployqt(${CENO_CREATOR} QMLDIR "${CMAKE_CURRENT_SOURCE_DIR}/qml")
 endif()
