@@ -21,8 +21,8 @@ else()
     add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
-find_package(QT NAMES Qt6 REQUIRED COMPONENTS Widgets Quick Quick3D 3DExtras 3DCore 3DRender)
-find_package(Qt6 REQUIRED COMPONENTS Widgets Quick Quick3D 3DExtras 3DCore 3DRender)
+find_package(QT NAMES Qt6 REQUIRED COMPONENTS Widgets Quick Quick3D QuickWidgets)
+find_package(Qt6 REQUIRED COMPONENTS Widgets Quick Quick3D QuickWidgets)
 
 include(cmake/deployqt.cmake)
 

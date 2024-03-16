@@ -29,15 +29,6 @@ set(PROJECT_SOURCES
 	src/controller/Shortcuts.cpp
 	src/controller/Shortcuts.hpp
 
-	src/engine/CuboidGeometry.cpp
-	src/engine/CuboidGeometry.hpp
-	src/engine/CuboidMesh.cpp
-	src/engine/CuboidMesh.hpp
-	src/engine/CuboidTexture.cpp
-	src/engine/CuboidTexture.hpp
-	src/engine/Engine.cpp
-	src/engine/Engine.hpp
-
 	src/io/WavefrontOBJ.cpp
 	src/io/WavefrontOBJ.hpp
 
@@ -82,6 +73,9 @@ set(PROJECT_SOURCES
 	resources/resources.rc.in
 	resources/resources.qrc
 )
+set(QML_SOURCES
+	qml/Preview.qml
+)
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" PREFIX "" FILES ${PROJECT_SOURCES})
 include_directories(.)
 include_directories(src)
@@ -94,13 +88,16 @@ set(OTHER_FILES
 )
 
 qt_add_executable(${CENO_CREATOR} MANUAL_FINALIZATION ${PROJECT_SOURCES} ${OTHER_FILES})
+qt_add_qml_module(${CENO_CREATOR} URI creator VERSION 1.0 RESOURCE_PREFIX / QML_FILES ${QML_SOURCES})
 
 target_link_libraries(${CENO_CREATOR} PRIVATE
-	Qt${QT_VERSION_MAJOR}::Widgets
-	Qt${QT_VERSION_MAJOR}::3DCore
-	Qt${QT_VERSION_MAJOR}::3DExtras
-	Qt${QT_VERSION_MAJOR}::3DRender
+	Qt6::Widgets
+	Qt6::Quick
+	Qt6::Quick3D
+	Qt6::QuickWidgets
 	${CENO_ENO}
+	${CENO_ENGINE}
+	${CENO_ENGINE}plugin
 )
 
 set_target_properties(${CENO_CREATOR} PROPERTIES

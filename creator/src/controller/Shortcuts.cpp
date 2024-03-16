@@ -3,6 +3,7 @@
 #include <QtGui/QAction>
 #include <QtGui/QActionGroup>
 #include <QtGui/QDesktopServices>
+#include <QtQuickWidgets/QtQuickWidgets>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QFileDialog>
 #include <QtWidgets/QMenu>
@@ -11,9 +12,10 @@
 
 #include <eno/data/Project.hpp>
 #include <eno/data/Scene.hpp>
+#include <eno/engine/CuboidGeometry.hpp>
+#include <eno/engine/CuboidTexture.hpp>
 #include <eno/io/Eno.hpp>
 
-#include "engine/Engine.hpp"
 #include "io/WavefrontOBJ.hpp"
 #include "view/PreferencesWindow.hpp"
 #include "Commands.hpp"
@@ -213,13 +215,19 @@ void Shortcuts::initGenerate() {
 		thread->start();
 	});
 
+
+	qmlRegisterType<eno::CuboidGeometry>("Eno", 1, 0, "MyCuboidGeometry");
+	qmlRegisterType<eno::CuboidTexture>("Eno", 1, 0, "MyCuboidTexture");
+
 	_generate3DAction = new QAction(QIcon(":export/opengl.png"), "Open 3D view", this);
 	_generate3DAction->setToolTip("Show the project in the 3D view");
 	_generate3DAction->setShortcut(Preferences::key3DView());
 	connect(_generate3DAction, &QAction::triggered, this, [this]() {
-		auto* widget = new Engine();
-		widget->init(_core->project());
-		widget->show();
+		const QUrl url("qrc:/creator/qml/Preview.qml");
+		QQuickWidget* view = new QQuickWidget;
+		view->rootContext()->setContextProperty("MyProject", _core->project());
+		view->setSource(url);
+		view->show();
 		emit showMessage("Loading");
 	});
 }
