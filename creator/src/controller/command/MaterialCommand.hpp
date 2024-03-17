@@ -14,6 +14,6 @@ struct MaterialCommand {
 	static bool destroy(Commands* commands, Material* material, Project* project);
 	static void setName(Commands* commands, Material* material, const QString& name);
 	static void setDiffuse(Commands* commands, Material* material, const QColor& color);
-	static void setTexture(Commands* commands, Material* material, Texture* texture);
+	static void setDiffuseMap(Commands* commands, Material* material, Texture* texture);
 };
 } // namespace eno

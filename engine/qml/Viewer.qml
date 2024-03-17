@@ -67,7 +67,7 @@ View3D {
 
                 var object = component.createObject(myModel);
                 object.diffuseColor = mat.diffuse;
-                object.diffuseTexture = mat.texture;
+                object.diffuseTexture = mat.diffuseMap;
 
                 myModel.matList.push(object);
             }

@@ -40,7 +40,7 @@ private:
 	QWidget* _form{ nullptr };
 	QLineEdit* _name{ nullptr };
 	ColorButton* _diffuse{ nullptr };
-	QComboBox* _texture{ nullptr };
+	QComboBox* _diffuseMap{ nullptr };
 	QLabel* _refCount{ nullptr };
 };
 } // namespace eno

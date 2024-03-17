@@ -8,7 +8,7 @@ set_target_properties(${CENO_CREATOR}_tooling PROPERTIES FOLDER "Autogen")
 
 #set_target_properties(${CENO_ENGINE}_autogen PROPERTIES FOLDER "Autogen")
 set_target_properties(${CENO_ENGINE}_automoc_json_extraction PROPERTIES FOLDER "Autogen")
-set_target_properties(${CENO_ENGINE}_qmlcache PROPERTIES FOLDER "Autogen")
+#set_target_properties(${CENO_ENGINE}_qmlcache PROPERTIES FOLDER "Autogen")
 #set_target_properties(${CENO_ENGINE}_qmlcache_autogen PROPERTIES FOLDER "Autogen")
 #set_target_properties(${CENO_ENGINE}_qmlimportscan PROPERTIES FOLDER "Autogen")
 set_target_properties(${CENO_ENGINE}_qmltyperegistration PROPERTIES FOLDER "Autogen")

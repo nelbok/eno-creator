@@ -98,30 +98,30 @@ QList<QPair<QString, QVariant>> MaterialsDockWidget::datas() const {
 }
 
 void MaterialsDockWidget::updateTextures(const QList<Texture*>& textures) {
-	_texture->blockSignals(true);
-	_texture->clear();
+	_diffuseMap->blockSignals(true);
+	_diffuseMap->clear();
 
 	// Default value
-	_texture->addItem("None");
-	_texture->setCurrentIndex(0);
+	_diffuseMap->addItem("None");
+	_diffuseMap->setCurrentIndex(0);
 
 	for (auto* texture : textures) {
 		disconnect(texture, &Texture::nameUpdated, this, &MaterialsDockWidget::updateTextureName);
-		_texture->addItem(texture->name(), QVariant::fromValue(texture));
+		_diffuseMap->addItem(texture->name(), QVariant::fromValue(texture));
 		connect(texture, &Texture::nameUpdated, this, &MaterialsDockWidget::updateTextureName);
 	}
-	if (_current && _current->texture())
-		_texture->setCurrentIndex(_texture->findData(QVariant::fromValue(_current->texture())));
-	_texture->blockSignals(false);
+	if (_current && _current->diffuseMap())
+		_diffuseMap->setCurrentIndex(_diffuseMap->findData(QVariant::fromValue(_current->diffuseMap())));
+	_diffuseMap->blockSignals(false);
 }
 
 void MaterialsDockWidget::updateTextureName() {
 	assert(sender());
 	auto* texture = qobject_cast<Texture*>(sender());
 	assert(texture);
-	int index = _texture->findData(QVariant::fromValue(texture));
+	int index = _diffuseMap->findData(QVariant::fromValue(texture));
 	assert(index != -1);
-	_texture->setItemText(index, texture->name());
+	_diffuseMap->setItemText(index, texture->name());
 }
 
 void MaterialsDockWidget::initForm() {
@@ -129,14 +129,14 @@ void MaterialsDockWidget::initForm() {
 
 	_name = new QLineEdit(w);
 	_diffuse = new ColorButton(w);
-	_texture = new QComboBox(w);
+	_diffuseMap = new QComboBox(w);
 	_refCount = new QLabel(w);
 
 	_form = new QWidget(w);
 	auto* form = new QFormLayout(_form);
 	form->addRow("Name:", _name);
 	form->addRow("Diffuse:", _diffuse);
-	form->addRow("Texture:", _texture);
+	form->addRow("Diffuse map:", _diffuseMap);
 	form->addRow(_refCount);
 	_layout->addWidget(_form);
 
@@ -153,10 +153,10 @@ void MaterialsDockWidget::initForm() {
 			emit showMessage(QString("Material's diffuse color changed to %1").arg(color.name()));
 		}
 	});
-	connect(_texture, &QComboBox::currentIndexChanged, [this](int index) {
+	connect(_diffuseMap, &QComboBox::currentIndexChanged, [this](int index) {
 		if (_current && index != -1) {
-			auto* texture = _texture->itemData(index).value<Texture*>();
-			MaterialCommand::setTexture(_core->commands(), _current, texture);
+			auto* texture = _diffuseMap->itemData(index).value<Texture*>();
+			MaterialCommand::setDiffuseMap(_core->commands(), _current, texture);
 			if (texture)
 				emit showMessage(QString("Material's texture changed to %1").arg(texture->name()));
 			else
@@ -176,15 +176,15 @@ void MaterialsDockWidget::updateForm() {
 	if (_current) {
 		_name->setText(_current->name());
 		_diffuse->setColor(_current->diffuse());
-		if (_current->texture())
-			_texture->setCurrentIndex(_texture->findData(QVariant::fromValue(_current->texture())));
+		if (_current->diffuseMap())
+			_diffuseMap->setCurrentIndex(_diffuseMap->findData(QVariant::fromValue(_current->diffuseMap())));
 		else
-			_texture->setCurrentIndex(0);
+			_diffuseMap->setCurrentIndex(0);
 		_refCount->setText(QString("Used by %1 object(s)").arg(_current->refCount()));
 	} else {
 		_name->setText("-");
 		_diffuse->setColor({ 0, 0, 0 });
-		_texture->setCurrentIndex(0);
+		_diffuseMap->setCurrentIndex(0);
 		_refCount->setText("");
 	}
 }

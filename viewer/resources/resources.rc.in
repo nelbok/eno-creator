@@ -60,8 +60,8 @@ IDI_ICON1               ICON                    "logo.ico"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,0,0,0
- PRODUCTVERSION 1,0,0,0
+ FILEVERSION @ENO_VERSION_RC@
+ PRODUCTVERSION @ENO_SUITE_VERSION_RC@
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -78,12 +78,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "@ENO_ORGANIZATION@"
             VALUE "FileDescription", "Viewer for Eno project multiplatform"
-            VALUE "FileVersion", "1.0.0"
+            VALUE "FileVersion", "@ENO_VERSION@"
             VALUE "InternalName", "resources.rc"
             VALUE "LegalCopyright", "@ENO_COPYRIGHT@"
             VALUE "OriginalFilename", "@CENO_VIEWER@.exe"
             VALUE "ProductName", "@ENO_VIEWER@"
-            VALUE "ProductVersion", "@ENO_VERSION@"
+            VALUE "ProductVersion", "@ENO_SUITE_VERSION@"
         END
     END
     BLOCK "VarFileInfo"

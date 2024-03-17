@@ -4,7 +4,7 @@ namespace eno::Config {
 constexpr auto organization = "@ENO_ORGANIZATION@";
 constexpr auto creator = "@ENO_CREATOR@";
 constexpr auto viewer = "@ENO_VIEWER@";
-constexpr auto version = "@ENO_VERSION@";
+constexpr auto version = "@ENO_SUITE_VERSION@";
 constexpr auto year = "@ENO_YEAR@";
 constexpr auto copyright = "@ENO_COPYRIGHT@";
 constexpr auto github = "@ENO_GITHUB@";

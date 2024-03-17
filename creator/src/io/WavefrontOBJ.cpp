@@ -217,7 +217,7 @@ void WavefrontOBJ::writeMtlFile() {
 		}
 		Material* material = it->first;
 		const QColor& color = material->diffuse();
-		auto* texture = material->texture();
+		auto* texture = material->diffuseMap();
 		stream << "newmtl " << material->name() << Qt::endl;
 		stream << "Kd " << color.red() / 255.f << " " << color.green() / 255.f << " " << color.blue() / 255.f << Qt::endl;
 		if (texture) {
