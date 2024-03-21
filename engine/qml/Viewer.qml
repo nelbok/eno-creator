@@ -50,28 +50,29 @@ View3D {
 
     function setModel(model) {
         // Clear old materials
-        myModel.matList = [];
-        var oldMats = myModel.children;
-        for (var i in oldMats) {
-            oldMats[i].destroy();
+        for (var i in myModel.matList) {
+            myModel.matList[i].destroy();
         }
-
-        geometry.project = model;
+        myModel.matList = [];
 
         // Set new materials
-        var mats = model.materials;
         var component = Qt.createComponent("Material.qml");
         if (component.status === Component.Ready) {
-            for (var j in mats) {
-                var mat = mats[j];
+            for (var j in model.materials) {
+                var mat = model.materials[j];
 
                 var object = component.createObject(myModel);
-                object.diffuseColor = mat.diffuse;
-                object.diffuseTexture = mat.diffuseMap;
+                object.baseColor = mat.diffuse;
+                object.baseColorTexture = mat.diffuseMap;
+                object.opacity = mat.opacity;
+                //object.opacityTexture = mat.opacityMap;
 
                 myModel.matList.push(object);
             }
         }
+
+        // Set new model
+        geometry.project = model;
     }
 
     Model {
@@ -85,5 +86,16 @@ View3D {
 
         // Eno is in meter, we need to convert into cm
         scale: Qt.vector3d(100,100,100)
+    }
+
+    Model {
+        id: debug
+        visible: false
+        position: Qt.vector3d(0, -100, 0)
+        scale: Qt.vector3d(10,1,10)
+        source: "#Cube"
+        materials: DefaultMaterial {
+            diffuseColor: "green"
+        }
     }
 }

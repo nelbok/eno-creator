@@ -34,4 +34,12 @@ void MaterialCommand::setDiffuse(Commands* c, Material* m, const QColor& newValu
 void MaterialCommand::setDiffuseMap(Commands* c, Material* m, Texture* newValue) {
 	addValueCommand(c, m, &Material::setDiffuseMap, &Material::diffuseMap, newValue);
 }
+
+void MaterialCommand::setOpacity(Commands* c, Material* m, float newValue) {
+	addValueCommand(c, m, &Material::setOpacity, &Material::opacity, newValue);
+}
+
+void MaterialCommand::setOpacityMap(Commands* c, Material* m, Texture* newValue) {
+	addValueCommand(c, m, &Material::setOpacityMap, &Material::opacityMap, newValue);
+}
 } // namespace eno

@@ -2,12 +2,19 @@ import QtQuick3D
 
 import Eno
 
-DefaultMaterial {
-    property alias diffuseTexture: cuboidTexture.texture
+PrincipledMaterial {
+    property alias baseColorTexture: matBaseColorTexture.texture
+//    property alias opacityTexture: matOpacityTexture.texture
 
-    diffuseMap: Texture {
+    alphaMode: PrincipledMaterial.Mask
+    baseColorMap: Texture {
         textureData: MyCuboidTexture {
-            id: cuboidTexture
+            id: matBaseColorTexture
         }
     }
+    // opacityMap: Texture {
+    //     textureData: MyCuboidTexture {
+    //         id: matOpacityTexture
+    //     }
+    // }
 }

@@ -17,8 +17,8 @@ public:
 	void setTexture(Texture* texture);
 
 private:
-	void clear();
 	void updateData();
+	void defaultTexture();
 
 	Texture* _texture{ nullptr };
 };
