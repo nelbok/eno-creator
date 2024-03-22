@@ -4,12 +4,12 @@
 
 namespace eno {
 
-class SpinBox : public QSpinBox {
+class BoundingBox : public QSpinBox {
 	Q_OBJECT
 
 public:
-	SpinBox(QWidget* parent = 0);
-	virtual ~SpinBox() = default;
+	BoundingBox(QWidget* parent = 0);
+	virtual ~BoundingBox() = default;
 
 	void init(bool positive);
 };

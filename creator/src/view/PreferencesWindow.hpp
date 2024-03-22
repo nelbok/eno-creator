@@ -10,10 +10,10 @@ class QSpinBox;
 class QTabWidget;
 
 namespace eno {
+class BoundingBox;
 class ColorButton;
 class KeyButton;
 class LocationWidget;
-class SpinBox;
 
 class PreferencesWindow : public QWidget {
 	Q_OBJECT
@@ -50,10 +50,10 @@ private:
 	QCheckBox* _opti1{ nullptr };
 
 	// Scene
-	SpinBox* _minX{ nullptr };
-	SpinBox* _minY{ nullptr };
-	SpinBox* _maxX{ nullptr };
-	SpinBox* _maxY{ nullptr };
+	BoundingBox* _minX{ nullptr };
+	BoundingBox* _minY{ nullptr };
+	BoundingBox* _maxX{ nullptr };
+	BoundingBox* _maxY{ nullptr };
 
 	// Material
 	QLineEdit* _name{ nullptr };

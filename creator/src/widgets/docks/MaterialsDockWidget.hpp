@@ -9,7 +9,9 @@ class QLineEdit;
 namespace eno {
 class ColorButton;
 class Material;
+class PercentSlider;
 class Texture;
+class TextureBox;
 
 class MaterialsDockWidget : public BaseDockWidget {
 	Q_OBJECT
@@ -28,10 +30,6 @@ protected:
 	virtual void currentListDataEdited() override;
 	virtual QList<QPair<QString, QVariant>> datas() const override;
 
-private slots:
-	void updateTextures(const QList<Texture*>& textures);
-	void updateTextureName();
-
 private:
 	void initForm();
 	void updateForm();
@@ -40,7 +38,9 @@ private:
 	QWidget* _form{ nullptr };
 	QLineEdit* _name{ nullptr };
 	ColorButton* _diffuse{ nullptr };
-	QComboBox* _diffuseMap{ nullptr };
+	TextureBox* _diffuseMap{ nullptr };
+	PercentSlider* _opacity{ nullptr };
+	TextureBox* _opacityMap{ nullptr };
 	QLabel* _refCount{ nullptr };
 };
 } // namespace eno

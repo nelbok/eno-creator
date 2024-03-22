@@ -14,6 +14,8 @@
 #include "controller/Core.hpp"
 #include "controller/Graphics.hpp"
 #include "widgets/common/ColorButton.hpp"
+#include "widgets/common/PercentSlider.hpp"
+#include "widgets/common/TextureBox.hpp"
 
 namespace eno {
 MaterialsDockWidget::MaterialsDockWidget(QWidget* parent)
@@ -97,46 +99,27 @@ QList<QPair<QString, QVariant>> MaterialsDockWidget::datas() const {
 	return datas;
 }
 
-void MaterialsDockWidget::updateTextures(const QList<Texture*>& textures) {
-	_diffuseMap->blockSignals(true);
-	_diffuseMap->clear();
-
-	// Default value
-	_diffuseMap->addItem("None");
-	_diffuseMap->setCurrentIndex(0);
-
-	for (auto* texture : textures) {
-		disconnect(texture, &Texture::nameUpdated, this, &MaterialsDockWidget::updateTextureName);
-		_diffuseMap->addItem(texture->name(), QVariant::fromValue(texture));
-		connect(texture, &Texture::nameUpdated, this, &MaterialsDockWidget::updateTextureName);
-	}
-	if (_current && _current->diffuseMap())
-		_diffuseMap->setCurrentIndex(_diffuseMap->findData(QVariant::fromValue(_current->diffuseMap())));
-	_diffuseMap->blockSignals(false);
-}
-
-void MaterialsDockWidget::updateTextureName() {
-	assert(sender());
-	auto* texture = qobject_cast<Texture*>(sender());
-	assert(texture);
-	int index = _diffuseMap->findData(QVariant::fromValue(texture));
-	assert(index != -1);
-	_diffuseMap->setItemText(index, texture->name());
-}
-
 void MaterialsDockWidget::initForm() {
 	auto* w = _layout->parentWidget();
 
 	_name = new QLineEdit(w);
 	_diffuse = new ColorButton(w);
-	_diffuseMap = new QComboBox(w);
+	_diffuseMap = new TextureBox(w);
+	_opacity = new PercentSlider(w);
+	_opacityMap = new TextureBox(w);
 	_refCount = new QLabel(w);
+
+	_diffuseMap->init(_core->project());
+	_opacity->init();
+	_opacityMap->init(_core->project());
 
 	_form = new QWidget(w);
 	auto* form = new QFormLayout(_form);
 	form->addRow("Name:", _name);
 	form->addRow("Diffuse:", _diffuse);
 	form->addRow("Diffuse map:", _diffuseMap);
+	form->addRow("Opacity:", _opacity);
+	form->addRow("Opacity map:", _opacityMap);
 	form->addRow(_refCount);
 	_layout->addWidget(_form);
 
@@ -153,18 +136,30 @@ void MaterialsDockWidget::initForm() {
 			emit showMessage(QString("Material's diffuse color changed to %1").arg(color.name()));
 		}
 	});
-	connect(_diffuseMap, &QComboBox::currentIndexChanged, [this](int index) {
-		if (_current && index != -1) {
-			auto* texture = _diffuseMap->itemData(index).value<Texture*>();
+	connect(_diffuseMap, &TextureBox::currentTextureChanged, [this](Texture* texture) {
+		if (_current) {
 			MaterialCommand::setDiffuseMap(_core->commands(), _current, texture);
 			if (texture)
-				emit showMessage(QString("Material's texture changed to %1").arg(texture->name()));
+				emit showMessage(QString("Material's diffuse texture changed to %1").arg(texture->name()));
 			else
-				emit showMessage(QString("Material's texture changed to none"));
+				emit showMessage(QString("Material's diffuse texture changed to none"));
 		}
 	});
-	connect(_core->project(), &Project::texturesUpdated, this, &MaterialsDockWidget::updateTextures);
-	updateTextures(_core->project()->textures());
+	connect(_opacity, &PercentSlider::valueChanged, [this](double value) {
+		if (_current) {
+			MaterialCommand::setOpacity(_core->commands(), _current, value);
+			emit showMessage(QString("Material's opacity value changed to %1").arg(value));
+		}
+	});
+	connect(_opacityMap, &TextureBox::currentTextureChanged, [this](Texture* texture) {
+		if (_current) {
+			MaterialCommand::setOpacityMap(_core->commands(), _current, texture);
+			if (texture)
+				emit showMessage(QString("Material's opacity texture changed to %1").arg(texture->name()));
+			else
+				emit showMessage(QString("Material's opacity texture changed to none"));
+		}
+	});
 	updateForm();
 }
 
@@ -176,15 +171,16 @@ void MaterialsDockWidget::updateForm() {
 	if (_current) {
 		_name->setText(_current->name());
 		_diffuse->setColor(_current->diffuse());
-		if (_current->diffuseMap())
-			_diffuseMap->setCurrentIndex(_diffuseMap->findData(QVariant::fromValue(_current->diffuseMap())));
-		else
-			_diffuseMap->setCurrentIndex(0);
+		_diffuseMap->setCurrentTexture(_current->diffuseMap());
+		_opacity->setValue(_current->opacity());
+		_opacityMap->setCurrentTexture(_current->opacityMap());
 		_refCount->setText(QString("Used by %1 object(s)").arg(_current->refCount()));
 	} else {
 		_name->setText("-");
 		_diffuse->setColor({ 0, 0, 0 });
-		_diffuseMap->setCurrentIndex(0);
+		_diffuseMap->setCurrentTexture(nullptr);
+		_opacity->setValue(1.0);
+		_opacityMap->setCurrentTexture(nullptr);
 		_refCount->setText("");
 	}
 }

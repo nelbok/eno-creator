@@ -41,14 +41,18 @@ set(PROJECT_SOURCES
 	src/view/PreferencesWindow.cpp
 	src/view/PreferencesWindow.hpp
 
+	src/widgets/common/BoundingBox.cpp
+	src/widgets/common/BoundingBox.hpp
 	src/widgets/common/ColorButton.cpp
 	src/widgets/common/ColorButton.hpp
 	src/widgets/common/KeyButton.cpp
 	src/widgets/common/KeyButton.hpp
+	src/widgets/common/PercentSlider.cpp
+	src/widgets/common/PercentSlider.hpp
 	src/widgets/common/PixmapButton.cpp
 	src/widgets/common/PixmapButton.hpp
-	src/widgets/common/SpinBox.cpp
-	src/widgets/common/SpinBox.hpp
+	src/widgets/common/TextureBox.cpp
+	src/widgets/common/TextureBox.hpp
 	src/widgets/docks/BaseDockWidget.cpp
 	src/widgets/docks/BaseDockWidget.hpp
 	src/widgets/docks/MaterialsDockWidget.cpp

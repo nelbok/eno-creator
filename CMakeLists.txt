@@ -20,7 +20,4 @@ add_subdirectory(engine)
 add_subdirectory(creator)
 add_subdirectory(viewer)
 
-if (MSVC)
-	include(cmake/visualstudio.cmake)
-endif()
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${CENO_CREATOR})

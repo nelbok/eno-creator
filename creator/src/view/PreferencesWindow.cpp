@@ -11,9 +11,9 @@
 #include <QtWidgets/QTabWidget>
 
 #include "controller/Preferences.hpp"
+#include "widgets/common/BoundingBox.hpp"
 #include "widgets/common/ColorButton.hpp"
 #include "widgets/common/KeyButton.hpp"
-#include "widgets/common/SpinBox.hpp"
 #include "widgets/LocationWidget.hpp"
 
 namespace eno {
@@ -142,10 +142,10 @@ void PreferencesWindow::initGeneral() {
 void PreferencesWindow::initProject() {
 	auto* form = initTab("Project", "Default project");
 
-	_minX = new SpinBox(this);
-	_minY = new SpinBox(this);
-	_maxX = new SpinBox(this);
-	_maxY = new SpinBox(this);
+	_minX = new BoundingBox(this);
+	_minY = new BoundingBox(this);
+	_maxX = new BoundingBox(this);
+	_maxY = new BoundingBox(this);
 
 	_minX->init(false);
 	_minY->init(false);

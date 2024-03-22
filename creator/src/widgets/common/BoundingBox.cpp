@@ -1,11 +1,11 @@
-#include "SpinBox.hpp"
+#include "BoundingBox.hpp"
 
 
 namespace eno {
-SpinBox::SpinBox(QWidget* parent)
+BoundingBox::BoundingBox(QWidget* parent)
 	: QSpinBox(parent) {}
 
-void SpinBox::init(bool positive) {
+void BoundingBox::init(bool positive) {
 	setFixedWidth(60);
 	if (positive) {
 		setRange(5, 999);

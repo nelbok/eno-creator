@@ -5,9 +5,9 @@
 class QLabel;
 
 namespace eno {
+class BoundingBox;
 class Commands;
 class Scene;
-class SpinBox;
 class GraphicsView;
 
 class InfoWidget : public QWidget {
@@ -28,9 +28,9 @@ private:
 	GraphicsView* _graphicsView{ nullptr };
 
 	QLabel* _labelPosition{ nullptr };
-	SpinBox* _minXSpinBox{ nullptr };
-	SpinBox* _minYSpinBox{ nullptr };
-	SpinBox* _maxXSpinBox{ nullptr };
-	SpinBox* _maxYSpinBox{ nullptr };
+	BoundingBox* _minX{ nullptr };
+	BoundingBox* _minY{ nullptr };
+	BoundingBox* _maxX{ nullptr };
+	BoundingBox* _maxY{ nullptr };
 };
 } // namespace eno
