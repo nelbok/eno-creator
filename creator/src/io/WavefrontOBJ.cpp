@@ -216,12 +216,18 @@ void WavefrontOBJ::writeMtlFile() {
 			return;
 		}
 		Material* material = it->first;
-		const QColor& color = material->diffuse();
-		auto* texture = material->diffuseMap();
+		const auto& color = material->diffuse();
+		auto* dTexture = material->diffuseMap();
+		float opacity = material->opacity();
+		auto* oTexture = material->opacityMap();
 		stream << "newmtl " << material->name() << Qt::endl;
 		stream << "Kd " << color.red() / 255.f << " " << color.green() / 255.f << " " << color.blue() / 255.f << Qt::endl;
-		if (texture) {
-			stream << "map_Kd " + texture->name() + ".png" << Qt::endl;
+		if (dTexture) {
+			stream << "map_Kd " + dTexture->name() + ".png" << Qt::endl;
+		}
+		stream << "d " << opacity << Qt::endl;
+		if (oTexture) {
+			stream << "map_d " + oTexture->name() + ".png" << Qt::endl;
 		}
 		stream << Qt::endl;
 	}
