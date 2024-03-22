@@ -25,7 +25,7 @@ void TextureBox::setCurrentTexture(Texture* current) {
 }
 
 void TextureBox::updateTextures(const QList<Texture*>& textures) {
-	blockSignals(true);
+	QSignalBlocker s(this);
 	clear();
 
 	// Default value
@@ -39,7 +39,6 @@ void TextureBox::updateTextures(const QList<Texture*>& textures) {
 	}
 	if (_current)
 		setCurrentIndex(findData(QVariant::fromValue(_current)));
-	blockSignals(false);
 }
 
 void TextureBox::updateTextureName() {

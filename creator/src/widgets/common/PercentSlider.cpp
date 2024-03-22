@@ -38,14 +38,11 @@ void PercentSlider::setValue(double value) {
 		return;
 	}
 
-	_sp->blockSignals(true);
-	_sl->blockSignals(true);
+	QSignalBlocker ssp(_sp);
+	QSignalBlocker ssl(_sl);
 
 	_sp->setValue(value);
 	_sl->setValue(static_cast<int>(value * 100.0));
-
-	_sp->blockSignals(false);
-	_sl->blockSignals(false);
 
 	emit valueChanged(value);
 }

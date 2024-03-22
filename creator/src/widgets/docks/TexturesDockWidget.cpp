@@ -159,6 +159,11 @@ void TexturesDockWidget::updateForm() {
 	if (_form == nullptr)
 		return;
 
+	QSignalBlocker sn(_name);
+	QSignalBlocker sd(_data);
+	QSignalBlocker siX(_invertX);
+	QSignalBlocker siY(_invertY);
+
 	_form->setEnabled(_current);
 	if (_current) {
 		_name->setText(_current->name());

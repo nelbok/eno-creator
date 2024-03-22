@@ -173,6 +173,12 @@ void MaterialsDockWidget::updateForm() {
 	if (_form == nullptr)
 		return;
 
+	QSignalBlocker sn(_name);
+	QSignalBlocker sd(_diffuse);
+	QSignalBlocker sdM(_diffuseMap);
+	QSignalBlocker so(_opacity);
+	QSignalBlocker soM(_opacityMap);
+
 	_form->setEnabled(_current);
 	if (_current) {
 		_name->setText(_current->name());
