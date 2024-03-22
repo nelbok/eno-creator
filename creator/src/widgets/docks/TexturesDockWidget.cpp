@@ -2,6 +2,7 @@
 
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QBoxLayout>
+#include <QtWidgets/QCheckBox>
 #include <QtWidgets/QFormLayout>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QLineEdit>
@@ -49,6 +50,8 @@ void TexturesDockWidget::currentListDataChanged() {
 		disconnect(_current, &Texture::nameUpdated, this, &TexturesDockWidget::updateForm);
 		disconnect(_current, &Texture::dataUpdated, this, &TexturesDockWidget::updateForm);
 		disconnect(_current, &Texture::refCountUpdated, this, &TexturesDockWidget::updateForm);
+		disconnect(_current, &Texture::invertXUpdated, this, &TexturesDockWidget::updateForm);
+		disconnect(_current, &Texture::invertYUpdated, this, &TexturesDockWidget::updateForm);
 	}
 
 	_current = nullptr;
@@ -61,6 +64,8 @@ void TexturesDockWidget::currentListDataChanged() {
 			connect(_current, &Texture::nameUpdated, this, &TexturesDockWidget::updateForm);
 			connect(_current, &Texture::dataUpdated, this, &TexturesDockWidget::updateForm);
 			connect(_current, &Texture::refCountUpdated, this, &TexturesDockWidget::updateForm);
+			connect(_current, &Texture::invertXUpdated, this, &TexturesDockWidget::updateForm);
+			connect(_current, &Texture::invertYUpdated, this, &TexturesDockWidget::updateForm);
 		}
 	}
 
@@ -93,12 +98,20 @@ void TexturesDockWidget::initForm() {
 
 	_name = new QLineEdit(w);
 	_data = new PixmapButton(w);
+	_invertX = new QCheckBox("X", w);
+	_invertY = new QCheckBox("Y", w);
 	_refCount = new QLabel(w);
+
+	auto* invert = new QHBoxLayout(w);
+	invert->setContentsMargins({ 0, 0, 0, 0 });
+	invert->addWidget(_invertX);
+	invert->addWidget(_invertY);
 
 	_form = new QWidget(w);
 	auto* form = new QFormLayout(_form);
 	form->addRow("Name:", _name);
 	form->addRow("Data:", _data);
+	form->addRow("Invert:", invert);
 	form->addRow(_refCount);
 	_layout->addWidget(_form);
 
@@ -125,6 +138,20 @@ void TexturesDockWidget::initForm() {
 			emit showMessage(QString("Texture's data changed"));
 		}
 	});
+	connect(_invertX, &QCheckBox::checkStateChanged, this, [this]() {
+		if (_current) {
+			bool invertX = _invertX->isChecked();
+			TextureCommand::setInvertX(_core->commands(), _current, invertX);
+			emit showMessage(QString("Texture's invert X changed to %1").arg((invertX) ? "true" : "false"));
+		}
+	});
+	connect(_invertY, &QCheckBox::checkStateChanged, this, [this]() {
+		if (_current) {
+			bool invertY = _invertY->isChecked();
+			TextureCommand::setInvertY(_core->commands(), _current, invertY);
+			emit showMessage(QString("Texture's invert Y changed to %1").arg((invertY) ? "true" : "false"));
+		}
+	});
 	updateForm();
 }
 
@@ -136,10 +163,14 @@ void TexturesDockWidget::updateForm() {
 	if (_current) {
 		_name->setText(_current->name());
 		_data->setPixmap(_current->pixmap());
+		_invertX->setChecked(_current->invertX());
+		_invertY->setChecked(_current->invertY());
 		_refCount->setText(QString("Used by %1 material(s)").arg(_current->refCount()));
 	} else {
 		_name->setText("-");
 		_data->setPixmap(QPixmap(":/logo/logo.png"));
+		_invertX->setChecked(false);
+		_invertY->setChecked(false);
 		_refCount->setText("");
 	}
 }

@@ -32,4 +32,12 @@ void TextureCommand::setData(Commands* c, Texture* t, const QPixmap& n) {
 	const auto& o = t->pixmap();
 	c->add(new LazyValueCommand(t, qOverload<const QPixmap&>(&Texture::set), o, n));
 }
+
+void TextureCommand::setInvertX(Commands* c, Texture* t, bool newValue) {
+	addValueCommand(c, t, &Texture::setInvertX, &Texture::invertX, newValue);
+}
+
+void TextureCommand::setInvertY(Commands* c, Texture* t, bool newValue) {
+	addValueCommand(c, t, &Texture::setInvertY, &Texture::invertY, newValue);
+}
 } // namespace eno

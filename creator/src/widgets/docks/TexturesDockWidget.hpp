@@ -2,6 +2,7 @@
 
 #include "BaseDockWidget.hpp"
 
+class QCheckBox;
 class QLabel;
 class QLineEdit;
 
@@ -34,6 +35,8 @@ private:
 	QWidget* _form{ nullptr };
 	QLineEdit* _name{ nullptr };
 	PixmapButton* _data{ nullptr };
+	QCheckBox* _invertX{ nullptr };
+	QCheckBox* _invertY{ nullptr };
 	QLabel* _refCount{ nullptr };
 };
 } // namespace eno

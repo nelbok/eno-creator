@@ -12,6 +12,8 @@ struct TextureCommand {
 	static Texture* create(Commands* commands, Project* project);
 	static bool destroy(Commands* commands, Texture* texture, Project* project);
 	static void setName(Commands* commands, Texture* texture, const QString& name);
-	static void setData(Commands* c, Texture* t, const QPixmap& newValue);
+	static void setData(Commands* commands, Texture* texture, const QPixmap& pixmap);
+	static void setInvertX(Commands* commands, Texture* texture, bool invertX);
+	static void setInvertY(Commands* commands, Texture* texture, bool invertY);
 };
 } // namespace eno

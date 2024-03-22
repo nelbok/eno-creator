@@ -57,6 +57,9 @@ void MaterialsDockWidget::currentListDataChanged() {
 	if (_current && _core->project()->materials().contains(_current)) {
 		disconnect(_current, &Material::nameUpdated, this, &MaterialsDockWidget::updateForm);
 		disconnect(_current, &Material::diffuseUpdated, this, &MaterialsDockWidget::updateForm);
+		disconnect(_current, &Material::diffuseMapUpdated, this, &MaterialsDockWidget::updateForm);
+		disconnect(_current, &Material::opacityUpdated, this, &MaterialsDockWidget::updateForm);
+		disconnect(_current, &Material::opacityMapUpdated, this, &MaterialsDockWidget::updateForm);
 		disconnect(_current, &Material::refCountUpdated, this, &MaterialsDockWidget::updateForm);
 	}
 
@@ -69,6 +72,9 @@ void MaterialsDockWidget::currentListDataChanged() {
 		if (_current) {
 			connect(_current, &Material::nameUpdated, this, &MaterialsDockWidget::updateForm);
 			connect(_current, &Material::diffuseUpdated, this, &MaterialsDockWidget::updateForm);
+			connect(_current, &Material::diffuseMapUpdated, this, &MaterialsDockWidget::updateForm);
+			connect(_current, &Material::opacityUpdated, this, &MaterialsDockWidget::updateForm);
+			connect(_current, &Material::opacityMapUpdated, this, &MaterialsDockWidget::updateForm);
 			connect(_current, &Material::refCountUpdated, this, &MaterialsDockWidget::updateForm);
 
 			_core->graphics()->setMaterial(_current);
