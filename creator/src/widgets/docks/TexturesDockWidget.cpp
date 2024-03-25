@@ -102,7 +102,7 @@ void TexturesDockWidget::initForm() {
 	_invertY = new QCheckBox("Y", w);
 	_refCount = new QLabel(w);
 
-	auto* invert = new QHBoxLayout(w);
+	auto* invert = new QHBoxLayout;
 	invert->setContentsMargins({ 0, 0, 0, 0 });
 	invert->addWidget(_invertX);
 	invert->addWidget(_invertY);

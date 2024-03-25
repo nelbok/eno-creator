@@ -50,24 +50,46 @@ View3D {
 
     function setModel(model) {
         // Clear old materials
-        for (var i in myModel.matList) {
-            myModel.matList[i].destroy();
+        for (var m in myModel.matList) {
+            myModel.matList[m].destroy();
         }
         myModel.matList = [];
 
+        // Clear old textures
+        for (var t in myModel.texList) {
+            myModel.texList[t].destroy();
+        }
+        myModel.texList = [];
+
+        // Set new textures
+        var compTex = Qt.createComponent("EnoTexture.qml");
+        if (compTex.status === Component.Ready) {
+            for (var et in model.textures) {
+                var objTex = compTex.createObject(myModel);
+                objTex.data = model.textures[et];
+                myModel.texList.push(objTex);
+            }
+        }
+
         // Set new materials
-        var component = Qt.createComponent("Material.qml");
-        if (component.status === Component.Ready) {
-            for (var j in model.materials) {
-                var mat = model.materials[j];
+        var compMat = Qt.createComponent("EnoMaterial.qml");
+        if (compMat.status === Component.Ready) {
+            for (var em in model.materials) {
+                var mat = model.materials[em];
 
-                var object = component.createObject(myModel);
-                object.baseColor = mat.diffuse;
-                object.baseColorTexture = mat.diffuseMap;
-                object.opacity = mat.opacity;
-                //object.opacityTexture = mat.opacityMap;
+                var objMat = compMat.createObject(myModel);
+                objMat.baseColor = mat.diffuse;
+                objMat.opacity = mat.opacity;
+                for(var mt in model.textures) {
+                    if (model.textures[mt] === mat.diffuseMap) {
+                        objMat.baseColorMap = myModel.texList[mt];
+                    }
+                    if (model.textures[mt] === mat.opacityMap) {
+                        objMat.opacityMap = myModel.texList[mt];
+                    }
+                }
 
-                myModel.matList.push(object);
+                myModel.matList.push(objMat);
             }
         }
 
@@ -77,7 +99,8 @@ View3D {
 
     Model {
         id: myModel
-        property list<DefaultMaterial> matList
+        property list<Texture> texList
+        property list<PrincipledMaterial> matList
 
         materials: matList
         geometry: MyCuboidGeometry {
