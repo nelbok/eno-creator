@@ -1,4 +1,4 @@
-# Eno Creator
+# Eno Suite
 
 ## About
 
@@ -8,13 +8,19 @@ And you can export your work into Wavefront file.
 
 Eno features:
 - version
-- material
+- project
+- tags
+- textures
+- materials
 - bounding box
 - object
 
 Wavefront features:
 - vertex / triangle
 - diffuse color
+- diffuse map
+- opacity (dissolve)
+- opacity (dissolve) map
 
 ![Interface](sample/preview.png)
 ![OpenGL preview](sample/preview-opengl.png)
@@ -26,26 +32,27 @@ Even if now it could be used to make old school video games.
 So the interface could look old.
 
 ## Units
-Meter: Eno files, Wavefront files, Qt3D
-Centimeter: QtQuick3D
+
+Meter: Eno files, Wavefront files
+Centimeter: Qt Quick 3D
 
 ## Requirements
 
 - CMake 3.27+
 - C++ 17
-- Qt 6.6
+- Qt Widgets/Quick 6
 
 ## Supported platforms
-Eno: All
-Creator: Windows, Linux, macOS(maybe)
-Viewer: Windows, Linux, macOS(maybe), Android
 
-Note about iOS:
-Without device, we can't update code
+- Eno: All
+- Creator: Windows, Linux, macOS(maybe)
+- Viewer: Windows, Linux, macOS(maybe), Android
+
+Note about iOS: Without device, we can't update code
 
 ## Compilation
 
-- cmake -D "CMAKE_PREFIX_PATH=Path to Qt" -B "build" .
+- cmake -B build
 - cmake --build build
 
-Path to Qt, example for Windows: C:/Qt/6.6.2/msvc2019_64
+If you need to specify Qt location, add this to the first call of CMake: -D "CMAKE_PREFIX_PATH=Path to Qt"
