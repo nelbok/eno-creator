@@ -21,7 +21,7 @@ void WavefrontOBJ::save() {
 	_result = Result::Success;
 	_data = Merger::fillData(_project->scene());
 	if (Preferences::generationOptimized()) {
-		_data = mergeData(_data);
+		_data = Merger::mergeData(_data);
 	}
 	compute();
 	writeObjFile();

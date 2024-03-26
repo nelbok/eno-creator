@@ -6,6 +6,7 @@
 #include <eno/data/Object.hpp>
 #include <eno/data/Scene.hpp>
 #include <eno/tools/Geometry.hpp>
+#include <eno/tools/Merger.hpp>
 #include <eno/tools/Utils.hpp>
 
 namespace eno {
@@ -22,6 +23,11 @@ void CuboidGeometry::setProject(Project* project) {
 	updateData();
 }
 
+void CuboidGeometry::setOptimized(bool optimized) {
+	_optimized = optimized;
+	updateData();
+}
+
 void CuboidGeometry::updateData() {
 	clear();
 	if (!_project) {
@@ -35,31 +41,41 @@ void CuboidGeometry::updateData() {
 	QByteArray arrayVertices;
 	QByteArray arrayIndexes;
 	const auto& materials = _project->materials();
-	const auto& objects = _project->scene()->objects();
+
+	// Optimized 3D view if needed
+	auto objects = Merger::fillData(_project->scene());
+	if (_optimized) {
+		objects = Merger::mergeData(objects);
+	}
+
 	for (auto* material : materials) {
 		indexOffset += indexCount;
 		indexCount = 0u;
+		QByteArray arrayOneVertices;
+		QByteArray arrayOneIndexes;
 
 		QList<QVector3D> bb;
-		for (Object* object : objects) {
-			if (object->material() != material)
+		for (const auto& object : objects) {
+			if (object.material != material)
 				continue;
 
-			const auto& pos = object->position();
-			bb.append(pos);
-			arrayVertices += Geometry::createCuboidVertexData(pos);
-			arrayIndexes += Geometry::createCuboidIndexData(verticesCount);
-			indexCount += 36; // 3 indices per triangle * 2 triangles per face * 6 faces per object
+			bb.append(object.position);
+			arrayOneVertices += Geometry::createCuboidVertexData(object.position, object.faces);
+			arrayOneIndexes += Geometry::createCuboidIndexData(verticesCount, object.faces);
 		}
 
 		auto [minMat, maxMat] = Utils::boundingBox(bb);
+		indexCount = arrayOneIndexes.length() / sizeof(quint32);
 		addSubset(indexOffset, indexCount, minMat, maxMat, material->name());
+
+		arrayVertices += arrayOneVertices;
+		arrayIndexes += arrayOneIndexes;
 	}
 
 	setVertexData(arrayVertices);
 	setIndexData(arrayIndexes);
 	setStride(Geometry::stride());
-	auto [min, max] = Utils::boundingBox(objects);
+	auto [min, max] = Utils::boundingBox(_project->scene()->objects());
 	setBounds(min, max);
 
 	setPrimitiveType(QQuick3DGeometry::PrimitiveType::Triangles);

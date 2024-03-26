@@ -61,6 +61,8 @@ public:
 	// Optimization
 	static bool generationOptimized();
 	static void setGenerationOptimized(bool enabled);
+	static bool preview3DOptimized();
+	static void setPreview3DOptimized(bool enabled);
 	static int maximumCommands();
 	static void setMaximumCommands(int maximum);
 

@@ -7,6 +7,9 @@ import Eno
 // https://doc.qt.io/qt-6/qtquick3dphysics-units.html
 // Qt Quick 3D Unit: cm
 View3D {
+    property alias optimized: myCuboidGeometry.optimized
+    property alias debug: myDebug.visible
+
     id: root
 
     environment: SceneEnvironment {
@@ -94,7 +97,7 @@ View3D {
         }
 
         // Set new model
-        geometry.project = model;
+        myCuboidGeometry.project = model;
     }
 
     Model {
@@ -104,7 +107,7 @@ View3D {
 
         materials: matList
         geometry: MyCuboidGeometry {
-            id: geometry
+            id: myCuboidGeometry
         }
 
         // Eno is in meter, we need to convert into cm
@@ -112,7 +115,7 @@ View3D {
     }
 
     Model {
-        id: debug
+        id: myDebug
         visible: false
         position: Qt.vector3d(0, -100, 0)
         scale: Qt.vector3d(10,1,10)

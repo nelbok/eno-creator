@@ -16,6 +16,7 @@ Item {
     Viewer {
         id: view
         anchors.fill: parent
+        optimized: Preview3DOptimized
     }
 
     Component.onCompleted: {

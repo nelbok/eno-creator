@@ -48,6 +48,7 @@ private:
 
 	// Optimizations
 	QCheckBox* _opti1{ nullptr };
+	QCheckBox* _opti2{ nullptr };
 
 	// Scene
 	BoundingBox* _minX{ nullptr };

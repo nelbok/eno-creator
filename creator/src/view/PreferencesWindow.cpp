@@ -53,6 +53,7 @@ void PreferencesWindow::closeEvent(QCloseEvent* e) {
 
 		// Optimizations
 		Preferences::setGenerationOptimized(_opti1->isChecked());
+		Preferences::setPreview3DOptimized(_opti2->isChecked());
 	}
 
 	// Scene
@@ -131,12 +132,16 @@ void PreferencesWindow::initGeneral() {
 
 	// Optimizations
 	_opti1 = new QCheckBox;
+	_opti2 = new QCheckBox;
 
 	_opti1->setMaximumWidth(200);
+	_opti2->setMaximumWidth(200);
 
 	_opti1->setChecked(Preferences::generationOptimized());
+	_opti2->setChecked(Preferences::preview3DOptimized());
 
 	form->addRow("Wavefront optimization:", _opti1);
+	form->addRow("Preview 3D optimization:", _opti2);
 }
 
 void PreferencesWindow::initProject() {

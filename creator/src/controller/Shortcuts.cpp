@@ -226,6 +226,7 @@ void Shortcuts::initGenerate() {
 		const QUrl url("qrc:/creator/qml/Preview.qml");
 		QQuickWidget* view = new QQuickWidget;
 		view->rootContext()->setContextProperty("MyProject", _core->project());
+		view->rootContext()->setContextProperty("Preview3DOptimized", Preferences::preview3DOptimized());
 		view->setSource(url);
 		view->show();
 		emit showMessage("Loading");

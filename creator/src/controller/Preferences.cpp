@@ -107,6 +107,14 @@ void Preferences::setGenerationOptimized(bool enabled) {
 	QSettings().setValue("optimization/wavefront", enabled);
 }
 
+bool Preferences::preview3DOptimized() {
+	return QSettings().value("optimization/preview", true).toBool();
+}
+
+void Preferences::setPreview3DOptimized(bool enabled) {
+	QSettings().setValue("optimization/preview", enabled);
+}
+
 int Preferences::maximumCommands() {
 	return QSettings().value("optimization/commands", 20).toInt();
 }
