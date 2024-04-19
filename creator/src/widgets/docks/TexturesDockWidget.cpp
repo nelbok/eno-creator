@@ -138,14 +138,22 @@ void TexturesDockWidget::initForm() {
 			emit showMessage(QString("Texture's data changed"));
 		}
 	});
+#if QT_VERSION >= 0x060700
 	connect(_invertX, &QCheckBox::checkStateChanged, this, [this]() {
+#else
+	connect(_invertX, &QCheckBox::stateChanged, this, [this]() {
+#endif
 		if (_current) {
 			bool invertX = _invertX->isChecked();
 			TextureCommand::setInvertX(_core->commands(), _current, invertX);
 			emit showMessage(QString("Texture's invert X changed to %1").arg((invertX) ? "true" : "false"));
 		}
 	});
+#if QT_VERSION >= 0x060700
 	connect(_invertY, &QCheckBox::checkStateChanged, this, [this]() {
+#else
+	connect(_invertY, &QCheckBox::stateChanged, this, [this]() {
+#endif
 		if (_current) {
 			bool invertY = _invertY->isChecked();
 			TextureCommand::setInvertY(_core->commands(), _current, invertY);

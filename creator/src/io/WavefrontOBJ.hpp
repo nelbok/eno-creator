@@ -8,6 +8,8 @@
 #include <eno/tools/Merger.hpp>
 #include <eno/io/IOThread.hpp>
 
+class QTextStream;
+
 namespace eno {
 class Material;
 

@@ -1,6 +1,5 @@
 #include "ProjectCommand.hpp"
 
-#include <QtCore/QOverload>
 #include <QtCore/QString>
 
 #include <eno/data/Project.hpp>

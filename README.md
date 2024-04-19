@@ -40,7 +40,7 @@ Centimeter: Qt Quick 3D
 
 - CMake 3.27+
 - C++ 17
-- Qt Widgets/Quick 6
+- Qt Widgets/Quick (6.7 / 6.6 / 6.5 LTS)
 
 ## Supported platforms
 

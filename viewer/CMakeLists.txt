@@ -46,7 +46,7 @@ configure_file(android/res/drawable-xxhdpi/icon.png android/res/drawable-xxhdpi/
 configure_file(android/res/drawable-xxxhdpi/icon.png android/res/drawable-xxxhdpi/icon.png COPYONLY)
 
 set_target_properties(${CENO_VIEWER} PROPERTIES
-	MACOSX_BUNDLE_GUI_IDENTIFIER ${CENO_VIEWER}.${CENO_ORGANIZATION}.com
+	MACOSX_BUNDLE_GUI_IDENTIFIER com.${CENO_ORGANIZATION}.${CENO_VIEWER}
 	MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
 	MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
 	MACOSX_BUNDLE TRUE

@@ -50,7 +50,7 @@ void CuboidGeometry::updateData() {
 
 	for (auto* material : materials) {
 		indexOffset += indexCount;
-		indexCount = 0u;
+
 		QByteArray arrayOneVertices;
 		QByteArray arrayOneIndexes;
 
@@ -65,7 +65,7 @@ void CuboidGeometry::updateData() {
 		}
 
 		auto [minMat, maxMat] = Utils::boundingBox(bb);
-		indexCount = arrayOneIndexes.length() / sizeof(quint32);
+		indexCount = static_cast<unsigned int>(arrayOneIndexes.length()) / sizeof(quint32);
 		addSubset(indexOffset, indexCount, minMat, maxMat, material->name());
 
 		arrayVertices += arrayOneVertices;

@@ -1,10 +1,11 @@
 #pragma once
 
+#include <eno/data/Texture.hpp>
+
 #include <QtWidgets/QComboBox>
 
 namespace eno {
 class Project;
-class Texture;
 
 class TextureBox : public QComboBox {
 	Q_OBJECT
