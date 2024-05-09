@@ -32,7 +32,6 @@ function(windeployqt target)
 		COMMAND "${CMAKE_COMMAND}" -E
 		env PATH="${_qt_bin_dir}" "${WINDEPLOYQT_EXECUTABLE}"
 		--verbose 0
-		--no-compiler-runtime
 		--no-opengl-sw
 		--no-system-d3d-compiler
 		--no-translations
