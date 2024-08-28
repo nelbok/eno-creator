@@ -1,4 +1,4 @@
-set(ENO_SUITE_VERSION "1.1.1")
+set(ENO_SUITE_VERSION "1.1.2")
 string(REPLACE "." "," ENO_SUITE_VERSION_RC ${ENO_SUITE_VERSION})
 set(ENO_CREATOR "Eno Creator")
 set(ENO_VIEWER "Eno Viewer")
