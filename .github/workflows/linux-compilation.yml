@@ -1,0 +1,23 @@
+name: Linux compilation
+on: [push]
+jobs:
+  qt6_6:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: jurplel/install-qt-action@v3
+        with:
+          version: '6.6.*'
+          modules: qtquick3d qtshadertools
+      - run: cmake -B build
+      - run: cmake --build build -j
+  qt6_5_LTS:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: jurplel/install-qt-action@v3
+        with:
+          version: '6.5.*'
+          modules: qtquick3d qtshadertools
+      - run: cmake -B build
+      - run: cmake --build build -j
