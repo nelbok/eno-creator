@@ -63,10 +63,14 @@ void CuboidGeometry::updateData() {
 			arrayOneVertices += Geometry::createCuboidVertexData(object.position, object.faces);
 			arrayOneIndexes += Geometry::createCuboidIndexData(verticesCount, object.faces);
 		}
-
-		auto [minMat, maxMat] = Utils::boundingBox(bb);
-		indexCount = static_cast<unsigned int>(arrayOneIndexes.length()) / sizeof(quint32);
-		addSubset(indexOffset, indexCount, minMat, maxMat, material->name());
+		if (bb.isEmpty()) {
+			indexCount = 0;
+			addSubset(indexOffset, indexCount, { 0, 0, 0 }, { 0, 0, 0 }, material->name());
+		} else {
+			auto [minMat, maxMat] = Utils::boundingBox(bb);
+			indexCount = static_cast<unsigned int>(arrayOneIndexes.length()) / sizeof(quint32);
+			addSubset(indexOffset, indexCount, minMat, maxMat, material->name());
+		}
 
 		arrayVertices += arrayOneVertices;
 		arrayIndexes += arrayOneIndexes;
